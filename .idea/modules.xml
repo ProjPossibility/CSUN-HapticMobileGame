@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/LockPick.iml" filepath="$PROJECT_DIR$/LockPick.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CSUN-HapticMobileGame.iml" filepath="$PROJECT_DIR$/CSUN-HapticMobileGame.iml" />
     </modules>
   </component>
 </project>
