@@ -65,7 +65,8 @@ public class LevelHandler {
 
 
         if (tilt > startSeed - difficulty && tilt < startSeed + difficulty) {
-            int intensity = 100 - (100 * Math.abs(startSeed - tilt) / difficulty);
+            float intensityPercentage = (float) Math.abs(startSeed - tilt) / difficulty;
+            int intensity = (int)(100 * (1.0 - intensityPercentage));
             return intensity;
         } else {
             return -1;
