@@ -12,12 +12,11 @@ import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.os.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.awt.*;
+
 import java.util.Scanner;
 
 
