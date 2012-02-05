@@ -12,6 +12,8 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -30,7 +32,8 @@ public class MyActivity extends Activity
     Chronometer chronoTimer;
     AnnouncementHandler announcementHandler;
     boolean keyPressed = false;
-     Context context;
+    Context context;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +59,45 @@ public class MyActivity extends Activity
             announcementHandler = new AnnouncementHandler(this, vibrationHandler);
             announcementHandler.newLaunch();
         }
+        chronoTimer.setKeepScreenOn(true);
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 0, 0, "Reset User Type");
+
+
+        return true;
+
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        adb.setTitle("Alert");
+        adb.setMessage("Please restart the app to continue with user type reset.");
+        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //To change body of implemented methods use File | Settings | File Templates.
+                SharedPreferencesHandler.clearUserType(context);
+                finish();
+            }
+        });
+        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+
+            }
+        });
+        adb.create().show();
+
+        return super.onMenuItemSelected(featureId, item);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
     boolean pressedOutsideGame = true;
 
     @Override
@@ -69,7 +109,8 @@ public class MyActivity extends Activity
                     gameHandler.gotKeyDown();
                 }
 
-            }   return true;
+            }
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -80,10 +121,10 @@ public class MyActivity extends Activity
             keyPressed = false;
             gameHandler.gotKeyUp();
             if (gameHandler.getGameState() != GameHandler.STATE_INGAME) {
-                if(pressedOutsideGame){
+                if (pressedOutsideGame) {
                     pressedOutsideGame = false;
                     gameHandler.playCurrentLevel();
-                }                else{
+                } else {
                     pressedOutsideGame = true;
                 }
             }
@@ -145,7 +186,7 @@ public class MyActivity extends Activity
             chronoTimer.stop();
             butNextLevel.setVisibility(View.VISIBLE);
             setPicksLeft(picksLeft);
-            announcementHandler.levelLost(level,picksLeft);
+            announcementHandler.levelLost(level, picksLeft);
         }
 
         @Override
@@ -153,9 +194,7 @@ public class MyActivity extends Activity
             butNextLevel.setText("New Game");
             if (SharedPreferencesHandler.getHighScore(context) < maxLevel) {
                 textGameOver.setText("GAME OVER\nHIGH SCORE!");
-            }
-            else
-            {
+            } else {
                 textGameOver.setText("GAME OVER");
             }
             textGameOver.setVisibility(View.VISIBLE);

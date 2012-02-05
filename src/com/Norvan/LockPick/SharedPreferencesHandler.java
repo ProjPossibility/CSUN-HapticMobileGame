@@ -28,6 +28,13 @@ public class SharedPreferencesHandler {
         return prefs.getInt("userType", 0);
     }
 
+    public static void clearUserType(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.remove("userType");
+        edit.commit();
+    }
+
     public static boolean isFirstRun(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return !prefs.contains("userType");
