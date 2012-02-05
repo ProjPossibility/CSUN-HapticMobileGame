@@ -61,6 +61,9 @@ public class AnnouncementHandler {
             //morse
             vibrationHandler.playString("You won level " + String.valueOf(wonLevel) + " in " + getTimeString(time));
         }
+        else{
+            tts.speakPhrase("Good Job!");
+        }
     }
 
     public void levelLost(int level, int picksLeft) {
@@ -72,6 +75,9 @@ public class AnnouncementHandler {
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
             vibrationHandler.playString("You lost " + String.valueOf(picksLeft) + " picks left");
+        }
+        else{
+            tts.speakPhrase("You failed");
         }
     }
 
@@ -89,6 +95,9 @@ public class AnnouncementHandler {
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
             vibrationHandler.playString("Game over. Reached level " + String.valueOf(maxLevel+1));
+        }
+        else{
+            tts.speakPhrase("Game Over");
         }
 
     }

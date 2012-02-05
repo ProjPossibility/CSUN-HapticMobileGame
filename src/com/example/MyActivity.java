@@ -208,9 +208,14 @@ public class MyActivity extends Activity
     public static boolean hasRequiredSensors(Context context) {
         try {
             SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-            Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+            List<Sensor> sensors = sensorManager.getSensorList(
+                    Sensor.TYPE_GYROSCOPE);
+
+            Sensor sensor = sensors.get(0);
+            Log.i("AMP", "hasGyro");
             return true;
         } catch (Exception e) {
+            Log.i("AMP", "noGryo");
             return false;
         }
     }
