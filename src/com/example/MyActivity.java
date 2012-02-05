@@ -36,11 +36,11 @@ public class MyActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         context = this;
-//        if (!hasRequiredSensors(this)) {
-//
-//            showUnsuportedDialog();
-//            return;
-//        }
+        if (!hasRequiredSensors(this)) {
+
+            showUnsuportedDialog();
+            return;
+        }
         vibrationHandler = new VibrationHandler(this);
         gameHandler = new GameHandler(this, gameStatusInterface, vibrationHandler);
         textPicksLeft = (TextView) findViewById(R.id.textPicksLeft);

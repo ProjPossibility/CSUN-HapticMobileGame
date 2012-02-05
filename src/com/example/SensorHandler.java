@@ -37,7 +37,7 @@ public class SensorHandler {
         PackageManager paM = context.getPackageManager();
         gyroExists = paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
 
-
+        
 
     }
 
