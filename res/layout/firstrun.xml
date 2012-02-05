@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:orientation="vertical"
+              android:layout_height="fill_parent">
+    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:textSize="30sp" android:text="Welcome to LockPick!" android:gravity="center" android:layout_margin="15dp"/>
+
+    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/butNotBlind" android:text="Click here to continue" android:textSize="30sp" android:gravity="center" android:layout_marginTop="30dp" android:layout_margin="15dp"/>
+</LinearLayout>

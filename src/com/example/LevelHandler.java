@@ -1,5 +1,7 @@
 package com.example;
 
+import android.util.Log;
+
 import java.util.Random;
 
 /**
@@ -10,32 +12,15 @@ import java.util.Random;
  * To change this template use File | Settings | File Templates.
  */
 public class LevelHandler {
-    VibrationHandler vibrationHandler;
+
     int startSeed;
     int difficulty;
     int keyPressPosition;
-
-    public LevelHandler(VibrationHandler vibrationHandler) {
-        this.vibrationHandler = vibrationHandler;
-
-
-    }
-
-    public void newLevel() {
+    float buttonPressProximity;
+    public LevelHandler(int levelNumber){
+        difficulty = 100-levelNumber*10;
         Random rand = new Random();
         startSeed = rand.nextInt(600) + 200;
-        difficulty = 100;
-    }
-    
-    public void newLevelDebug(){
-        startSeed =   500;
-        difficulty = 100;
-    }
-
-    public void newLevel(int difficulty) {
-        Random rand = new Random();
-        startSeed = rand.nextInt(600) + 200;
-        this.difficulty = difficulty;
     }
 
     public int getDifficulty() {
@@ -48,29 +33,33 @@ public class LevelHandler {
 
     public void keyDown(int position) {
         keyPressPosition = position;
+        buttonPressProximity = ((float) Math.abs(keyPressPosition - startSeed)) / difficulty;
     }
 
     public int getUnlockedState(int currentPosition) {
-        if (Math.abs(keyPressPosition - currentPosition) > difficulty) {
-            if (Math.abs(keyPressPosition - startSeed) / difficulty < 0.25) {
+        Log.i("AMP", String.valueOf(((float) Math.abs(keyPressPosition - startSeed)) / difficulty));
+        if (Math.abs(keyPressPosition - currentPosition) > difficulty * 2) {
+            if (((float) Math.abs(keyPressPosition - startSeed)) / difficulty < 0.25) {
                 return 1;
             } else {
                 return -1;
             }
+        } else if (((float) Math.abs(keyPressPosition - startSeed) * 2) / difficulty > 1) {
+            return -1;
         }
         return 0;
     }
-    
-    public boolean isCurrentTryWinnable(){
-        if ((float)(Math.abs(keyPressPosition - startSeed)) / difficulty < 0.25) {
+
+    public boolean isCurrentTryWinnable() {
+        if ((float) (Math.abs(keyPressPosition - startSeed)) / difficulty < 0.25) {
             return true;
         } else {
             return false;
         }
     }
-    
-    public float getCurrentTryResult(){
-      return (float)(Math.abs(keyPressPosition - startSeed)) / difficulty ;
+
+    public float getCurrentTryResult() {
+        return (float) (Math.abs(keyPressPosition - startSeed)) / difficulty;
     }
 
     public int getIntensityForPosition(int tilt) {
@@ -83,6 +72,23 @@ public class LevelHandler {
             return -1;
         }
 
+    }
+
+    public int getIntensityForPositionWhileUnlocking(int tilt) {
+        float diff = Math.abs(keyPressPosition-tilt);
+        float numerator = buttonPressProximity* diff;
+        float divided = numerator/difficulty;
+
+        int intensity =  (int)(divided*100);
+        Log.i("AMP", "tilt "+ String.valueOf(tilt));
+        Log.i("AMP", "intensity "+ String.valueOf(intensity));
+        if (intensity > 100) {
+            return 100;
+        } else if (intensity <= 0) {
+            return -1;
+        } else {
+            return intensity;
+        }
     }
 
 

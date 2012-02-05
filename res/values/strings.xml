@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LockPick</string>
+    <string name="firstrunBlind">If you are blind, press the volume up key twice</string>
+    <string name="firstrunDeafBlind">If deaf blind press volume up twice</string>
 </resources>

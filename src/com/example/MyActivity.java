@@ -1,15 +1,20 @@
 package com.example;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.*;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,74 +24,51 @@ public class MyActivity extends Activity
 
 {
     VibrationHandler vibrationHandler;
-    SensorHandler sensorHandler;
-    LevelHandler levelHandler;
-    TextView textSeed, textButtonState, textDifficulty, textPressedLocation, textWinnable, textLastGame;
-    EditText editDifficulty;
-    Button butNewLevel;
-    int lastPressedPosition = -1;
+    GameHandler gameHandler;
+    TextView textPicksLeft, textLevel, textGameOver;
+    Button butNextLevel;
+    Chronometer chronoTimer;
+    AnnouncementHandler announcementHandler;
     boolean keyPressed = false;
-    boolean gameInProgress = false;
-    int keyPressedPosition = -1;
-    private Handler mHandler = new Handler();
 
-    /**
-     * Called when the activity is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        if (!hasRequiredSensors(this)) {
+
+            showUnsuportedDialog();
+            return;
+        }
         vibrationHandler = new VibrationHandler(this);
-        levelHandler = new LevelHandler(vibrationHandler);
-        sensorHandler = new SensorHandler(this, sensorHandlerInterface);
-        levelHandler.newLevel();
-        textSeed = (TextView) findViewById(R.id.textSeed);
-        textButtonState = (TextView) findViewById(R.id.textButtonState);
-        textDifficulty = (TextView) findViewById(R.id.textDifficulty);
-        textPressedLocation = (TextView) findViewById(R.id.textPressedLoc);
-        textWinnable = (TextView) findViewById(R.id.textWinnable);
-        textLastGame = (TextView) findViewById(R.id.textLastGame);
-        butNewLevel = (Button) findViewById(R.id.butNewLevel);
-        butNewLevel.setOnClickListener(onClick);
-        editDifficulty = (EditText) findViewById(R.id.editTextDifficulty);
-        textSeed.setText("Seed: " + String.valueOf(levelHandler.getStartSeed()));
-        textDifficulty.setText("Difficulty: " + String.valueOf(levelHandler.getDifficulty()));
-        textButtonState.setText("Button Pressed: FALSE");
-
-        gameInProgress = true;
-
+        gameHandler = new GameHandler(this, gameStatusInterface, vibrationHandler);
+        textPicksLeft = (TextView) findViewById(R.id.textPicksLeft);
+        textLevel = (TextView) findViewById(R.id.textLevelNumber);
+        textGameOver = (TextView) findViewById(R.id.textGameOver);
+        butNextLevel = (Button) findViewById(R.id.butNextLevel);
+        butNextLevel.setOnClickListener(onClick);
+        chronoTimer = (Chronometer) findViewById(R.id.chronoTimer);
+        if (SharedPreferencesHandler.isFirstRun(this)) {
+            Intent i = new Intent(this, FirstRunActivity.class);
+            startActivityForResult(i, 1);
+        } else {
+            announcementHandler = new AnnouncementHandler(this, vibrationHandler);
+            announcementHandler.newLaunch();
+        }
 
     }
-
-
-    View.OnClickListener onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (butNewLevel.equals(view)) {
-                try {
-                    levelHandler.newLevel(Integer.valueOf(String.valueOf(editDifficulty.getText())));
-                } catch (Exception e) {
-                    levelHandler.newLevel();
-                }
-                textSeed.setText("Seed: " + String.valueOf(levelHandler.getStartSeed()));
-                textDifficulty.setText("Difficulty: " + String.valueOf(levelHandler.getDifficulty()));
-
-            }
-        }
-    };
+    boolean pressedOutsideGame = false;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            keyPressed = true;
-            keyPressedPosition = lastPressedPosition;
-            levelHandler.keyDown(keyPressedPosition);
-            textPressedLocation.setText("PressedLoc: " + String.valueOf(keyPressedPosition));
-            textButtonState.setText("Button Pressed: TRUE");
-            vibrationHandler.stopVibrate();
-            textWinnable.setText("Winnable: "+ String.valueOf(levelHandler.isCurrentTryWinnable()+" "+String.valueOf(levelHandler.getCurrentTryResult())));
-            return true;
+            if (gameHandler.getGameState() == GameHandler.STATE_INGAME) {
+                if (!keyPressed) {
+                    keyPressed = true;
+                    gameHandler.gotKeyDown();
+                }
+
+            }   return true;
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -95,70 +77,133 @@ public class MyActivity extends Activity
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             keyPressed = false;
-            textButtonState.setText("Button Pressed: FALSE");
-
+            gameHandler.gotKeyUp();
+            if (gameHandler.getGameState() != GameHandler.STATE_INGAME) {
+                if(pressedOutsideGame){
+                    pressedOutsideGame = false;
+                    gameHandler.playCurrentLevel();
+                }                else{
+                    pressedOutsideGame = true;
+                }
+            }
             return true;
         }
         return super.onKeyUp(keyCode, event);
     }
 
-    SensorHandler.SensorHandlerInterface sensorHandlerInterface = new SensorHandler.SensorHandlerInterface() {
+    View.OnClickListener onClick = new View.OnClickListener() {
         @Override
-        public void newValues(float angularVelocity, int tilt) {
-            if (gameInProgress) {
-                if (keyPressed) {
-                    switch (levelHandler.getUnlockedState(tilt)) {
-                        case -1://Pick Broken
-                            gameInProgress = false;
-                            textLastGame.setText("you lost :(");
-                            vibrationHandler.playSad();
-                            mHandler.postDelayed(startGame, 5000);
-                            break;
-                        case 0: //In Progress
-                            break;
-                        case 1: //A WINRAR IS YOU!!!
-                            gameInProgress = false;
-                            textLastGame.setText("A WINRAR IS YOU!!!!");
-                            vibrationHandler.playHappy();
-                            mHandler.postDelayed(startGame, 5000);
-                            break;
-                    }
-                } else {
-                    lastPressedPosition = tilt;
-                    int intensity = levelHandler.getIntensityForPosition(tilt);
-                    if ((angularVelocity * 100) > 10) {
-                        if (intensity == -1) {
-                            vibrationHandler.stopVibrate();
-                        } else {
-                            vibrationHandler.pulsePWM(intensity);
-                        }
-                    } else {
-                        vibrationHandler.stopVibrate();
-                    }
-                }
+        public void onClick(View view) {
+            gameHandler.playCurrentLevel();
+        }
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (SharedPreferencesHandler.isFirstRun(this)) {
+                Intent i = new Intent(this, FirstRunActivity.class);
+                startActivityForResult(i, 1);
+            } else {
+                announcementHandler = new AnnouncementHandler(this, vibrationHandler);
+                announcementHandler.newLaunch();
+
             }
+        }
+        super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
+    }
 
+    public GameHandler.GameStatusInterface gameStatusInterface = new GameHandler.GameStatusInterface() {
+        @Override
+        public void levelStart(int level, int picksLeft) {
+            butNextLevel.setVisibility(View.GONE);
+            textGameOver.setVisibility(View.GONE);
+
+            chronoTimer.setBase(SystemClock.elapsedRealtime());
+            chronoTimer.start();
+            setPicksLeft(picksLeft);
+            textLevel.setText("Level " + String.valueOf(level + 1));
+            announcementHandler.levelStart(level, picksLeft);
 
         }
 
         @Override
-        public void showAngularVelocity(float[] values) {
+        public void levelWon(int levelWon, int picksLeft) {
+            butNextLevel.setText("Next Level");
+            chronoTimer.stop();
+            float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
+            butNextLevel.setVisibility(View.VISIBLE);
+            setPicksLeft(picksLeft);
+            announcementHandler.levelWon(levelTime, levelWon);
+
+        }
+
+        @Override
+        public void levelLost(int level, int picksLeft) {
+            butNextLevel.setText("Try Again");
+            chronoTimer.stop();
+            butNextLevel.setVisibility(View.VISIBLE);
+            setPicksLeft(picksLeft);
+            announcementHandler.levelLost(level,picksLeft);
+        }
+
+        @Override
+        public void gameOver(int maxLevel) {
+            butNextLevel.setText("New Game");
+            textGameOver.setVisibility(View.VISIBLE);
+            chronoTimer.stop();
+            butNextLevel.setVisibility(View.VISIBLE);
+            announcementHandler.gameOver(maxLevel);
 
         }
     };
 
+    private void showUnsuportedDialog() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle("Error!");
+        adb.setMessage("Your device does not have a gyroscope. Gyroscope substitution with the accelerometer has not been implemented yet");
+        adb.setCancelable(false);
+        adb.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        adb.create().show();
+    }
 
 
+    void setPicksLeft(int picks) {
+        textPicksLeft.setText("Picks Left: " + String.valueOf(picks));
+    }
 
 
-    private Runnable startGame = new Runnable() {
-        public void run() {
-            levelHandler.newLevelDebug();
-            gameInProgress = true;
-            keyPressed = false;
-            textLastGame.setText("");
+    @Override
+    protected void onResume() {
+        keyPressed = false;
+        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void onPause() {
+        gameHandler.setSensorPollingState(false);
+        super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void onDestroy() {
+        announcementHandler.shutDown();
+        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    public static boolean hasRequiredSensors(Context context) {
+        try {
+            SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+            Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-    };
-
+    }
 }
 

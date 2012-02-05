@@ -5,22 +5,27 @@
               android:layout_height="fill_parent"
         >
     <TextView
-            android:layout_width="fill_parent" android:id="@+id/textSeed"
-            android:layout_height="wrap_content" android:textSize="25sp"
+            android:layout_width="fill_parent" android:id="@+id/textLevelNumber" android:text="Level 1"
+            android:layout_marginTop="20dp" android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content" android:textSize="45sp"
             />
-    <TextView android:layout_width="fill_parent" android:id="@+id/textDifficulty"
+    <TextView android:layout_width="fill_parent" android:id="@+id/textPicksLeft" android:layout_marginBottom="10dp"
+              android:text="Picks Left: 5"
               android:layout_height="wrap_content" android:textSize="25sp"/>
-    <TextView android:layout_width="fill_parent" android:id="@+id/textButtonState"
-              android:layout_height="wrap_content" android:textSize="25sp"/>
-    <TextView android:layout_width="fill_parent" android:id="@+id/textPressedLoc"
-              android:layout_height="wrap_content" android:textSize="25sp"/>
-    <TextView android:layout_width="fill_parent" android:id="@+id/textWinnable"
-              android:layout_height="wrap_content" android:textSize="25sp"/>
-    <TextView android:layout_width="fill_parent" android:id="@+id/textLastGame"
-              android:layout_height="wrap_content" android:textSize="25sp"/>
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent"
+                  android:orientation="horizontal">
+        <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Time: "
+                  android:textSize="25sp"/>
+        <Chronometer android:layout_width="fill_parent" android:id="@+id/chronoTimer"
+                     android:layout_height="wrap_content" android:textSize="25sp"/>
 
-    <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:inputType="number" android:id="@+id/editTextDifficulty" android:text="100" />
-    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="New Level" android:id="@+id/butNewLevel" />
+    </LinearLayout>
+    <TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/textGameOver" android:visibility="gone" android:text="GAME OVER" android:gravity="center"    android:layout_marginTop="10dp"
+              android:textSize="45sp"/> 
+    <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Start"
+            android:layout_marginTop="15dp"       android:id="@+id/butNextLevel"
+            android:layout_marginLeft="15dp" android:layout_marginRight="15dp"
+            android:gravity="center" android:textSize="45sp"/>
 
 </LinearLayout>
 
