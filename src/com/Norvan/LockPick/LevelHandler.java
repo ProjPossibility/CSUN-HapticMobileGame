@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public class LevelHandler {
     public static final double sweetSpot = 0.25;
-    public static final int startingDifficulty = 130;
+    public static final int startingDifficulty = 140;
     int startSeed;
     int difficulty;
     int keyPressPosition;
