@@ -7,7 +7,13 @@
     <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:textSize="30sp"
               android:text="Welcome to LockPick!" android:gravity="center" android:layout_margin="15dp"/>
 
-    <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/butNotBlind"
-            android:text="Click here to continue" android:textSize="30sp" android:gravity="center"
-            android:layout_marginTop="30dp" android:layout_margin="15dp"/>
+    <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/butNormalMode"
+            android:text="Click here for normal mode" android:textSize="30sp" android:gravity="center"  android:padding="20dp"
+            android:layout_margin="5dp"/>
+    <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/butBlindMode"
+            android:text="Click here for blind mode" android:textSize="30sp" android:gravity="center"  android:padding="20dp"
+            android:layout_margin="5dp"/>
+    <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/butBlindDeafMode"
+            android:text="Click here for blind-deaf mode" android:textSize="30sp" android:gravity="center"  android:padding="20dp"
+           android:layout_margin="5dp"/>
 </LinearLayout>

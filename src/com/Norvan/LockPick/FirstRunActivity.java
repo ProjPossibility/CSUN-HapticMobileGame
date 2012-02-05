@@ -16,7 +16,7 @@ import android.widget.Button;
  * To change this template use File | Settings | File Templates.
  */
 public class FirstRunActivity extends Activity {
-    Button butNotBlind;
+    Button butNormalMode, butBlindMode, butBlindDeafMode;
     TTSHandler tts;
     Context context;
     Vibrator vibrator;
@@ -28,11 +28,28 @@ public class FirstRunActivity extends Activity {
         context = this;
         tts = new TTSHandler(context);
         vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
-        butNotBlind = (Button) findViewById(R.id.butNotBlind);
-        butNotBlind.setOnClickListener(new View.OnClickListener() {
+        butNormalMode = (Button) findViewById(R.id.butNormalMode);
+        butNormalMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_NORMAL);
+                finish();
+            }
+        });
+
+        butBlindMode = (Button) findViewById(R.id.butBlindMode);
+        butBlindMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_BLIND);
+                finish();
+            }
+        });
+        butBlindDeafMode = (Button) findViewById(R.id.butBlindDeafMode);
+        butBlindDeafMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_DEAFBLIND);
                 finish();
             }
         });

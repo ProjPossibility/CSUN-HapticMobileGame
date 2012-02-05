@@ -123,6 +123,7 @@ public class SensorHandler {
                         lastTiltReading = currentTiltReading;
                         
                         lastTimestampAccel = timestamp;
+                        Log.i("AMP", "delta "+ String.valueOf(delta)+" tilt "+String.valueOf(currentTiltReading));
                         sensorHandlerInterface.newValues(delta, currentTiltReading);
                     }
                 } else if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
