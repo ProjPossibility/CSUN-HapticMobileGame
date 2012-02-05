@@ -14,6 +14,11 @@
               android:layout_height="wrap_content" android:textSize="25sp"/>
     <TextView android:layout_width="fill_parent" android:id="@+id/textPressedLoc"
               android:layout_height="wrap_content" android:textSize="25sp"/>
+    <TextView android:layout_width="fill_parent" android:id="@+id/textWinnable"
+              android:layout_height="wrap_content" android:textSize="25sp"/>
+    <TextView android:layout_width="fill_parent" android:id="@+id/textLastGame"
+              android:layout_height="wrap_content" android:textSize="25sp"/>
+
     <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:inputType="number" android:id="@+id/editTextDifficulty" android:text="100" />
     <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="New Level" android:id="@+id/butNewLevel" />
 

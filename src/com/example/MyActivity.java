@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.*;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,12 +21,14 @@ public class MyActivity extends Activity
     VibrationHandler vibrationHandler;
     SensorHandler sensorHandler;
     LevelHandler levelHandler;
-    TextView textSeed, textButtonState, textDifficulty, textPressedLocation;
+    TextView textSeed, textButtonState, textDifficulty, textPressedLocation, textWinnable, textLastGame;
     EditText editDifficulty;
     Button butNewLevel;
     int lastPressedPosition = -1;
     boolean keyPressed = false;
+    boolean gameInProgress = false;
     int keyPressedPosition = -1;
+    private Handler mHandler = new Handler();
 
     /**
      * Called when the activity is first created.
@@ -42,17 +45,25 @@ public class MyActivity extends Activity
         textButtonState = (TextView) findViewById(R.id.textButtonState);
         textDifficulty = (TextView) findViewById(R.id.textDifficulty);
         textPressedLocation = (TextView) findViewById(R.id.textPressedLoc);
+        textWinnable = (TextView) findViewById(R.id.textWinnable);
+        textLastGame = (TextView) findViewById(R.id.textLastGame);
         butNewLevel = (Button) findViewById(R.id.butNewLevel);
         butNewLevel.setOnClickListener(onClick);
         editDifficulty = (EditText) findViewById(R.id.editTextDifficulty);
         textSeed.setText("Seed: " + String.valueOf(levelHandler.getStartSeed()));
         textDifficulty.setText("Difficulty: " + String.valueOf(levelHandler.getDifficulty()));
+        textButtonState.setText("Button Pressed: FALSE");
+
+        gameInProgress = true;
+
+
     }
+
 
     View.OnClickListener onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(butNewLevel.equals(view)) {
+            if (butNewLevel.equals(view)) {
                 try {
                     levelHandler.newLevel(Integer.valueOf(String.valueOf(editDifficulty.getText())));
                 } catch (Exception e) {
@@ -70,9 +81,11 @@ public class MyActivity extends Activity
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             keyPressed = true;
             keyPressedPosition = lastPressedPosition;
+            levelHandler.keyDown(keyPressedPosition);
             textPressedLocation.setText("PressedLoc: " + String.valueOf(keyPressedPosition));
             textButtonState.setText("Button Pressed: TRUE");
             vibrationHandler.stopVibrate();
+            textWinnable.setText("Winnable: "+ String.valueOf(levelHandler.isCurrentTryWinnable()+" "+String.valueOf(levelHandler.getCurrentTryResult())));
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -92,19 +105,36 @@ public class MyActivity extends Activity
     SensorHandler.SensorHandlerInterface sensorHandlerInterface = new SensorHandler.SensorHandlerInterface() {
         @Override
         public void newValues(float angularVelocity, int tilt) {
-            if (keyPressed) {
-
-            } else {
-                lastPressedPosition = tilt;
-                int intensity = levelHandler.getIntensityForPosition(tilt);
-                if ((angularVelocity * 100) > 10) {
-                    if (intensity == -1) {
-                        vibrationHandler.stopVibrate();
-                    } else {
-                        vibrationHandler.pulsePWM(intensity);
+            if (gameInProgress) {
+                if (keyPressed) {
+                    switch (levelHandler.getUnlockedState(tilt)) {
+                        case -1://Pick Broken
+                            gameInProgress = false;
+                            textLastGame.setText("you lost :(");
+                            vibrationHandler.playSad();
+                            mHandler.postDelayed(startGame, 5000);
+                            break;
+                        case 0: //In Progress
+                            break;
+                        case 1: //A WINRAR IS YOU!!!
+                            gameInProgress = false;
+                            textLastGame.setText("A WINRAR IS YOU!!!!");
+                            vibrationHandler.playHappy();
+                            mHandler.postDelayed(startGame, 5000);
+                            break;
                     }
                 } else {
-                    vibrationHandler.stopVibrate();
+                    lastPressedPosition = tilt;
+                    int intensity = levelHandler.getIntensityForPosition(tilt);
+                    if ((angularVelocity * 100) > 10) {
+                        if (intensity == -1) {
+                            vibrationHandler.stopVibrate();
+                        } else {
+                            vibrationHandler.pulsePWM(intensity);
+                        }
+                    } else {
+                        vibrationHandler.stopVibrate();
+                    }
                 }
             }
 
@@ -117,6 +147,18 @@ public class MyActivity extends Activity
         }
     };
 
+
+
+
+
+    private Runnable startGame = new Runnable() {
+        public void run() {
+            levelHandler.newLevelDebug();
+            gameInProgress = true;
+            keyPressed = false;
+            textLastGame.setText("");
+        }
+    };
 
 }
 

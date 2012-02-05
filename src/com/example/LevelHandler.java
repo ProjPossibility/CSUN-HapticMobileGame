@@ -26,6 +26,11 @@ public class LevelHandler {
         startSeed = rand.nextInt(600) + 200;
         difficulty = 100;
     }
+    
+    public void newLevelDebug(){
+        startSeed =   500;
+        difficulty = 100;
+    }
 
     public void newLevel(int difficulty) {
         Random rand = new Random();
@@ -54,6 +59,18 @@ public class LevelHandler {
             }
         }
         return 0;
+    }
+    
+    public boolean isCurrentTryWinnable(){
+        if ((float)(Math.abs(keyPressPosition - startSeed)) / difficulty < 0.25) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public float getCurrentTryResult(){
+      return (float)(Math.abs(keyPressPosition - startSeed)) / difficulty ;
     }
 
     public int getIntensityForPosition(int tilt) {
