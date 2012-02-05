@@ -60,9 +60,7 @@ public class GameHandler {
         return gameState;
     }
 
-    public void setGameState(int gameState) {
-        this.gameState = gameState;
-    }
+
 
     public void playCurrentLevel() {
 
@@ -91,7 +89,6 @@ public class GameHandler {
         keyPressed = true;
         keyPressedPosition = lastPressedPosition;
         levelHandler.keyDown(keyPressedPosition);
-        Log.i("AMP", "odds "+ String.valueOf(levelHandler.getCurrentTryResult()));
         vibrationHandler.stopVibrate();
     }
 

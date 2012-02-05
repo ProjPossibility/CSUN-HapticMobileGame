@@ -13,24 +13,21 @@ import java.util.Random;
  */
 public class LevelHandler {
     public static final double sweetSpot = 0.25;
+    public static final int startingDifficulty = 130;
     int startSeed;
     int difficulty;
     int keyPressPosition;
     float buttonPressProximity;
     boolean currentTryWinnable = false;
     public LevelHandler(int levelNumber){
-        difficulty = 100-levelNumber*10;
+        difficulty = startingDifficulty-levelNumber*10;
+        if (difficulty < 10) {
+            difficulty =10;
+        }
         Random rand = new Random();
         startSeed = rand.nextInt(600) + 200;
     }
 
-    public int getDifficulty() {
-        return difficulty;
-    }
-
-    public int getStartSeed() {
-        return startSeed;
-    }
 
     public void keyDown(int position) {
         keyPressPosition = position;
