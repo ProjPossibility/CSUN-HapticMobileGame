@@ -6,24 +6,24 @@
         >
     <TextView
             android:layout_width="fill_parent" android:id="@+id/textLevelNumber" android:text="Level 1"
-            android:layout_marginTop="20dp" android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp" android:layout_marginBottom="10dp"  android:contentDescription="Current Level"
             android:layout_height="wrap_content" android:textSize="45sp"
             />
     <TextView android:layout_width="fill_parent" android:id="@+id/textPicksLeft" android:layout_marginBottom="10dp"
-              android:text="Picks Left: 5"
+              android:text="Picks Left: 5"                                     android:contentDescription="Picks Left"
               android:layout_height="wrap_content" android:textSize="25sp"/>
     <LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent"
                   android:orientation="horizontal">
         <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Time: "
                   android:textSize="25sp"/>
-        <Chronometer android:layout_width="fill_parent" android:id="@+id/chronoTimer"
+        <Chronometer android:layout_width="fill_parent" android:id="@+id/chronoTimer"     android:contentDescription="Level Timer"
                      android:layout_height="wrap_content" android:textSize="25sp"/>
 
     </LinearLayout>
-    <TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/textGameOver" android:visibility="gone" android:text="GAME OVER" android:gravity="center"    android:layout_marginTop="10dp"
+    <TextView android:layout_height="wrap_content" android:contentDescription="Game Over" android:layout_width="fill_parent" android:id="@+id/textGameOver" android:visibility="gone" android:text="GAME OVER" android:gravity="center"    android:layout_marginTop="10dp"
               android:textSize="45sp"/> 
     <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Start"
-            android:layout_marginTop="15dp"       android:id="@+id/butNextLevel"
+            android:layout_marginTop="15dp"       android:id="@+id/butNextLevel" android:contentDescription="Next Level"
             android:layout_marginLeft="15dp" android:layout_marginRight="15dp"
             android:gravity="center" android:textSize="45sp"/>
 
