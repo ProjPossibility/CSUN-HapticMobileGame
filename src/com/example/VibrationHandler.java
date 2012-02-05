@@ -21,14 +21,14 @@ public class VibrationHandler {
     }
 
     public void stopVibrate() {
-         vibrator.cancel();
+        vibrator.cancel();
     }
 
     public void playHappy() {
         long[] happyPattern = {0, 100, 200, 100, 100, 100, 100, 400};
         vibrator.vibrate(happyPattern, -1);
     }
-    
+
     public void playNewLevel() {
         long[] pattern = {0, 150, 100, 150, 100, 150};
         vibrator.vibrate(pattern, -1);
@@ -53,5 +53,10 @@ public class VibrationHandler {
 
 
         vibrator.vibrate(pattern, 0);
+    }
+
+    public void playString(String text) {
+
+        vibrator.vibrate(MorseCodeConverter.pattern(text), -1);
     }
 }

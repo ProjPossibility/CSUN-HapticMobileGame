@@ -57,7 +57,7 @@ public class MyActivity extends Activity
         }
 
     }
-    boolean pressedOutsideGame = false;
+    boolean pressedOutsideGame = true;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

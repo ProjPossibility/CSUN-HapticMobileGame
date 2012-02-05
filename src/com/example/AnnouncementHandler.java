@@ -36,6 +36,8 @@ public class AnnouncementHandler {
             tts.speakPhrase("Turn the phone on its side with the screen facing left. Press the volume button to begin.");
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
+            vibrationHandler.stopVibrate();
+           vibrationHandler.playString("Turn phone on side screen facing left. Press volume to begin.");
         }
 
     }
@@ -49,35 +51,45 @@ public class AnnouncementHandler {
         }
     }
 
-    public void levelWon(float time, int newLevel) {
+    public void levelWon(float time, int wonLevel) {
+        vibrationHandler.playHappy();
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
-            tts.speakPhrase("You beat level "+String.valueOf(newLevel)+" in "+ getTimeString(time)+". Press volume to continue.");
+            tts.speakPhrase("You beat level " + String.valueOf(wonLevel + 1) + " in " + getTimeString(time) + ". Press volume to continue.");
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
+            vibrationHandler.playString("You won level " + String.valueOf(wonLevel) + " in " + getTimeString(time));
         }
     }
 
     public void levelLost(int level, int picksLeft) {
+        vibrationHandler.playSad();
+
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
             tts.speakPhrase("You lost. Press volume to try again");
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
+            vibrationHandler.playString("You lost " + String.valueOf(picksLeft) + " picks left");
         }
     }
 
     public void gameOver(int maxLevel) {
+        vibrationHandler.playSad();
+
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
             tts.speakPhrase("Game Over. Press volume for a new game.");
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
+            vibrationHandler.playString("Game over. Reached level " + String.valueOf(maxLevel));
         }
-        
+
     }
-    
-    private String getTimeString(float time){
-        return null;
+
+    private String getTimeString(float time) {
+        int seconds = (int) time / 1000;
+        return String.valueOf(seconds) + " seconds";
+
     }
 }

@@ -12,11 +12,12 @@ import java.util.Random;
  * To change this template use File | Settings | File Templates.
  */
 public class LevelHandler {
-
+    public static final double sweetSpot = 0.25;
     int startSeed;
     int difficulty;
     int keyPressPosition;
     float buttonPressProximity;
+    boolean currentTryWinnable = false;
     public LevelHandler(int levelNumber){
         difficulty = 100-levelNumber*10;
         Random rand = new Random();
@@ -34,12 +35,13 @@ public class LevelHandler {
     public void keyDown(int position) {
         keyPressPosition = position;
         buttonPressProximity = ((float) Math.abs(keyPressPosition - startSeed)) / difficulty;
+        currentTryWinnable = isCurrentTryWinnable();
     }
 
     public int getUnlockedState(int currentPosition) {
         Log.i("AMP", String.valueOf(((float) Math.abs(keyPressPosition - startSeed)) / difficulty));
         if (Math.abs(keyPressPosition - currentPosition) > difficulty * 2) {
-            if (((float) Math.abs(keyPressPosition - startSeed)) / difficulty < 0.25) {
+            if (((float) Math.abs(keyPressPosition - startSeed)) / difficulty < sweetSpot) {
                 return 1;
             } else {
                 return -1;
@@ -51,7 +53,7 @@ public class LevelHandler {
     }
 
     public boolean isCurrentTryWinnable() {
-        if ((float) (Math.abs(keyPressPosition - startSeed)) / difficulty < 0.25) {
+        if ((float) (Math.abs(keyPressPosition - startSeed)) / difficulty < sweetSpot) {
             return true;
         } else {
             return false;
@@ -75,13 +77,15 @@ public class LevelHandler {
     }
 
     public int getIntensityForPositionWhileUnlocking(int tilt) {
+        
         float diff = Math.abs(keyPressPosition-tilt);
         float numerator = buttonPressProximity* diff;
         float divided = numerator/difficulty;
-
+        if (!currentTryWinnable) {
+            divided =(float)( divided * 1.5);
+        }
         int intensity =  (int)(divided*100);
-        Log.i("AMP", "tilt "+ String.valueOf(tilt));
-        Log.i("AMP", "intensity "+ String.valueOf(intensity));
+        
         if (intensity > 100) {
             return 100;
         } else if (intensity <= 0) {

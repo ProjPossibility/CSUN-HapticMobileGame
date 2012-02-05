@@ -43,7 +43,7 @@ public class GameHandler {
 
     public void setSensorPollingState(boolean state) {
         try {
-            if (true) {
+            if (state) {
                 sensorHandler.startPolling();
             } else {
                 sensorHandler.stopPolling();
@@ -91,6 +91,7 @@ public class GameHandler {
         keyPressed = true;
         keyPressedPosition = lastPressedPosition;
         levelHandler.keyDown(keyPressedPosition);
+        Log.i("AMP", "odds "+ String.valueOf(levelHandler.getCurrentTryResult()));
         vibrationHandler.stopVibrate();
     }
 
