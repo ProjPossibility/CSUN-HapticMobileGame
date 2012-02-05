@@ -13,10 +13,11 @@ public class AnnouncementHandler {
     int userType;
     VibrationHandler vibrationHandler;
     TTSHandler tts;
-
+        Context context;
     public AnnouncementHandler(Context context, VibrationHandler vibrationHandler) {
         userType = SharedPreferencesHandler.getUserType(context);
         this.vibrationHandler = vibrationHandler;
+        this.context = context;
         tts = new TTSHandler(context);
     }
 
@@ -79,10 +80,15 @@ public class AnnouncementHandler {
 
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
-            tts.speakPhrase("Game Over. Press volume for a new game.");
+            if (SharedPreferencesHandler.getHighScore(context) < maxLevel) {
+                tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". A new high score! Press volume for a new game.");
+            }   else{
+                tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". Press volume for a new game.");
+            }
+
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playString("Game over. Reached level " + String.valueOf(maxLevel));
+            vibrationHandler.playString("Game over. Reached level " + String.valueOf(maxLevel+1));
         }
 
     }

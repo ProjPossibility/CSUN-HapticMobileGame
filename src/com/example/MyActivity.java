@@ -30,11 +30,12 @@ public class MyActivity extends Activity
     Chronometer chronoTimer;
     AnnouncementHandler announcementHandler;
     boolean keyPressed = false;
-
+     Context context;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        context = this;
         if (!hasRequiredSensors(this)) {
 
             showUnsuportedDialog();
@@ -150,7 +151,15 @@ public class MyActivity extends Activity
         @Override
         public void gameOver(int maxLevel) {
             butNextLevel.setText("New Game");
+            if (SharedPreferencesHandler.getHighScore(context) < maxLevel) {
+                textGameOver.setText("GAME OVER\nHIGH SCORE!");
+            }
+            else
+            {
+                textGameOver.setText("GAME OVER");
+            }
             textGameOver.setVisibility(View.VISIBLE);
+
             chronoTimer.stop();
             butNextLevel.setVisibility(View.VISIBLE);
             announcementHandler.gameOver(maxLevel);

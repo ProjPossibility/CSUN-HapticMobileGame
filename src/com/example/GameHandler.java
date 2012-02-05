@@ -153,7 +153,11 @@ public class GameHandler {
         gameState = STATE_MIDLEVEL;
         if(numberOfPicksLeft ==0) {
             gameState = STATE_GAMEOVER;
+
             gameStatusInterface.gameOver(currentLevel);
+            if (SharedPreferencesHandler.getHighScore(context) < currentLevel) {
+                SharedPreferencesHandler.setHighScore(context,currentLevel);
+            }
             currentLevel = 0;
             numberOfPicksLeft = 5;
         }else {
