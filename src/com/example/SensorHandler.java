@@ -29,7 +29,7 @@ public class SensorHandler {
         this.sensorHandlerInterface = sensorHandlerInterface;
         SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         List<Sensor> sensors = sensorManager.getSensorList(
-                Sensor.TYPE_ACCELEROMETER);
+                Sensor.TYPE_MAGNETIC_FIELD);
 
         Sensor sensor = sensors.get(0);
         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_GAME);
@@ -55,13 +55,13 @@ public class SensorHandler {
         public void onSensorChanged(SensorEvent sensorEvent) {
             long timestamp = sensorEvent.timestamp;
 
-            if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                if(timestamp-lastTimestampAccel > 500000000){
-                    lastTiltReading = (int) (50 * sensorEvent.values[2]) + 500;
+            if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+                if(timestamp-lastTimestampAccel > 100000000){
+                    lastTiltReading = ((int)(  sensorEvent.values[2] *10))+500;
                     lastTimestampAccel = timestamp;
                 }
             } else if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-                if(timestamp-lastTimestampGyro > 500000000){
+                if(timestamp-lastTimestampGyro > 100000000){
                     lastAngularVelocity = (int) sensorEvent.values[2];
                     sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
                     lastTimestampGyro = timestamp;
