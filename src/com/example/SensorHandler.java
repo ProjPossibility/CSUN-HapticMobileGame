@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 import android.util.Log;
 
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,8 @@ import java.util.List;
  */
 public class SensorHandler {
     Context context;
-    int lastTiltReading = -1, lastAngularVelocity = -1;
+    int lastTiltReading = -1;
+    float lastAngularVelocity = -1;
     SensorHandlerInterface sensorHandlerInterface;
     long lastTimestampGyro = 0;
     long lastTimestampAccel = 0;
@@ -29,7 +31,7 @@ public class SensorHandler {
         this.sensorHandlerInterface = sensorHandlerInterface;
         SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         List<Sensor> sensors = sensorManager.getSensorList(
-                Sensor.TYPE_MAGNETIC_FIELD);
+                Sensor.TYPE_ORIENTATION);
 
         Sensor sensor = sensors.get(0);
         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_GAME);
@@ -38,36 +40,34 @@ public class SensorHandler {
 
         Sensor sensor2 = sensors2.get(0);
         sensorManager.registerListener(sensorEventListener, sensor2, SensorManager.SENSOR_DELAY_GAME);
-
     }
 
 
-    public int getTilt() {
-        return lastTiltReading;
-    }
 
-    public int getAngularVelocity() {
-        return lastAngularVelocity;
-    }
 
     SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
+
             long timestamp = sensorEvent.timestamp;
 
-            if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-                if(timestamp-lastTimestampAccel > 100000000){
-                    lastTiltReading = ((int)(  sensorEvent.values[2] *10))+500;
+            if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+                if (timestamp - lastTimestampAccel > 50000000) {
+                    if (Math.abs(sensorEvent.values[1]) > 100) {
+                        lastTiltReading = (int) (sensorEvent.values[2] * 10);
+                    } else {
+                        lastTiltReading = 1800 - (int) (sensorEvent.values[2] * 10);
+                    }
+                    lastTiltReading = Math.abs((int) (lastTiltReading / 1.8));
                     lastTimestampAccel = timestamp;
                 }
             } else if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-                if(timestamp-lastTimestampGyro > 100000000){
-                    lastAngularVelocity = (int) sensorEvent.values[2];
+                if (timestamp - lastTimestampGyro > 50000000) {
+//
+                    lastAngularVelocity  = Math.abs(sensorEvent.values[1]);
                     sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
                     lastTimestampGyro = timestamp;
                 }
-
-
 
 
             }
@@ -81,7 +81,9 @@ public class SensorHandler {
     };
 
     public interface SensorHandlerInterface {
-        public void newValues(int angularVelocity, int tilt);
+        public void newValues(float angularVelocity, int tilt);
+
+        public void showAngularVelocity(float[] values);
     }
 
 

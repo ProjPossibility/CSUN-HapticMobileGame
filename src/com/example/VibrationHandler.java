@@ -1,0 +1,51 @@
+package com.example;
+
+import android.content.Context;
+import android.os.Vibrator;
+import android.util.Log;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: ngorgi-dev
+ * Date: 2/4/12
+ * Time: 6:07 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class VibrationHandler {
+
+    Vibrator vibrator;
+
+    public VibrationHandler(Context context) {
+        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+
+    }
+
+    public void stopVibrate() {
+        vibrator.cancel();
+    }
+
+    public void playHappy() {
+        long[] happyPattern = {0, 100, 200, 100, 100, 100, 100, 400};
+        vibrator.vibrate(happyPattern, -1);
+    }
+
+    public void playSad() {
+        long[] sadPattern = {0, 100, 200, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 403, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6};
+        vibrator.vibrate(sadPattern, -1);
+    }
+
+    public void pulsePWM(int intensity) {
+        int onTime = intensity / 2;
+        int offTime = 50 - onTime;
+        if (offTime < 0) {
+            offTime = 0;
+        }
+        if (onTime < 2) {
+            onTime = 2;
+        }
+        long[] pattern = {0, onTime, offTime};
+
+
+        vibrator.vibrate(pattern, 0);
+    }
+}
