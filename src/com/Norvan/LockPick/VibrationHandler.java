@@ -59,4 +59,8 @@ public class VibrationHandler {
 
         vibrator.vibrate(MorseCodeConverter.pattern(text), -1);
     }
+    
+    public boolean hasVibrator(){
+        return vibrator.hasVibrator();
+    }
 }

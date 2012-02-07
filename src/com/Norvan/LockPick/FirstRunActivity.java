@@ -33,6 +33,7 @@ public class FirstRunActivity extends Activity {
             @Override
             public void onClick(View v) {
                 SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_NORMAL);
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -42,6 +43,7 @@ public class FirstRunActivity extends Activity {
             @Override
             public void onClick(View v) {
                 SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_BLIND);
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -50,6 +52,7 @@ public class FirstRunActivity extends Activity {
             @Override
             public void onClick(View v) {
                 SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_DEAFBLIND);
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -59,22 +62,36 @@ public class FirstRunActivity extends Activity {
     }
 
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            if (confirmType == SharedPreferencesHandler.USER_BLIND) {
-                SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_BLIND);
-                finish();
-            } else {
-                confirmType = SharedPreferencesHandler.USER_BLIND;
+            if (!event.isLongPress() && event.getRepeatCount() == 0) {
+                if (confirmType == SharedPreferencesHandler.USER_BLIND) {
+                    SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_BLIND);
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    confirmType = SharedPreferencesHandler.USER_BLIND;
+                }
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            if (confirmType == SharedPreferencesHandler.USER_DEAFBLIND) {
-                SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_DEAFBLIND);
-                finish();
-            } else {
-                confirmType = SharedPreferencesHandler.USER_DEAFBLIND;
+            if (!event.isLongPress() && event.getRepeatCount() == 0) {
+                if (confirmType == SharedPreferencesHandler.USER_DEAFBLIND) {
+                    SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_DEAFBLIND);
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    confirmType = SharedPreferencesHandler.USER_DEAFBLIND;
+                }
             }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             return true;
         }
         return super.onKeyUp(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
@@ -83,7 +100,6 @@ public class FirstRunActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
-        tts.shutDownTTS();
         vibrator.cancel();
     }
 }

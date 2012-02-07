@@ -86,7 +86,7 @@ public class AnnouncementHandler {
 
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
-            if (SharedPreferencesHandler.getHighScore(context) < maxLevel) {
+            if (new SharedPreferencesHandler(context).getHighScore() < maxLevel) {
                 tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". A new high score! Press volume for a new game.");
             }   else{
                 tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". Press volume for a new game.");

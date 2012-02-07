@@ -22,8 +22,7 @@ public class GameHandler {
     int lastPressedPosition = -1;
     boolean keyPressed = false;
     boolean isPolling = false;
-    boolean gameInProgress = false;
-    int keyPressedPosition = -1;
+     int keyPressedPosition = -1;
     private Handler mHandler = new Handler();
     GameStatusInterface gameStatusInterface;
     Context context;
@@ -31,7 +30,7 @@ public class GameHandler {
     int gameState = 0;
     public static final int STATE_FRESHLOAD = 0;
     public static final int STATE_INGAME = 1;
-    public static final int STATE_MIDLEVEL = 2;
+    public static final int STATE_BETWEENLEVELS = 2;
     public static final int STATE_GAMEOVER = 3;
 
     public GameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler) {
@@ -71,16 +70,13 @@ public class GameHandler {
 
 
     public void playCurrentLevel() {
-
-
         levelHandler = new LevelHandler(currentLevel);
-        gameInProgress = true;
         keyPressed = false;
         gameStatusInterface.levelStart(currentLevel, numberOfPicksLeft);
+        gameState = STATE_INGAME;
         if (!isPolling) {
             sensorHandler.startPolling();
         }
-        gameState = STATE_INGAME;
     }
 
 
@@ -103,7 +99,7 @@ public class GameHandler {
                 if (keyPressed) {
                     switch (levelHandler.getUnlockedState(tilt)) {
                         case -1://Pick Broken
-                            gameState = STATE_MIDLEVEL;
+                            gameState = STATE_BETWEENLEVELS;
                             levelLost();
                             break;
                         case 0: //In Progress
@@ -122,7 +118,7 @@ public class GameHandler {
                         case 1: //A WINRAR IS YOU!!!
 
                             levelWon();
-                            gameState = STATE_MIDLEVEL;
+                            gameState = STATE_BETWEENLEVELS;
                             break;
                     }
                 } else {
@@ -146,14 +142,10 @@ public class GameHandler {
 
     private void levelLost() {
         vibrationHandler.stopVibrate();
-        gameState = STATE_MIDLEVEL;
+        gameState = STATE_BETWEENLEVELS;
         if (numberOfPicksLeft == 0) {
             gameState = STATE_GAMEOVER;
-
             gameStatusInterface.gameOver(currentLevel);
-            if (SharedPreferencesHandler.getHighScore(context) < currentLevel) {
-                SharedPreferencesHandler.setHighScore(context, currentLevel);
-            }
             currentLevel = 0;
             numberOfPicksLeft = 5;
         } else {
@@ -163,7 +155,7 @@ public class GameHandler {
     }
 
     private void levelWon() {
-        gameState = STATE_MIDLEVEL;
+        gameState = STATE_BETWEENLEVELS;
         vibrationHandler.stopVibrate();
         gameStatusInterface.levelWon(currentLevel, numberOfPicksLeft);
         currentLevel++;
@@ -171,6 +163,7 @@ public class GameHandler {
     }
 
     public interface GameStatusInterface {
+        public void newGameStart();
         public void levelStart(int level, int picksLeft);
 
         public void levelWon(int newLevel, int picksLeft);
