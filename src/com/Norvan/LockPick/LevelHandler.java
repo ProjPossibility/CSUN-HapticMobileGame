@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public class LevelHandler {
     public static final double sweetSpot = 0.25;
-    public static final int startingDifficulty = 140;
+    public static final int startingDifficulty = 120;
     int startSeed;
     int difficulty;
     int keyPressPosition;
@@ -25,7 +25,7 @@ public class LevelHandler {
             difficulty =10;
         }
         Random rand = new Random();
-        startSeed = rand.nextInt(600) + 200;
+        startSeed = rand.nextInt(500) + 250;
     }
 
 
@@ -36,7 +36,6 @@ public class LevelHandler {
     }
 
     public int getUnlockedState(int currentPosition) {
-        Log.i("AMP", String.valueOf(((float) Math.abs(keyPressPosition - startSeed)) / difficulty));
         if (Math.abs(keyPressPosition - currentPosition) > difficulty * 2) {
             if (((float) Math.abs(keyPressPosition - startSeed)) / difficulty < sweetSpot) {
                 return 1;

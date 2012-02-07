@@ -138,6 +138,11 @@ public class GameHandler {
 
 
         }
+
+        @Override
+        public void notOnSide() {
+
+        }
     };
 
     private void levelLost() {

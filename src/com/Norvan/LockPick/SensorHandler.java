@@ -27,8 +27,12 @@ public class SensorHandler {
     SensorHandlerInterface sensorHandlerInterface;
     long lastTimestampGyro = 0;
     long lastTimestampAccel = 0;
-     SensorManager sensorManager;
+    SensorManager sensorManager;
     boolean gyroExists;
+
+    int initialSideFacingUp = 0;
+    private static final int LEFT_FACING_UP = -1;
+    private static final int RIGHT_FACING_UP = 1;
 
     public SensorHandler(Context context, SensorHandlerInterface sensorHandlerInterface) {
         this.context = context;
@@ -37,7 +41,6 @@ public class SensorHandler {
         PackageManager paM = context.getPackageManager();
         gyroExists = paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
 
-        
 
     }
 
@@ -47,9 +50,7 @@ public class SensorHandler {
             Sensor sensorGyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
             sensorManager.registerListener(sensorEventListenerWithGyro, sensorOrientation, SensorManager.SENSOR_DELAY_GAME);
             sensorManager.registerListener(sensorEventListenerWithGyro, sensorGyroscope, SensorManager.SENSOR_DELAY_GAME);
-        }
-        else
-        {
+        } else {
             Sensor sensorOrientation = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
             sensorManager.registerListener(sensorEventListenerNoGyro, sensorOrientation, SensorManager.SENSOR_DELAY_GAME);
         }
@@ -59,12 +60,12 @@ public class SensorHandler {
         try {
             sensorManager.unregisterListener(sensorEventListenerNoGyro);
         } catch (Exception e) {
-            
+
         }
         try {
             sensorManager.unregisterListener(sensorEventListenerWithGyro);
         } catch (Exception e) {
-            
+
         }
     }
 
@@ -76,19 +77,38 @@ public class SensorHandler {
 
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
                     if (timestamp - lastTimestampAccel > 50000000) {
-                        if (Math.abs(sensorEvent.values[1]) > 100) {
-                            lastTiltReading = (int) (sensorEvent.values[2] * 10);
-                        } else {
-                            lastTiltReading = 1800 - (int) (sensorEvent.values[2] * 10);
+
+                        boolean isFacingDown = (Math.abs(sensorEvent.values[1]) > 90);
+                        float phoneRightSideHeading = sensorEvent.values[2] + 90;
+                        if (isFacingDown) {
+                            phoneRightSideHeading = 360 - phoneRightSideHeading;
                         }
-                        lastTiltReading = Math.abs((int) (lastTiltReading / 1.8));
+                        lastTiltReading = (int) ((phoneRightSideHeading * 1000) / 360);
+
+                        if (initialSideFacingUp == 0) {
+                            if (lastTiltReading > 350 && lastTiltReading < 650) {
+                                initialSideFacingUp = RIGHT_FACING_UP;
+                            } else if (lastTiltReading > 850 || lastTiltReading < 150) {
+                                initialSideFacingUp = LEFT_FACING_UP;
+                            }
+                        }
+                        if (initialSideFacingUp == LEFT_FACING_UP) {
+                            if (lastTiltReading > 500) {
+                                lastTiltReading = lastTiltReading - 500;
+                            }   else {
+                                lastTiltReading = lastTiltReading + 500;
+                            }
+                        }
                         lastTimestampAccel = timestamp;
                     }
                 } else if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
                     if (timestamp - lastTimestampGyro > 50000000) {
-//
-                        lastAngularVelocity = Math.abs(sensorEvent.values[1]);
-                        sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
+                        if (initialSideFacingUp != 0) {
+                            lastAngularVelocity = Math.abs(sensorEvent.values[1]);
+                            sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
+                        }   else{
+                            sensorHandlerInterface.notOnSide();
+                        }
                         lastTimestampGyro = timestamp;
                     }
 
@@ -111,31 +131,38 @@ public class SensorHandler {
 
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
                     if (timestamp - lastTimestampAccel > 50000000) {
-                        int currentTiltReading = 0;
-                        if (Math.abs(sensorEvent.values[1]) > 100) {
-                            currentTiltReading = (int) (sensorEvent.values[2] * 10);
-                        } else {
-                            currentTiltReading = 1800 - (int) (sensorEvent.values[2] * 10);
+                        int currentTiltReading;
+                        boolean isFacingDown = (Math.abs(sensorEvent.values[1]) > 90);
+                        float phoneRightSideHeading = sensorEvent.values[2] + 90;
+                        if (isFacingDown) {
+                            phoneRightSideHeading = 360 - phoneRightSideHeading;
                         }
-                        currentTiltReading = Math.abs((int) (currentTiltReading / 1.8));
-
+                        currentTiltReading = (int) ((phoneRightSideHeading * 1000) / 360);
+                        if (initialSideFacingUp == 0) {
+                            if (currentTiltReading > 350 && currentTiltReading < 650) {
+                                initialSideFacingUp = RIGHT_FACING_UP;
+                            } else if (currentTiltReading > 850 || currentTiltReading < 150) {
+                                initialSideFacingUp = LEFT_FACING_UP;
+                            }
+                        }
+                        if (initialSideFacingUp == LEFT_FACING_UP) {
+                            if (currentTiltReading > 500) {
+                                currentTiltReading = currentTiltReading - 500;
+                            }   else {
+                                currentTiltReading = currentTiltReading + 500;
+                            }
+                        }
                         int delta = Math.abs(lastTiltReading - currentTiltReading);
                         lastTiltReading = currentTiltReading;
-                        
                         lastTimestampAccel = timestamp;
-                        Log.i("AMP", "delta "+ String.valueOf(delta)+" tilt "+String.valueOf(currentTiltReading));
+                        if (initialSideFacingUp != 0) {
                         sensorHandlerInterface.newValues(delta, currentTiltReading);
+                        }else{
+                            sensorHandlerInterface.notOnSide();
+                        }
+                        
                     }
-                } else if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-                    if (timestamp - lastTimestampGyro > 50000000) {
-//
-                        lastAngularVelocity = Math.abs(sensorEvent.values[1]);
-                        sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
-                        lastTimestampGyro = timestamp;
-                    }
-
-
-                }
+                } 
             }
         }
 
@@ -147,7 +174,7 @@ public class SensorHandler {
 
     public interface SensorHandlerInterface {
         public void newValues(float angularVelocity, int tilt);
-
+        public void notOnSide();
 
     }
 
