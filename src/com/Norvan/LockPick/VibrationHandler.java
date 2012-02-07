@@ -1,6 +1,7 @@
 package com.Norvan.LockPick;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Vibrator;
 import android.util.Log;
 
@@ -15,8 +16,8 @@ public class VibrationHandler {
 
     Vibrator vibrator;
     private static final int PWMsegmentLength = 50;
-    
-    
+
+
     public VibrationHandler(Context context) {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
@@ -42,7 +43,7 @@ public class VibrationHandler {
     }
 
     public void pulsePWM(int intensity) {
-        int onTime = (int)(PWMsegmentLength * ((float) intensity / 100));
+        int onTime = (int) (PWMsegmentLength * ((float) intensity / 100));
         int offTime = PWMsegmentLength - onTime;
         if (offTime < 0) {
             offTime = 0;
@@ -60,8 +61,12 @@ public class VibrationHandler {
 
         vibrator.vibrate(MorseCodeConverter.pattern(text), -1);
     }
-    
-    public boolean hasVibrator(){
-        return vibrator.hasVibrator();
+
+    public boolean hasVibrator() {
+        if (Build.VERSION.SDK_INT > 10) {
+            return vibrator.hasVibrator();
+        } else {
+            return true;
+        }
     }
 }
