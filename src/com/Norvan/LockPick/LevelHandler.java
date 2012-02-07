@@ -11,13 +11,17 @@ import java.util.Random;
  */
 public class LevelHandler {
     private static final double sweetSpot = 0.25;
+    private static final double curvePower = 2;
     private static final int startingDifficulty = 1200;
+    private boolean exponential = false;
     private int targetLocation;
     private int difficulty;
     private int keyPressPosition;
     private float buttonPressProximity;
     private boolean currentTryWinnable = false;
-    int [] levelData;
+    int[] levelData;
+    int[][] falsePositiveData;
+    int[] falsePositiveLocations;
 
     public LevelHandler(int levelNumber) {
         difficulty = startingDifficulty - levelNumber * 10;
@@ -28,8 +32,12 @@ public class LevelHandler {
         targetLocation = rand.nextInt(4000) + 3000;
         levelData = new int[difficulty];
         for (int i = 0; i < difficulty; i++) {
-            float percentage = ((float)1)-(((float) i)/difficulty);
-            levelData[i] = (int) (100 * (percentage*percentage));
+            double percentage = 1.0f - (((double) i) / difficulty);
+            if (exponential) {
+                levelData[i] = (int) (100 * (Math.pow(percentage, curvePower)));
+            } else {
+                levelData[i] = (int) (100 * percentage);
+            }
         }
     }
 
@@ -95,5 +103,10 @@ public class LevelHandler {
         }
     }
 
+
+    public int[] getLevelData() {
+        //TODO remove
+        return levelData;
+    }
 
 }

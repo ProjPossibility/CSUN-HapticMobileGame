@@ -176,5 +176,8 @@ public class GameHandler {
         public void gameOver(int maxLevel);
     }
 
-
+    public int [] getLevelData(){
+        //TODO remove
+        return levelHandler.getLevelData();
+    }
 }

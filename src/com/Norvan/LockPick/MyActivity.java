@@ -36,6 +36,7 @@ public class MyActivity extends Activity
     Context context;
     AudioManager audioManager;
     long gamePausedChronoProgress;
+    GraphView graphView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,12 +54,13 @@ public class MyActivity extends Activity
         textLevel = (TextView) findViewById(R.id.textLevelNumber);
         textGameOver = (TextView) findViewById(R.id.textGameOver);
         textHighScore = (TextView) findViewById(R.id.textHighScore);
+
         imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutToggleVolume);
         imgbutToggleVolume.setOnClickListener(onClick);
         butNextLevel = (Button) findViewById(R.id.butNextLevel);
         butNextLevel.setOnClickListener(onClick);
         chronoTimer = (Chronometer) findViewById(R.id.chronoTimer);
-        if (SharedPreferencesHandler.isFirstRun(this) ) {
+        if (SharedPreferencesHandler.isFirstRun(this)) {
             Intent i = new Intent(this, FirstRunActivity.class);
             startActivityForResult(i, 1);
         } else {
@@ -69,6 +71,8 @@ public class MyActivity extends Activity
         prefs = new SharedPreferencesHandler(this);
         setHighScore(prefs.getHighScore() + 1);
         setVolumeToggleImage(isVolumeMuted());
+
+
     }
 
     @Override
@@ -137,7 +141,7 @@ public class MyActivity extends Activity
             if (butNextLevel.equals(view)) {
                 gameHandler.playCurrentLevel();
             } else if (imgbutToggleVolume.equals(view)) {
-              toggleVolume();
+                toggleVolume();
             }
         }
     };
@@ -171,7 +175,7 @@ public class MyActivity extends Activity
             if (resultCode == RESULT_CANCELED) {
                 Intent i = new Intent(this, FirstRunActivity.class);
                 startActivityForResult(i, 1);
-            } else if(resultCode == RESULT_OK) {
+            } else if (resultCode == RESULT_OK) {
                 announcementHandler = new AnnouncementHandler(this, vibrationHandler);
                 announcementHandler.newLaunch();
 
@@ -196,6 +200,15 @@ public class MyActivity extends Activity
             setPicksLeft(picksLeft);
             textLevel.setText("Level " + String.valueOf(level + 1));
             announcementHandler.levelStart(level, picksLeft);
+            boolean needsToAdd = false;
+            if (graphView == null) {
+                needsToAdd = true;
+            }
+            graphView = new GraphView(context, gameHandler.getLevelData(), GraphView.LINE);
+            if (needsToAdd) {
+                ((LinearLayout) findViewById(R.id.linearMain)).addView(graphView);
+            }
+            graphView.setVisibility(View.VISIBLE);
 
         }
 
@@ -205,6 +218,8 @@ public class MyActivity extends Activity
             chronoTimer.stop();
             float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
             butNextLevel.setVisibility(View.VISIBLE);
+            graphView.setVisibility(View.GONE);
+
             setPicksLeft(picksLeft);
             announcementHandler.levelWon(levelTime, levelWon);
 
@@ -215,6 +230,8 @@ public class MyActivity extends Activity
             butNextLevel.setText("Try Again");
             chronoTimer.stop();
             butNextLevel.setVisibility(View.VISIBLE);
+            graphView.setVisibility(View.GONE);
+
             setPicksLeft(picksLeft);
             announcementHandler.levelLost(level, picksLeft);
         }
@@ -234,6 +251,8 @@ public class MyActivity extends Activity
 
             chronoTimer.stop();
             butNextLevel.setVisibility(View.VISIBLE);
+            graphView.setVisibility(View.GONE);
+
             announcementHandler.gameOver(maxLevel);
 
         }
