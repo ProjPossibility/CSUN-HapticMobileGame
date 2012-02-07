@@ -17,6 +17,7 @@ public class LevelHandler {
     private int keyPressPosition;
     private float buttonPressProximity;
     private boolean currentTryWinnable = false;
+    int [] levelData;
 
     public LevelHandler(int levelNumber) {
         difficulty = startingDifficulty - levelNumber * 10;
@@ -25,6 +26,11 @@ public class LevelHandler {
         }
         Random rand = new Random();
         targetLocation = rand.nextInt(4000) + 3000;
+        levelData = new int[difficulty];
+        for (int i = 0; i < difficulty; i++) {
+            float percentage = ((float)1)-(((float) i)/difficulty);
+            levelData[i] = (int) (100 * (percentage*percentage));
+        }
     }
 
 
@@ -61,15 +67,11 @@ public class LevelHandler {
 
     public int getIntensityForPosition(int tilt) {
         int distanceFromTarget = Math.abs(targetLocation - tilt);
-        if (distanceFromTarget > difficulty) {
+        if (distanceFromTarget >= difficulty) {
             return -1;
         }
-        float intensityPercentage = (float) distanceFromTarget / difficulty;
 
-
-        int intensity = (int) (100 * (1.0 - intensityPercentage));
-
-        return intensity;
+        return levelData[distanceFromTarget];
 
 
     }
