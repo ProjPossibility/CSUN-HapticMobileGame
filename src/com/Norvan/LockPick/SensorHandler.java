@@ -29,7 +29,7 @@ public class SensorHandler {
     long lastTimestampAccel = 0;
     SensorManager sensorManager;
     boolean gyroExists;
-
+    ArrayList<Float> angularVelocityBuffer;
     int initialSideFacingUp = 0;
     private static final int LEFT_FACING_UP = -1;
     private static final int RIGHT_FACING_UP = 1;
@@ -42,8 +42,9 @@ public class SensorHandler {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         PackageManager paM = context.getPackageManager();
         gyroExists = paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
-
-
+        angularVelocityBuffer = new ArrayList<Float>();
+        angularVelocityBuffer.add(0f);
+        angularVelocityBuffer.add(0f);
     }
 
     public void startPolling() {
@@ -107,6 +108,13 @@ public class SensorHandler {
                     if (timestamp - lastTimestampGyro > refreshDelay) {
                         if (initialSideFacingUp != 0) {
                             lastAngularVelocity = Math.abs(sensorEvent.values[1]);
+                            angularVelocityBuffer.remove(0);
+                            angularVelocityBuffer.add(lastAngularVelocity);
+                            lastAngularVelocity = 0;
+                            for (float val : angularVelocityBuffer) {
+                                lastAngularVelocity = lastAngularVelocity + val;
+                            }
+                            lastAngularVelocity = lastAngularVelocity/angularVelocityBuffer.size();
                             sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
                         }   else{
                             sensorHandlerInterface.notOnSide();

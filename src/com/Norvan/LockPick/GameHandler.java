@@ -22,7 +22,7 @@ public class GameHandler {
     int lastPressedPosition = -1;
     boolean keyPressed = false;
     boolean isPolling = false;
-     int keyPressedPosition = -1;
+    int keyPressedPosition = -1;
     private Handler mHandler = new Handler();
     GameStatusInterface gameStatusInterface;
     Context context;
@@ -43,7 +43,7 @@ public class GameHandler {
 
         PackageManager paM = context.getPackageManager();
         if (!paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
-            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold*100;
+            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * 100;
         }
     }
 
@@ -167,6 +167,7 @@ public class GameHandler {
 
     public interface GameStatusInterface {
         public void newGameStart();
+
         public void levelStart(int level, int picksLeft);
 
         public void levelWon(int newLevel, int picksLeft);
@@ -176,8 +177,12 @@ public class GameHandler {
         public void gameOver(int maxLevel);
     }
 
-    public int [] getLevelData(){
+    public int[] getLevelData() {
         //TODO remove
         return levelHandler.getLevelData();
+    }
+
+    public int getTargetLocation() {
+        return levelHandler.getTargetLocation();
     }
 }

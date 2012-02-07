@@ -19,7 +19,6 @@ public class VibrationHandler {
     
     public VibrationHandler(Context context) {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-
     }
 
     public void stopVibrate() {

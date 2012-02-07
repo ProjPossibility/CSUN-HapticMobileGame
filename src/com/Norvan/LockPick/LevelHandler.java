@@ -1,5 +1,7 @@
 package com.Norvan.LockPick;
 
+import android.util.Log;
+
 import java.util.Random;
 
 /**
@@ -12,7 +14,8 @@ import java.util.Random;
 public class LevelHandler {
     private static final double sweetSpot = 0.25;
     private static final double curvePower = 2;
-    private static final int startingDifficulty = 1200;
+    private static final int startingDifficulty = 1000;
+    private static final float unlockDistanceMultiplier = 1.5f;
     private boolean exponential = false;
     private int targetLocation;
     private int difficulty;
@@ -24,9 +27,9 @@ public class LevelHandler {
     int[] falsePositiveLocations;
 
     public LevelHandler(int levelNumber) {
-        difficulty = startingDifficulty - levelNumber * 10;
-        if (difficulty < 10) {
-            difficulty = 10;
+        difficulty = startingDifficulty - (levelNumber/3) * 100;
+        if (difficulty < 150) {
+            difficulty = 150;
         }
         Random rand = new Random();
         targetLocation = rand.nextInt(4000) + 3000;
@@ -49,13 +52,13 @@ public class LevelHandler {
     }
 
     public int getUnlockedState(int currentPosition) {
-        if (Math.abs(keyPressPosition - currentPosition) > difficulty * 2) {
+        if (Math.abs(keyPressPosition - currentPosition) > difficulty * unlockDistanceMultiplier) {
             if (((float) Math.abs(keyPressPosition - targetLocation)) / difficulty < sweetSpot) {
                 return 1;
             } else {
                 return -1;
             }
-        } else if (((float) Math.abs(keyPressPosition - targetLocation) * 2) / difficulty > 1) {
+        } else if (((float) Math.abs(keyPressPosition - targetLocation) * unlockDistanceMultiplier) / difficulty > 1) {
             return -1;
         }
         return 0;
@@ -75,10 +78,16 @@ public class LevelHandler {
 
     public int getIntensityForPosition(int tilt) {
         int distanceFromTarget = Math.abs(targetLocation - tilt);
+
+
+//        int distanceFromTarget = tilt-targetLocation;
+//        if (distanceFromTarget < 0) {
+//            return -1;
+//        }
+
         if (distanceFromTarget >= difficulty) {
             return -1;
         }
-
         return levelData[distanceFromTarget];
 
 
@@ -90,7 +99,7 @@ public class LevelHandler {
         float numerator = buttonPressProximity * diff;
         float divided = numerator / difficulty;
         if (!currentTryWinnable) {
-            divided = (float) (divided * 1.5);
+            divided = (float) (divided * 2);
         }
         int intensity = (int) (divided * 100);
 
@@ -109,4 +118,7 @@ public class LevelHandler {
         return levelData;
     }
 
+    public int getTargetLocation(){
+        return targetLocation;
+    }
 }

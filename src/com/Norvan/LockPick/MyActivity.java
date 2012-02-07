@@ -198,17 +198,17 @@ public class MyActivity extends Activity
             chronoTimer.setBase(SystemClock.elapsedRealtime());
             chronoTimer.start();
             setPicksLeft(picksLeft);
-            textLevel.setText("Level " + String.valueOf(level + 1));
+            textLevel.setText("Level " + String.valueOf(level + 1)+" "+String.valueOf(gameHandler.getTargetLocation()));
             announcementHandler.levelStart(level, picksLeft);
-            boolean needsToAdd = false;
-            if (graphView == null) {
-                needsToAdd = true;
-            }
-            graphView = new GraphView(context, gameHandler.getLevelData(), GraphView.LINE);
-            if (needsToAdd) {
-                ((LinearLayout) findViewById(R.id.linearMain)).addView(graphView);
-            }
-            graphView.setVisibility(View.VISIBLE);
+//            boolean needsToAdd = false;
+//            if (graphView == null) {
+//                needsToAdd = true;
+//            }
+//            graphView = new GraphView(context, gameHandler.getLevelData(), GraphView.LINE);
+//            if (needsToAdd) {
+//                ((LinearLayout) findViewById(R.id.linearMain)).addView(graphView);
+//            }
+//            graphView.setVisibility(View.VISIBLE);
 
         }
 
@@ -230,7 +230,7 @@ public class MyActivity extends Activity
             butNextLevel.setText("Try Again");
             chronoTimer.stop();
             butNextLevel.setVisibility(View.VISIBLE);
-            graphView.setVisibility(View.GONE);
+//            graphView.setVisibility(View.GONE);
 
             setPicksLeft(picksLeft);
             announcementHandler.levelLost(level, picksLeft);
@@ -251,7 +251,7 @@ public class MyActivity extends Activity
 
             chronoTimer.stop();
             butNextLevel.setVisibility(View.VISIBLE);
-            graphView.setVisibility(View.GONE);
+//            graphView.setVisibility(View.GONE);
 
             announcementHandler.gameOver(maxLevel);
 
@@ -306,6 +306,12 @@ public class MyActivity extends Activity
     @Override
     protected void onDestroy() {
         announcementHandler.shutDown();
+        vibrationHandler.stopVibrate();
+        announcementHandler = null;
+        vibrationHandler = null;
+        gameHandler = null;
+        prefs =  null;
+
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
