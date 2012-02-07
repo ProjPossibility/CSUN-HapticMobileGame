@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class LevelHandler {
     private static final double sweetSpot = 0.25;
-    private static final int startingDifficulty = 120;
+    private static final int startingDifficulty = 1200;
     private int targetLocation;
     private int difficulty;
     private int keyPressPosition;
@@ -24,7 +24,7 @@ public class LevelHandler {
             difficulty = 10;
         }
         Random rand = new Random();
-        targetLocation = rand.nextInt(400) + 300;
+        targetLocation = rand.nextInt(4000) + 3000;
     }
 
 
@@ -61,11 +61,14 @@ public class LevelHandler {
 
     public int getIntensityForPosition(int tilt) {
         int distanceFromTarget = Math.abs(targetLocation - tilt);
-
+        if (distanceFromTarget > difficulty) {
+            return -1;
+        }
         float intensityPercentage = (float) distanceFromTarget / difficulty;
 
 
         int intensity = (int) (100 * (1.0 - intensityPercentage));
+
         return intensity;
 
 

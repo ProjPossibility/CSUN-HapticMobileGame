@@ -42,10 +42,8 @@ public class GameHandler {
         currentLevel = 0;
 
         PackageManager paM = context.getPackageManager();
-        if (paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
-            angularVelocityMinimumThreshold = 10;
-        } else {
-            angularVelocityMinimumThreshold = 1000;
+        if (!paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
+            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold*100;
         }
     }
 

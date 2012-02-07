@@ -85,20 +85,20 @@ public class SensorHandler {
                         if (isFacingDown) {
                             phoneRightSideHeading = 360 - phoneRightSideHeading;
                         }
-                        lastTiltReading = (int) ((phoneRightSideHeading * 1000) / 360);
+                        lastTiltReading = (int) ((phoneRightSideHeading * 10000) / 360);
 
                         if (initialSideFacingUp == 0) {
-                            if (lastTiltReading > 350 && lastTiltReading < 650) {
+                            if (lastTiltReading > 3500 && lastTiltReading < 6500) {
                                 initialSideFacingUp = RIGHT_FACING_UP;
-                            } else if (lastTiltReading > 850 || lastTiltReading < 150) {
+                            } else if (lastTiltReading > 8500 || lastTiltReading < 1500) {
                                 initialSideFacingUp = LEFT_FACING_UP;
                             }
                         }
                         if (initialSideFacingUp == LEFT_FACING_UP) {
-                            if (lastTiltReading > 500) {
-                                lastTiltReading = lastTiltReading - 500;
+                            if (lastTiltReading > 5000) {
+                                lastTiltReading = lastTiltReading - 5000;
                             }   else {
-                                lastTiltReading = lastTiltReading + 500;
+                                lastTiltReading = lastTiltReading + 5000;
                             }
                         }
                         lastTimestampAccel = timestamp;
@@ -139,19 +139,19 @@ public class SensorHandler {
                         if (isFacingDown) {
                             phoneRightSideHeading = 360 - phoneRightSideHeading;
                         }
-                        currentTiltReading = (int) ((phoneRightSideHeading * 1000) / 360);
+                        currentTiltReading = (int) ((phoneRightSideHeading * 10000) / 360);
                         if (initialSideFacingUp == 0) {
-                            if (currentTiltReading > 350 && currentTiltReading < 650) {
+                            if (currentTiltReading > 3500 && currentTiltReading < 6500) {
                                 initialSideFacingUp = RIGHT_FACING_UP;
-                            } else if (currentTiltReading > 850 || currentTiltReading < 150) {
+                            } else if (currentTiltReading > 8500 || currentTiltReading < 1500) {
                                 initialSideFacingUp = LEFT_FACING_UP;
                             }
                         }
                         if (initialSideFacingUp == LEFT_FACING_UP) {
-                            if (currentTiltReading > 500) {
-                                currentTiltReading = currentTiltReading - 500;
+                            if (currentTiltReading > 5000) {
+                                currentTiltReading = currentTiltReading - 5000;
                             }   else {
-                                currentTiltReading = currentTiltReading + 500;
+                                currentTiltReading = currentTiltReading + 5000;
                             }
                         }
                         int delta = Math.abs(lastTiltReading - currentTiltReading);
