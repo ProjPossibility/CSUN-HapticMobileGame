@@ -14,7 +14,9 @@ import android.util.Log;
 public class VibrationHandler {
 
     Vibrator vibrator;
-
+    private static final int PWMsegmentLength = 50;
+    
+    
     public VibrationHandler(Context context) {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -41,13 +43,13 @@ public class VibrationHandler {
     }
 
     public void pulsePWM(int intensity) {
-        int onTime = intensity / 2;
-        int offTime = 50 - onTime;
+        int onTime = (int)(PWMsegmentLength * ((float) intensity / 100));
+        int offTime = PWMsegmentLength - onTime;
         if (offTime < 0) {
             offTime = 0;
         }
         if (onTime < 2) {
-            onTime = 2;
+            onTime = 1;
         }
         long[] pattern = {0, onTime, offTime};
 

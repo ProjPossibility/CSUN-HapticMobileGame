@@ -34,6 +34,8 @@ public class SensorHandler {
     private static final int LEFT_FACING_UP = -1;
     private static final int RIGHT_FACING_UP = 1;
 
+    
+    private static final int refreshDelay = 10000000;
     public SensorHandler(Context context, SensorHandlerInterface sensorHandlerInterface) {
         this.context = context;
         this.sensorHandlerInterface = sensorHandlerInterface;
@@ -76,7 +78,7 @@ public class SensorHandler {
                 long timestamp = sensorEvent.timestamp;
 
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-                    if (timestamp - lastTimestampAccel > 50000000) {
+                    if (timestamp - lastTimestampAccel > refreshDelay) {
 
                         boolean isFacingDown = (Math.abs(sensorEvent.values[1]) > 90);
                         float phoneRightSideHeading = sensorEvent.values[2] + 90;
@@ -102,7 +104,7 @@ public class SensorHandler {
                         lastTimestampAccel = timestamp;
                     }
                 } else if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-                    if (timestamp - lastTimestampGyro > 50000000) {
+                    if (timestamp - lastTimestampGyro > refreshDelay) {
                         if (initialSideFacingUp != 0) {
                             lastAngularVelocity = Math.abs(sensorEvent.values[1]);
                             sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
@@ -130,7 +132,7 @@ public class SensorHandler {
                 long timestamp = sensorEvent.timestamp;
 
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-                    if (timestamp - lastTimestampAccel > 50000000) {
+                    if (timestamp - lastTimestampAccel > refreshDelay) {
                         int currentTiltReading;
                         boolean isFacingDown = (Math.abs(sensorEvent.values[1]) > 90);
                         float phoneRightSideHeading = sensorEvent.values[2] + 90;

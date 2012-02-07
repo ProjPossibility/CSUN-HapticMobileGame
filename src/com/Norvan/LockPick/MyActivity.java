@@ -280,6 +280,7 @@ public class MyActivity extends Activity
             gamePausedChronoProgress = getCurrentTime() - chronoTimer.getBase();
             chronoTimer.stop();
         }
+        vibrationHandler.stopVibrate();
         super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
