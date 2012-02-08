@@ -45,6 +45,7 @@ public class SensorHandler {
         angularVelocityBuffer = new ArrayList<Float>();
         angularVelocityBuffer.add(0f);
         angularVelocityBuffer.add(0f);
+
     }
 
     public void startPolling() {
@@ -163,6 +164,14 @@ public class SensorHandler {
                             }
                         }
                         int delta = Math.abs(lastTiltReading - currentTiltReading);
+
+                        angularVelocityBuffer.remove(0);
+                        angularVelocityBuffer.add((float) delta);
+                        delta = 0;
+                        for (float val : angularVelocityBuffer) {
+                            delta = (int) (delta + val);
+                        }
+                        delta = delta/angularVelocityBuffer.size();
                         lastTiltReading = currentTiltReading;
                         lastTimestampAccel = timestamp;
                         if (initialSideFacingUp != 0) {

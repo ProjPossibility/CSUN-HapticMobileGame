@@ -45,6 +45,7 @@ public class GameHandler {
         if (!paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
             angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * 100;
         }
+
     }
 
     public void setSensorPollingState(boolean state) {

@@ -198,7 +198,7 @@ public class MyActivity extends Activity
             chronoTimer.setBase(SystemClock.elapsedRealtime());
             chronoTimer.start();
             setPicksLeft(picksLeft);
-            textLevel.setText("Level " + String.valueOf(level + 1)+" "+String.valueOf(gameHandler.getTargetLocation()));
+            textLevel.setText("Level " + String.valueOf(level + 1));
             announcementHandler.levelStart(level, picksLeft);
 //            boolean needsToAdd = false;
 //            if (graphView == null) {
@@ -218,7 +218,7 @@ public class MyActivity extends Activity
             chronoTimer.stop();
             float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
             butNextLevel.setVisibility(View.VISIBLE);
-            graphView.setVisibility(View.GONE);
+//            graphView.setVisibility(View.GONE);
 
             setPicksLeft(picksLeft);
             announcementHandler.levelWon(levelTime, levelWon);
