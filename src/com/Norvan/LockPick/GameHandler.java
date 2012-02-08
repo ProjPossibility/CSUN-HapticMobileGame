@@ -32,6 +32,7 @@ public class GameHandler {
     public static final int STATE_INGAME = 1;
     public static final int STATE_BETWEENLEVELS = 2;
     public static final int STATE_GAMEOVER = 3;
+    boolean gyroExists;
 
     public GameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler) {
         this.context = context;
@@ -40,10 +41,11 @@ public class GameHandler {
         levelHandler = new LevelHandler(0);
         sensorHandler = new SensorHandler(context, sensorHandlerInterface);
         currentLevel = 0;
+        gyroExists = context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)  ;
 
-        PackageManager paM = context.getPackageManager();
-        if (!paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
-            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * 100;
+
+        if (!gyroExists) {
+            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * 500;
         }
 
     }
@@ -122,9 +124,15 @@ public class GameHandler {
                     }
                 } else {
                     lastPressedPosition = tilt;
-                    int intensity = levelHandler.getIntensityForPosition(tilt);
+                    Log.i("AMP",String.valueOf(angularVelocity*100)+ " "+ String.valueOf(angularVelocityMinimumThreshold));
+
                     if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
-                        if (intensity == -1) {
+                        int intensity = levelHandler.getIntensityForPosition(tilt);
+                        if (!gyroExists) {
+                            intensity = (int)(intensity *0.7) ;
+                        }
+
+                        if (intensity <0) {
                             vibrationHandler.stopVibrate();
                         } else {
                             vibrationHandler.pulsePWM(intensity);

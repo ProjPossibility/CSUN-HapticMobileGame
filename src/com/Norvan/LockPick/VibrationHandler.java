@@ -1,6 +1,7 @@
 package com.Norvan.LockPick;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Vibrator;
 import android.util.Log;
@@ -15,11 +16,18 @@ import android.util.Log;
 public class VibrationHandler {
 
     Vibrator vibrator;
-    private static final int PWMsegmentLength = 50;
+    private   int PWMsegmentLength = 50;
+    private static final int PWMsegmentLengthNoGyro = 15;
 
+    boolean gyroExists;
 
     public VibrationHandler(Context context) {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        gyroExists = context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
+        if (!gyroExists) {
+            PWMsegmentLength = PWMsegmentLengthNoGyro;
+        }
+
     }
 
     public void stopVibrate() {

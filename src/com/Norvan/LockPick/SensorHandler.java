@@ -36,6 +36,8 @@ public class SensorHandler {
 
     
     private static final int refreshDelay = 10000000;
+    private static final int refreshDelayNoGyro = 10000000;
+
     public SensorHandler(Context context, SensorHandlerInterface sensorHandlerInterface) {
         this.context = context;
         this.sensorHandlerInterface = sensorHandlerInterface;
@@ -45,10 +47,15 @@ public class SensorHandler {
         angularVelocityBuffer = new ArrayList<Float>();
         angularVelocityBuffer.add(0f);
         angularVelocityBuffer.add(0f);
+        if(!gyroExists) {
+            angularVelocityBuffer.add(0f);
+
+        }
 
     }
 
     public void startPolling() {
+        Log.i("AMP", "start "+ String.valueOf(gyroExists));
         if (gyroExists) {
             Sensor sensorOrientation = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
             Sensor sensorGyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -77,6 +84,7 @@ public class SensorHandler {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             synchronized (this) {
+                Log.i("AMP", "gotReading "+ String.valueOf(sensorEvent.sensor.getType()));
                 long timestamp = sensorEvent.timestamp;
 
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
@@ -141,7 +149,7 @@ public class SensorHandler {
                 long timestamp = sensorEvent.timestamp;
 
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-                    if (timestamp - lastTimestampAccel > refreshDelay) {
+                    if (timestamp - lastTimestampAccel > refreshDelayNoGyro) {
                         int currentTiltReading;
                         boolean isFacingDown = (Math.abs(sensorEvent.values[1]) > 90);
                         float phoneRightSideHeading = sensorEvent.values[2] + 90;
