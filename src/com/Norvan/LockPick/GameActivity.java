@@ -5,12 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.hardware.*;
-import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -19,18 +15,16 @@ import android.view.View;
 import android.widget.*;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 
-import java.util.List;
-
 public class GameActivity extends Activity
 
 {
-
+    LinearLayout linearChrono;
     VolumeToggleHelper volumeToggleHelper;
     VibrationHandler vibrationHandler;
     GameHandler gameHandler;
-    TextView textPicksLeft, textLevel, textGameOver, textHighScore;
+    TextView textPicksLeft, textLevelLabel, textGameOver, textHighScore;
     ImageButton imgbutToggleVolume;
-    Button butNextLevel;
+    Button butGameButton;
     Chronometer chronoTimer;
     AnnouncementHandler announcementHandler;
     SharedPreferencesHandler prefs;
@@ -42,38 +36,27 @@ public class GameActivity extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.gamelayout);
         context = this;
         vibrationHandler = new VibrationHandler(this);
-        if (!vibrationHandler.hasVibrator()) {
-            showUnsuportedDialog();
-            return;
-        }
         gameHandler = new GameHandler(this, gameStatusInterface, vibrationHandler);
         textPicksLeft = (TextView) findViewById(R.id.textPicksLeft);
-        textLevel = (TextView) findViewById(R.id.textLevelNumber);
-        textGameOver = (TextView) findViewById(R.id.textGameOver);
+        textLevelLabel = (TextView) findViewById(R.id.textLevelLabel);
+        textGameOver = (TextView) findViewById(R.id.textGameOverLabel);
         textHighScore = (TextView) findViewById(R.id.textHighScore);
-
-        imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutToggleVolume);
+        linearChrono = (LinearLayout) findViewById(R.id.linearChrono);
+        imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutGameVolume);
         imgbutToggleVolume.setOnClickListener(onClick);
-        butNextLevel = (Button) findViewById(R.id.butNextLevel);
-        butNextLevel.setOnClickListener(onClick);
+        butGameButton = (Button) findViewById(R.id.butGameButton);
+        butGameButton.setOnClickListener(onClick);
         chronoTimer = (Chronometer) findViewById(R.id.chronoTimer);
-        volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume)  ;
-        if (SharedPreferencesHandler.isFirstRun(this)) {
-            Intent i = new Intent(this, FirstRunActivity.class);
-            startActivityForResult(i, 1);
-        } else {
-            announcementHandler = new AnnouncementHandler(this, vibrationHandler);
-            announcementHandler.newLaunch();
-        }
+        volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
+
         chronoTimer.setKeepScreenOn(true);
         prefs = new SharedPreferencesHandler(this);
         setHighScore(prefs.getHighScore() + 1);
-       
-
-
+        setUiGameState(GameHandler.STATE_FRESHLOAD);
+        announcementHandler = new AnnouncementHandler(context, vibrationHandler);
     }
 
     @Override
@@ -139,7 +122,7 @@ public class GameActivity extends Activity
     View.OnClickListener onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (butNextLevel.equals(view)) {
+            if (butGameButton.equals(view)) {
                 gameHandler.playCurrentLevel();
             } else if (imgbutToggleVolume.equals(view)) {
                 volumeToggleHelper.toggleMute();
@@ -147,37 +130,21 @@ public class GameActivity extends Activity
         }
     };
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            if (resultCode == RESULT_CANCELED) {
-                Intent i = new Intent(this, FirstRunActivity.class);
-                startActivityForResult(i, 1);
-            } else if (resultCode == RESULT_OK) {
-                announcementHandler = new AnnouncementHandler(this, vibrationHandler);
-                announcementHandler.newLaunch();
-
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
+ 
     public GameHandler.GameStatusInterface gameStatusInterface = new GameHandler.GameStatusInterface() {
         @Override
         public void newGameStart() {
+            setUiGameState(GameHandler.STATE_FRESHLOAD);
             setHighScore(prefs.getHighScore() + 1);
         }
 
         @Override
         public void levelStart(int level, int picksLeft) {
-            butNextLevel.setVisibility(View.GONE);
-            textGameOver.setVisibility(View.GONE);
-
+            setUiGameState(GameHandler.STATE_INGAME);
             chronoTimer.setBase(SystemClock.elapsedRealtime());
             chronoTimer.start();
             setPicksLeft(picksLeft);
-            textLevel.setText("Level " + String.valueOf(level + 1));
+            setLevelLabel(level);
             announcementHandler.levelStart(level, picksLeft);
 //            boolean needsToAdd = false;
 //            if (graphView == null) {
@@ -193,11 +160,10 @@ public class GameActivity extends Activity
 
         @Override
         public void levelWon(int levelWon, int picksLeft) {
-            butNextLevel.setText("Next Level");
+            setUiGameState(GameHandler.STATE_BETWEENLEVELS);
+            butGameButton.setText("Next Level");
             chronoTimer.stop();
             float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
-            butNextLevel.setVisibility(View.VISIBLE);
-//            graphView.setVisibility(View.GONE);
 
             setPicksLeft(picksLeft);
             announcementHandler.levelWon(levelTime, levelWon);
@@ -206,10 +172,10 @@ public class GameActivity extends Activity
 
         @Override
         public void levelLost(int level, int picksLeft) {
-            butNextLevel.setText("Try Again");
+            setUiGameState(GameHandler.STATE_BETWEENLEVELS);
+
+            butGameButton.setText("Try Again");
             chronoTimer.stop();
-            butNextLevel.setVisibility(View.VISIBLE);
-//            graphView.setVisibility(View.GONE);
 
             setPicksLeft(picksLeft);
             announcementHandler.levelLost(level, picksLeft);
@@ -217,43 +183,33 @@ public class GameActivity extends Activity
 
         @Override
         public void gameOver(int maxLevel) {
-            butNextLevel.setText("New Game");
+            setUiGameState(GameHandler.STATE_GAMEOVER);
+            Log.i("AMP", "gameOver");
+            butGameButton.setText("New Game");
             if (prefs.getHighScore() < maxLevel) {
-                textGameOver.setText("GAME OVER\nHIGH SCORE!");
+                textGameOver.setText("GAME OVER\nScore: "+String.valueOf(maxLevel)+"NEW RECORD!");
                 prefs.setHighScore(maxLevel);
                 setHighScore(maxLevel + 1);
             } else {
-                textGameOver.setText("GAME OVER");
+                textGameOver.setText("GAME OVER\nScore: "+String.valueOf(maxLevel+1)+"\nRecord: "+String.valueOf(prefs.getHighScore()));
             }
 
-            textGameOver.setVisibility(View.VISIBLE);
 
             chronoTimer.stop();
-            butNextLevel.setVisibility(View.VISIBLE);
-//            graphView.setVisibility(View.GONE);
+
 
             announcementHandler.gameOver(maxLevel);
 
         }
     };
 
-    private void showUnsuportedDialog() {
-        AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle("Error!");
-        adb.setMessage("Your device does not have a vibrator, which is required for the game.");
-        adb.setCancelable(false);
-        adb.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        adb.create().show();
-    }
-
 
     void setPicksLeft(int picks) {
         textPicksLeft.setText("Picks Left: " + String.valueOf(picks));
+    }
+
+    void setLevelLabel(int level) {
+        textLevelLabel.setText("Level " + String.valueOf(level + 1));
     }
 
     void setHighScore(int highScore) {
@@ -289,11 +245,49 @@ public class GameActivity extends Activity
         announcementHandler = null;
         vibrationHandler = null;
         gameHandler = null;
-        prefs =  null;
+        prefs = null;
 
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
+    private void setUiGameState(int gameState) {
+        switch (gameState) {
+            case GameHandler.STATE_FRESHLOAD: {
+                butGameButton.setVisibility(View.VISIBLE);
+                textGameOver.setVisibility(View.GONE);
+                linearChrono.setVisibility(View.GONE);
+                textPicksLeft.setVisibility(View.GONE);
+                textHighScore.setVisibility(View.GONE);
+                textLevelLabel.setVisibility(View.VISIBLE);
+                setLevelLabel(0);
+            }  break;
+            case GameHandler.STATE_INGAME: {
+                textLevelLabel.setVisibility(View.VISIBLE);
+                butGameButton.setVisibility(View.GONE);
+                textGameOver.setVisibility(View.GONE);
+                linearChrono.setVisibility(View.VISIBLE);
+                textPicksLeft.setVisibility(View.VISIBLE);
+                textHighScore.setVisibility(View.VISIBLE);
+
+            } break;
+            case GameHandler.STATE_BETWEENLEVELS: {
+                textLevelLabel.setVisibility(View.VISIBLE);
+                butGameButton.setVisibility(View.VISIBLE);
+                textGameOver.setVisibility(View.GONE);
+                linearChrono.setVisibility(View.GONE);
+                textPicksLeft.setVisibility(View.GONE);
+                textHighScore.setVisibility(View.GONE);
+            }       break;
+            case GameHandler.STATE_GAMEOVER: {
+                textLevelLabel.setVisibility(View.GONE);
+                butGameButton.setVisibility(View.VISIBLE);
+                textGameOver.setVisibility(View.VISIBLE);
+                linearChrono.setVisibility(View.GONE);
+                textPicksLeft.setVisibility(View.GONE);
+                textHighScore.setVisibility(View.GONE);
+            }   break;
+        }
+    }
 
     private long getCurrentTime() {
         return SystemClock.elapsedRealtime();

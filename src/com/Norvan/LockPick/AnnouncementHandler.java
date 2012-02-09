@@ -13,7 +13,8 @@ public class AnnouncementHandler {
     int userType;
     VibrationHandler vibrationHandler;
     TTSHandler tts;
-        Context context;
+    Context context;
+
     public AnnouncementHandler(Context context, VibrationHandler vibrationHandler) {
         userType = SharedPreferencesHandler.getUserType(context);
         this.vibrationHandler = vibrationHandler;
@@ -31,6 +32,21 @@ public class AnnouncementHandler {
 
     }
 
+    public void mainActivityLaunch() {
+        if (userType == SharedPreferencesHandler.USER_BLIND) {
+            //tts
+            tts.speakPhrase(context.getResources().getString(R.string.mainactivityBlind));
+        } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
+            //morse
+            vibrationHandler.stopVibrate();
+            vibrationHandler.playString(context.getResources().getString(R.string.mainactivityDeafBlind));
+        }
+    }
+
+    public void playDeafBlindInstructions() {
+        vibrationHandler.playString(context.getResources().getString(R.string.instructionsDeafBlind));
+    }
+
     public void newLaunch() {
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
@@ -38,7 +54,7 @@ public class AnnouncementHandler {
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
             vibrationHandler.stopVibrate();
-           vibrationHandler.playString("Turn phone on side screen facing left. Press volume to begin.");
+            vibrationHandler.playString("Turn phone on side screen facing left. Press volume to begin.");
         }
 
     }
@@ -60,8 +76,7 @@ public class AnnouncementHandler {
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
             vibrationHandler.playString("You won level " + String.valueOf(wonLevel) + " in " + getTimeString(time));
-        }
-        else{
+        } else {
             tts.speakPhrase("Good Job!");
         }
     }
@@ -75,8 +90,7 @@ public class AnnouncementHandler {
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
             vibrationHandler.playString("You lost " + String.valueOf(picksLeft) + " picks left");
-        }
-        else{
+        } else {
             tts.speakPhrase("You failed");
         }
     }
@@ -88,15 +102,14 @@ public class AnnouncementHandler {
             //tts
             if (new SharedPreferencesHandler(context).getHighScore() < maxLevel) {
                 tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". A new high score! Press volume for a new game.");
-            }   else{
+            } else {
                 tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". Press volume for a new game.");
             }
 
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playString("Game over. Reached level " + String.valueOf(maxLevel+1));
-        }
-        else{
+            vibrationHandler.playString("Game over. Reached level " + String.valueOf(maxLevel + 1));
+        } else {
             tts.speakPhrase("Game Over");
         }
 

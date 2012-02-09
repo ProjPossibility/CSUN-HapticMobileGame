@@ -1,7 +1,9 @@
 package com.Norvan.LockPick;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,13 +32,18 @@ public class MainActivity extends Activity {
     VolumeToggleHelper volumeToggleHelper;
     ImageButton imgbutToggleVolume;
     Context context;
-    TTSHandler ttsHandler;
     VibrationHandler vibrationHandler;
+    AnnouncementHandler announcementHandler;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainlayout);
         context = this;
+        vibrationHandler = new VibrationHandler(context);
+        if (!vibrationHandler.hasVibrator()) {
+            showUnsuportedDialog();
+            return;
+        }
         butNewGame = (Button) findViewById(R.id.butMainNewGame);
         butHelp = (Button) findViewById(R.id.butMainHelp);
         butSettings = (Button) findViewById(R.id.butMainSettings);
@@ -46,32 +53,26 @@ public class MainActivity extends Activity {
         imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutMainVolume);
         imgbutToggleVolume.setOnClickListener(onClickListener);
         volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
-        if (SharedPreferencesHandler.isFirstRun(context)) {
-            startActivityForResult(new Intent(context, FirstRunActivity.class), REQ_FIRSTRUNACTIVITY);
+        if (SharedPreferencesHandler.isFirstRun(this)) {
+            startFirstRunActivity();
             return;
+        } else {
+            announcementHandler = new AnnouncementHandler(this, vibrationHandler);
+
         }
 
-        setUpAccessibility();
-
-    }
-
-    private void setUpAccessibility() {
         userType = SharedPreferencesHandler.getUserType(context);
-        if (userType == SharedPreferencesHandler.USER_BLIND) {
-            ttsHandler = new TTSHandler(context);
-            ttsHandler.speakPhrase(getResources().getString(R.string.mainactivityBlind));
-        } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
-            vibrationHandler = new VibrationHandler(context);
-            vibrationHandler.playString(getResources().getString(R.string.mainactivityDeafBlind));
-        }
+        announcementHandler.mainActivityLaunch();
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQ_FIRSTRUNACTIVITY: {
                 if (resultCode == RESULT_OK) {
-                    setUpAccessibility();
+                    userType = SharedPreferencesHandler.getUserType(context);
+                    announcementHandler.mainActivityLaunch();
                 } else {
                     startFirstRunActivity();
                 }
@@ -101,7 +102,7 @@ public class MainActivity extends Activity {
                     if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                         startGameActivity();
                     } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                        vibrationHandler.playString(getResources().getString(R.string.instructionsDeafBlind));
+                        announcementHandler.playDeafBlindInstructions();
                     }
                 }
             }
@@ -145,5 +146,19 @@ public class MainActivity extends Activity {
 
     private void startFirstRunActivity() {
         startActivityForResult(new Intent(context, FirstRunActivity.class), REQ_FIRSTRUNACTIVITY);
+    }
+
+    private void showUnsuportedDialog() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle("Error!");
+        adb.setMessage("Your device does not have a vibrator, which is required for the game.");
+        adb.setCancelable(false);
+        adb.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        adb.create().show();
     }
 }
