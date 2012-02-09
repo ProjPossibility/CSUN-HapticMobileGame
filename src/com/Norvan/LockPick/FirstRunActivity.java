@@ -21,7 +21,7 @@ public class FirstRunActivity extends Activity {
     TTSHandler tts;
     Context context;
     Vibrator vibrator;
-
+    Handler mHandler;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.firstrun);
@@ -57,7 +57,7 @@ public class FirstRunActivity extends Activity {
             }
         });
 
-        Handler mHandler = new Handler();
+          mHandler = new Handler();
         mHandler.postDelayed(playAccessibleInfo, 5000);
     }
 
@@ -105,6 +105,7 @@ public class FirstRunActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
         vibrator.cancel();
+        mHandler.removeCallbacks(playAccessibleInfo);
 
     }
 }

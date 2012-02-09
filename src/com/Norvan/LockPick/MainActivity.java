@@ -72,6 +72,7 @@ public class MainActivity extends Activity {
             case REQ_FIRSTRUNACTIVITY: {
                 if (resultCode == RESULT_OK) {
                     userType = SharedPreferencesHandler.getUserType(context);
+                    announcementHandler = new AnnouncementHandler(context, vibrationHandler);
                     announcementHandler.mainActivityLaunch();
                 } else {
                     startFirstRunActivity();
