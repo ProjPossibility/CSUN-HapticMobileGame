@@ -23,7 +23,6 @@ public class GameHandler {
     boolean keyPressed = false;
     boolean isPolling = false;
     int keyPressedPosition = -1;
-    private Handler mHandler = new Handler();
     GameStatusInterface gameStatusInterface;
     Context context;
     int angularVelocityMinimumThreshold = 10;

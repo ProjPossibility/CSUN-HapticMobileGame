@@ -17,14 +17,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 
 import java.util.List;
 
-public class MyActivity extends Activity
+public class GameActivity extends Activity
 
 {
 
-
+    VolumeToggleHelper volumeToggleHelper;
     VibrationHandler vibrationHandler;
     GameHandler gameHandler;
     TextView textPicksLeft, textLevel, textGameOver, textHighScore;
@@ -34,7 +35,7 @@ public class MyActivity extends Activity
     AnnouncementHandler announcementHandler;
     SharedPreferencesHandler prefs;
     Context context;
-    AudioManager audioManager;
+
     long gamePausedChronoProgress;
     GraphView graphView;
 
@@ -49,7 +50,6 @@ public class MyActivity extends Activity
             return;
         }
         gameHandler = new GameHandler(this, gameStatusInterface, vibrationHandler);
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         textPicksLeft = (TextView) findViewById(R.id.textPicksLeft);
         textLevel = (TextView) findViewById(R.id.textLevelNumber);
         textGameOver = (TextView) findViewById(R.id.textGameOver);
@@ -60,6 +60,7 @@ public class MyActivity extends Activity
         butNextLevel = (Button) findViewById(R.id.butNextLevel);
         butNextLevel.setOnClickListener(onClick);
         chronoTimer = (Chronometer) findViewById(R.id.chronoTimer);
+        volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume)  ;
         if (SharedPreferencesHandler.isFirstRun(this)) {
             Intent i = new Intent(this, FirstRunActivity.class);
             startActivityForResult(i, 1);
@@ -70,7 +71,7 @@ public class MyActivity extends Activity
         chronoTimer.setKeepScreenOn(true);
         prefs = new SharedPreferencesHandler(this);
         setHighScore(prefs.getHighScore() + 1);
-        setVolumeToggleImage(isVolumeMuted());
+       
 
 
     }
@@ -141,33 +142,11 @@ public class MyActivity extends Activity
             if (butNextLevel.equals(view)) {
                 gameHandler.playCurrentLevel();
             } else if (imgbutToggleVolume.equals(view)) {
-                toggleVolume();
+                volumeToggleHelper.toggleMute();
             }
         }
     };
 
-    private boolean toggleVolume() {
-        if (isVolumeMuted()) {
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-            setVolumeToggleImage(false);
-            return false;
-        } else {
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-            setVolumeToggleImage(true);
-            return true;
-        }
-    }
-
-    private boolean isVolumeMuted() {
-        if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
-            return true;
-        }
-        return false;
-    }
-
-    private void setVolumeToggleImage(boolean isMute) {
-        imgbutToggleVolume.setImageResource(isMute ? R.drawable.ic_audio_vol : R.drawable.ic_audio_vol_mute);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
