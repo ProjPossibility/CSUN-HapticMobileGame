@@ -1,6 +1,7 @@
 package com.Norvan.LockPick;
 
 import android.content.Context;
+import com.Norvan.LockPick.Helpers.ResponseHelper;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,12 +15,14 @@ public class AnnouncementHandler {
     VibrationHandler vibrationHandler;
     TTSHandler tts;
     Context context;
+    ResponseHelper responseHelper;
 
     public AnnouncementHandler(Context context, VibrationHandler vibrationHandler) {
         userType = SharedPreferencesHandler.getUserType(context);
         this.vibrationHandler = vibrationHandler;
         this.context = context;
         tts = new TTSHandler(context);
+        responseHelper = new ResponseHelper(context);
     }
 
     public void shutDown() {
@@ -65,7 +68,9 @@ public class AnnouncementHandler {
             tts.speakPhrase("Level " + String.valueOf(level + 1) + ", " + String.valueOf(picksLeft) + " picks left.");
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playString("lvl "+String.valueOf(level+1));
+            vibrationHandler.playString("lvl " + String.valueOf(level + 1));
+        } else {
+            tts.speakPhrase("Level " + String.valueOf(level + 1));
         }
     }
 
@@ -73,12 +78,20 @@ public class AnnouncementHandler {
         vibrationHandler.playHappy();
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
-            tts.speakPhrase("You beat level " + String.valueOf(wonLevel + 1) + " in " + getTimeString(time) + ". Press volume to continue.");
+            if (wonLevel > 8) {
+                tts.speakPhrase(responseHelper.getLevelWin10plus() + " Press either volume key to continue.");
+            } else {
+                tts.speakPhrase(responseHelper.getLevelWin0to10() + " Press either volume key to continue.");
+            }
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playString("won lvl "+String.valueOf(wonLevel+1));
+            vibrationHandler.playString("won lvl " + String.valueOf(wonLevel + 1));
         } else {
-            tts.speakPhrase("Good Job!");
+            if (wonLevel > 8) {
+                tts.speakPhrase(responseHelper.getLevelWin10plus());
+            } else {
+                tts.speakPhrase(responseHelper.getLevelWin0to10());
+            }
         }
     }
 
@@ -87,12 +100,20 @@ public class AnnouncementHandler {
 
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
-            tts.speakPhrase("You lost. Press volume to try again");
+            if (level > 3) {
+                tts.speakPhrase(responseHelper.getLevelLose5plus() + " Press either volume key to try again.");
+            } else {
+                tts.speakPhrase("You lost. Press volume to try again");
+            }
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playString("lvl lost "+String.valueOf(picksLeft)+" lives");
+            vibrationHandler.playString("lvl lost " + String.valueOf(picksLeft) + " lives");
         } else {
-            tts.speakPhrase("You failed");
+            if (level > 3) {
+                tts.speakPhrase(responseHelper.getLevelLose5plus());
+            } else {
+                tts.speakPhrase("You lost.");
+            }
         }
     }
 
@@ -109,11 +130,17 @@ public class AnnouncementHandler {
 
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playString("Game over lvl "+ String.valueOf(maxLevel+1));
+            vibrationHandler.playString("Game over lvl " + String.valueOf(maxLevel + 1));
         } else {
             tts.speakPhrase("Game Over");
         }
 
+    }
+
+    public void userTakingTooLong() {
+        if (userType != SharedPreferencesHandler.USER_DEAFBLIND) {
+            tts.speakPhrase(responseHelper.getTakingTooLong());
+        }
     }
 
     private String getTimeString(float time) {

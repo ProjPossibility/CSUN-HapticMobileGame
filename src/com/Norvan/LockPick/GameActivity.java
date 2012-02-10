@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 
 public class GameActivity extends Activity
@@ -29,7 +30,7 @@ public class GameActivity extends Activity
     AnnouncementHandler announcementHandler;
     SharedPreferencesHandler prefs;
     Context context;
-
+    ResponseHelper responseHelper;
     long gamePausedChronoProgress;
     GraphView graphView;
 
@@ -57,7 +58,25 @@ public class GameActivity extends Activity
         setHighScore(prefs.getHighScore() + 1);
         setUiGameState(GameHandler.STATE_FRESHLOAD);
         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
+
+        chronoTimer.setOnChronometerTickListener(onTick);
+        responseHelper = new ResponseHelper(context);
+
+
     }
+
+    Chronometer.OnChronometerTickListener onTick = new Chronometer.OnChronometerTickListener() {
+        @Override
+        public void onChronometerTick(Chronometer chronometer) {
+            long timeElapsed = getCurrentTime() - chronometer.getBase();
+            Log.i("AMP", "modulo " + String.valueOf(timeElapsed % 10000));
+            if (timeElapsed > 10000) {
+                if (timeElapsed % 10000 < 1000) {
+                    announcementHandler.userTakingTooLong();
+                }
+            }
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,7 +96,6 @@ public class GameActivity extends Activity
         adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //To change body of implemented methods use File | Settings | File Templates.
                 SharedPreferencesHandler.clearUserType(context);
                 finish();
             }
@@ -130,7 +148,7 @@ public class GameActivity extends Activity
         }
     };
 
- 
+
     public GameHandler.GameStatusInterface gameStatusInterface = new GameHandler.GameStatusInterface() {
         @Override
         public void newGameStart() {
@@ -187,11 +205,11 @@ public class GameActivity extends Activity
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
             if (prefs.getHighScore() < maxLevel) {
-                textGameOver.setText("GAME OVER\nScore: "+String.valueOf(maxLevel)+"NEW RECORD!");
+                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel) + "\nNEW RECORD!");
                 prefs.setHighScore(maxLevel);
                 setHighScore(maxLevel + 1);
             } else {
-                textGameOver.setText("GAME OVER\nScore: "+String.valueOf(maxLevel+1)+"\nRecord: "+String.valueOf(prefs.getHighScore()));
+                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel + 1) + "\nRecord: " + String.valueOf(prefs.getHighScore()));
             }
 
 
@@ -260,7 +278,8 @@ public class GameActivity extends Activity
                 textHighScore.setVisibility(View.GONE);
                 textLevelLabel.setVisibility(View.VISIBLE);
                 setLevelLabel(0);
-            }  break;
+            }
+            break;
             case GameHandler.STATE_INGAME: {
                 textLevelLabel.setVisibility(View.VISIBLE);
                 butGameButton.setVisibility(View.GONE);
@@ -269,7 +288,8 @@ public class GameActivity extends Activity
                 textPicksLeft.setVisibility(View.VISIBLE);
                 textHighScore.setVisibility(View.VISIBLE);
 
-            } break;
+            }
+            break;
             case GameHandler.STATE_BETWEENLEVELS: {
                 textLevelLabel.setVisibility(View.VISIBLE);
                 butGameButton.setVisibility(View.VISIBLE);
@@ -277,7 +297,8 @@ public class GameActivity extends Activity
                 linearChrono.setVisibility(View.GONE);
                 textPicksLeft.setVisibility(View.GONE);
                 textHighScore.setVisibility(View.GONE);
-            }       break;
+            }
+            break;
             case GameHandler.STATE_GAMEOVER: {
                 textLevelLabel.setVisibility(View.GONE);
                 butGameButton.setVisibility(View.VISIBLE);
@@ -285,7 +306,8 @@ public class GameActivity extends Activity
                 linearChrono.setVisibility(View.GONE);
                 textPicksLeft.setVisibility(View.GONE);
                 textHighScore.setVisibility(View.GONE);
-            }   break;
+            }
+            break;
         }
     }
 

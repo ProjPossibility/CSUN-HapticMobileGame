@@ -55,7 +55,6 @@ public class SensorHandler {
     }
 
     public void startPolling() {
-        Log.i("AMP", "start "+ String.valueOf(gyroExists));
         if (gyroExists) {
             Sensor sensorOrientation = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
             Sensor sensorGyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -84,7 +83,6 @@ public class SensorHandler {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             synchronized (this) {
-                Log.i("AMP", "gotReading "+ String.valueOf(sensorEvent.sensor.getType()));
                 long timestamp = sensorEvent.timestamp;
 
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {

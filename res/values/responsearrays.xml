@@ -1,0 +1,41 @@
+<resources>
+
+    <string-array name="levelwin0to10">
+        <item>Nice job.</item>
+        <item>Not bad.</item>
+        <item>Way to go!</item>
+        <item>You\'re getting there.</item>
+        <item>Very nice.</item>
+    </string-array>
+
+    <string-array name="levelwintenplus">
+        <item>Fort Knox better watch out.</item>
+        <item>The force is strong with this one.</item>
+        <item>Impossible!</item>
+        <item>Are you a locksmith?</item>
+        <item>Locks are scared of you.</item>
+        <item>Who needs keys anyway?</item>
+    </string-array>
+
+    <string-array name="levellose5plus">
+        <item>Are you even trying?</item>
+        <item>Is that really your best?</item>
+        <item>I\'m not amused.</item>
+        <item>Try harder.</item>
+        <item>You fail.</item>
+        <item>Did you take an arrow to the hand?</item>
+        <item>Cut down on the coffee.</item>
+        <item>Do you think this is a game?</item>
+        <item>Don\'t quit your day job yet.</item>
+        <item>Take a deep breath before continuing.</item>
+    </string-array>
+
+    <string-array name="takingtoolong">
+        <item>Hey, are you there.</item>
+        <item>Put some hustle in it.</item>
+        <item>I don\'t have all day.</item>
+        <item>That lock won\'t pick itself.</item>
+        <item>This is like watching paint dry.</item>
+        <item>Any day now.</item>
+    </string-array>
+</resources>

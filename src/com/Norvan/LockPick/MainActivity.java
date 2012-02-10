@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -60,7 +61,7 @@ public class MainActivity extends Activity {
             announcementHandler = new AnnouncementHandler(this, vibrationHandler);
 
         }
-
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         userType = SharedPreferencesHandler.getUserType(context);
         announcementHandler.mainActivityLaunch();
     }
@@ -106,6 +107,7 @@ public class MainActivity extends Activity {
                         announcementHandler.playDeafBlindInstructions();
                     }
                 }
+                
             }
             return true;
         }

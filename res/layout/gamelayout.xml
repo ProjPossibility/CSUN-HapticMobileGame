@@ -30,21 +30,21 @@
             <Button android:layout_width="wrap_content" android:layout_height="wrap_content"  android:id="@+id/butGameButton"
                     android:layout_centerInParent="true" android:textSize="50sp" android:text="START"/>
 
-            <TextView android:layout_width="wrap_content" android:id="@+id/textPicksLeft"
+            <TextView android:layout_width="wrap_content" android:id="@+id/textPicksLeft"     android:layout_margin="5dp"
                       android:text="Picks Left: 5" android:contentDescription="Picks Left" android:layout_centerHorizontal="true"
-                      android:layout_height="wrap_content" android:textSize="25sp"/>
-            <LinearLayout android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_centerHorizontal="true" android:layout_below="@+id/textPicksLeft" android:id="@+id/linearChrono"
+                      android:layout_height="wrap_content" android:textSize="30sp"/>
+            <LinearLayout android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5dp" android:layout_centerHorizontal="true" android:layout_below="@+id/textPicksLeft" android:id="@+id/linearChrono"
                           android:orientation="horizontal">
                 <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Time: "
-                          android:textSize="25sp"/>
+                          android:textSize="30sp"/>
                 <Chronometer android:layout_width="fill_parent" android:id="@+id/chronoTimer"
                              android:contentDescription="Level Timer"
-                             android:layout_height="wrap_content" android:textSize="25sp"/>
+                             android:layout_height="wrap_content" android:textSize="30sp"/>
 
             </LinearLayout>
             <TextView android:layout_width="wrap_content" android:id="@+id/textHighScore"  android:layout_centerHorizontal="true" android:layout_below="@+id/linearChrono"
-                      android:text="Record: 0" android:contentDescription="High Score"
-                      android:layout_height="wrap_content" android:textSize="25sp"/>
+                      android:text="Record: 0" android:contentDescription="High Score"     android:layout_margin="5dp"
+                      android:layout_height="wrap_content" android:textSize="30sp"/>
 
         </RelativeLayout>
 

@@ -123,7 +123,6 @@ public class GameHandler {
                     }
                 } else {
                     lastPressedPosition = tilt;
-                    Log.i("AMP",String.valueOf(angularVelocity*100)+ " "+ String.valueOf(angularVelocityMinimumThreshold));
 
                     if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
                         int intensity = levelHandler.getIntensityForPosition(tilt);
