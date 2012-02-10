@@ -7,12 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import com.Norvan.LockPick.Helpers.DevelopmentHelpers;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 
@@ -26,6 +24,7 @@ import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 public class MainActivity extends Activity {
     private static final int REQ_FIRSTRUNACTIVITY = 1;
     private static final int REQ_GAMEACTIVITY = 2;
+    private static final int REQ_INSTRUCTIONS = 3;
 
     int userType = 0;
 
@@ -51,6 +50,7 @@ public class MainActivity extends Activity {
         butNewGame.setOnClickListener(onClickListener);
         butHelp.setOnClickListener(onClickListener);
         butSettings.setOnClickListener(onClickListener);
+        butSettings.setText("Reset User Type");
         imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutMainVolume);
         imgbutToggleVolume.setOnClickListener(onClickListener);
         volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
                         announcementHandler.playDeafBlindInstructions();
                     }
                 }
-                
+
             }
             return true;
         }
@@ -135,9 +135,9 @@ public class MainActivity extends Activity {
             } else if (butNewGame.equals(v)) {
                 startGameActivity();
             } else if (butHelp.equals(v)) {
-                DevelopmentHelpers.toastUnsupported(context);
+                startInstructionsActivity();
             } else if (butSettings.equals(v)) {
-                DevelopmentHelpers.toastUnsupported(context);
+                showResetUserTypeDialog();
             }
         }
     };
@@ -149,6 +149,10 @@ public class MainActivity extends Activity {
 
     private void startFirstRunActivity() {
         startActivityForResult(new Intent(context, FirstRunActivity.class), REQ_FIRSTRUNACTIVITY);
+    }
+
+    private void startInstructionsActivity() {
+        startActivityForResult(new Intent(context, Instructions.class), REQ_INSTRUCTIONS);
     }
 
     private void showUnsuportedDialog() {
@@ -163,5 +167,29 @@ public class MainActivity extends Activity {
             }
         });
         adb.create().show();
+    }
+
+    private void showResetUserTypeDialog() {
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        adb.setTitle("Alert");
+        adb.setMessage("Please restart the app to continue with user type reset.");
+        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                SharedPreferencesHandler.clearUserType(context);
+                finish();
+            }
+        });
+        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+
+            }
+        });
+        adb.create().show();
+
+
     }
 }

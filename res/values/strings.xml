@@ -5,6 +5,17 @@
     <string name="firstrunDeafBlind">If deafblind hold vol down</string>
     <string name="mainactivityBlind">Press either volume key to begin</string>
     <string name="mainactivityDeafBlind">vol down start vol up help</string>
-    <string name="instructionsDeafBlind"></string>
-    <string name="instructionsBlind"></string>
+    <string name="instructionsDeafBlind">Turn the phone on its side. Feel around until you find the sweet
+        spot. When you think you are on the right spot, hold down either volume button and slowly turn the phone to
+        open the lock. Be careful, if you try to open the lock in the wrong spot, you will break the pick. If you
+        feel too much resistance when turning the pick, let go of the button and try again.</string>
+    <string name="instructionsBlind">Turn the phone on its side. Feel around until you find the sweet
+        spot. When you think you are on the right spot, hold down either volume button and slowly turn the phone to
+        open the lock. Be careful, if you try to open the lock in the wrong spot, you will break the pick. If you
+        feel too much resistance when turning the pick, let go of the button and try again.</string>
+    <string name="instructionsNormal">1. Turn the pick (phone) on its side.\n\n2. Feel around until you find the sweet
+        spot.\n\n3. When you think you are on the right spot, hold down either volume button and slowly turn the pick to
+        open the lock.\n\n4. Be careful, if you try to open the lock in the wrong spot, you will break the pick. If you
+        feel too much resistance when turning the pick, let go of the button and try again.
+    </string>
 </resources>

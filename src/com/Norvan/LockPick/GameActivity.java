@@ -78,39 +78,7 @@ public class GameActivity extends Activity
         }
     };
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 0, 0, "Reset User Type");
 
-
-        return true;
-
-    }
-
-    @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-
-        AlertDialog.Builder adb = new AlertDialog.Builder(context);
-        adb.setTitle("Alert");
-        adb.setMessage("Please restart the app to continue with user type reset.");
-        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                SharedPreferencesHandler.clearUserType(context);
-                finish();
-            }
-        });
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-
-            }
-        });
-        adb.create().show();
-
-        return super.onMenuItemSelected(featureId, item);    //To change body of overridden methods use File | Settings | File Templates.
-    }
 
 
     @Override
