@@ -45,6 +45,13 @@
             <TextView android:layout_width="wrap_content" android:id="@+id/textHighScore"  android:layout_centerHorizontal="true" android:layout_below="@+id/linearChrono"
                       android:text="Record: 0" android:contentDescription="High Score"     android:layout_margin="5dp"
                       android:layout_height="wrap_content" android:textSize="30sp"/>
+            <ImageButton android:layout_width="wrap_content" android:layout_height="fill_parent"
+                         android:layout_alignLeft="@+id/textHighScore" android:layout_margin="5dp"
+                         android:layout_alignRight="@+id/textHighScore" android:scaleType="fitCenter"
+                         android:id="@+id/imgbutTogglePause" android:src="@drawable/ic_media_pause"    android:visibility="gone"
+                         android:background="@android:color/transparent" android:layout_below="@+id/textHighScore"
+                         android:layout_centerHorizontal="true"/>
+
 
         </RelativeLayout>
 

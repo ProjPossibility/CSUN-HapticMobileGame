@@ -30,14 +30,10 @@ public class TimeTrialGameHandler {
     public static final int STATE_INGAME = 1;
     public static final int STATE_BETWEENLEVELS = 2;
     public static final int STATE_GAMEOVER = 3;
+    public static final int STATE_PAUSED = 4;
     boolean gyroExists;
     TimingHandler timingHandler;
 
-    boolean isPaused = false;
-
-    public boolean isPaused() {
-        return isPaused;
-    }
 
     public TimeTrialGameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler, TimingHandler timingHandler) {
         this.context = context;
@@ -83,9 +79,7 @@ public class TimeTrialGameHandler {
             keyPressed = false;
             gameStatusInterface.levelStart(currentLevel, timingHandler.getTimeLeft());
             gameState = STATE_INGAME;
-            if (!isPolling) {
-                sensorHandler.startPolling();
-            }
+
         } else if (gameState == STATE_FRESHLOAD || gameState == STATE_GAMEOVER) {
 
             levelHandler = new LevelHandler(currentLevel);
@@ -93,9 +87,7 @@ public class TimeTrialGameHandler {
             timingHandler.startTimerNew();
             gameStatusInterface.levelStart(currentLevel, timingHandler.getTimeLeft());
             gameState = STATE_INGAME;
-            if (!isPolling) {
-                sensorHandler.startPolling();
-            }
+
         }
     }
 
@@ -234,23 +226,21 @@ public class TimeTrialGameHandler {
     }
 
     public void pauseGame() {
-        isPaused = true;
+        gameState = STATE_PAUSED;
         timingHandler.pauseTimer();
     }
 
     public void resumeGame() {
-        isPaused = false;
+        gameState = STATE_INGAME;
         timingHandler.resumeTimer();
     }
 
     public boolean togglePause() {
-        if (isPaused) {
-            isPaused = false;
-            timingHandler.resumeTimer();
+        if (gameState == STATE_PAUSED) {
+            resumeGame();
             return false;
         } else {
-            isPaused = true;
-            timingHandler.pauseTimer();
+            pauseGame();
             return true;
 
         }

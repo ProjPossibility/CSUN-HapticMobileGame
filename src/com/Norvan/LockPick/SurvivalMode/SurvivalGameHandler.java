@@ -17,8 +17,13 @@ import com.Norvan.LockPick.VibrationHandler;
  * To change this template use File | Settings | File Templates.
  */
 public class SurvivalGameHandler {
-    int numberOfPicksLeft = 5;
-    int currentLevel = 0;
+    private int numberOfPicksLeft = 5;
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    private int currentLevel = 0;
     VibrationHandler vibrationHandler;
     SensorHandler sensorHandler;
     LevelHandler levelHandler;
@@ -34,6 +39,7 @@ public class SurvivalGameHandler {
     public static final int STATE_INGAME = 1;
     public static final int STATE_BETWEENLEVELS = 2;
     public static final int STATE_GAMEOVER = 3;
+    public static final int STATE_PAUSED = 4;
     boolean gyroExists;
 
     public SurvivalGameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler) {
@@ -205,4 +211,25 @@ public class SurvivalGameHandler {
              Log.i("AMP", "vibeDone");
         }
     };
+
+    public void pauseGame() {
+        gameState = STATE_PAUSED;
+
+    }
+
+    public void resumeGame() {
+        gameState = STATE_INGAME;
+
+    }
+
+    public boolean togglePause() {
+        if (gameState == STATE_PAUSED) {
+            resumeGame();
+            return false;
+        } else {
+            pauseGame();
+            return true;
+
+        }
+    }
 }

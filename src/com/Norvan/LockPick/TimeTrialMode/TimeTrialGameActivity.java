@@ -69,7 +69,7 @@ public class TimeTrialGameActivity extends Activity {
             if (!event.isLongPress() && event.getRepeatCount() == 0) {
                 if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
                     gameHandler.gotKeyDown();
-                } else {
+                } else if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_FRESHLOAD || gameHandler.getGameState() == TimeTrialGameHandler.STATE_GAMEOVER) {
                     gameHandler.playCurrentLevel();
                 }
             }
@@ -184,25 +184,28 @@ public class TimeTrialGameActivity extends Activity {
 
     @Override
     protected void onResume() {
-        if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
-            gameHandler.setSensorPollingState(true);
-            gameHandler.resumeGame();
-        }
         super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+        gameHandler.setSensorPollingState(true);
+        if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_PAUSED) {
+            setTogglePauseImage(true);
+        }
     }
 
     @Override
     protected void onPause() {
+        super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
+        Log.i("AMP", "onpause timetrial");
         gameHandler.setSensorPollingState(false);
         if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
             gameHandler.pauseGame();
         }
         vibrationHandler.stopVibrate();
-        super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
+        Log.i("AMP", "ondestroy timetrial");
         announcementHandler.shutDown();
         vibrationHandler.stopVibrate();
         announcementHandler = null;
@@ -210,7 +213,6 @@ public class TimeTrialGameActivity extends Activity {
         gameHandler = null;
         prefs = null;
 
-        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     private void setUiGameState(int gameState) {
