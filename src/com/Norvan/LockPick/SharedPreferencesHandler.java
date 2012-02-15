@@ -45,13 +45,23 @@ public class SharedPreferencesHandler {
         return !prefs.contains("userType");
     }
 
-    public void setHighScore(int score) {
+    public void setSurvivalHighScore(int score) {
         SharedPreferences.Editor edit = prefs.edit();
         edit.putInt("puzzleHighScore", score);
         edit.commit();
     }
 
-    public int getHighScore() {
+    public int getSurvivalHighScore() {
         return prefs.getInt("puzzleHighScore", -1);
+    }
+
+    public void setTimeTrialHighScore(int score) {
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putInt("timetrialHighScore", score);
+        edit.commit();
+    }
+
+    public int getTimeTrialHighScore() {
+        return prefs.getInt("timetrialHighScore", -1);
     }
 }

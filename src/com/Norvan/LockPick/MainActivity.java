@@ -11,8 +11,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import com.Norvan.LockPick.Helpers.DevelopmentHelpers;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
+import com.Norvan.LockPick.SurvivalMode.SurvivalGameActivity;
+import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameActivity;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,12 +24,13 @@ import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
  */
 public class MainActivity extends Activity {
     private static final int REQ_FIRSTRUNACTIVITY = 1;
-    private static final int REQ_GAMEACTIVITY = 2;
+    private static final int REQ_SURVIVALGAMEACTIVITY = 2;
+    private static final int REQ_TIMETRIALGAMEACTIVITY = 2;
     private static final int REQ_INSTRUCTIONS = 3;
 
     int userType = 0;
 
-    Button butNewGame, butHelp, butSettings;
+    Button butNewSurvivalGame, butNewTimeTrialGame, butHelp, butSettings;
     VolumeToggleHelper volumeToggleHelper;
     ImageButton imgbutToggleVolume;
     Context context;
@@ -44,10 +46,12 @@ public class MainActivity extends Activity {
             showUnsuportedDialog();
             return;
         }
-        butNewGame = (Button) findViewById(R.id.butMainNewGame);
+        butNewSurvivalGame = (Button) findViewById(R.id.butMainNewSurvivalGame);
+        butNewTimeTrialGame = (Button) findViewById(R.id.butMainNewTimeTrialGame);
         butHelp = (Button) findViewById(R.id.butMainHelp);
         butSettings = (Button) findViewById(R.id.butMainSettings);
-        butNewGame.setOnClickListener(onClickListener);
+        butNewSurvivalGame.setOnClickListener(onClickListener);
+        butNewTimeTrialGame.setOnClickListener(onClickListener);
         butHelp.setOnClickListener(onClickListener);
         butSettings.setOnClickListener(onClickListener);
         butSettings.setText("Reset User Type");
@@ -80,7 +84,7 @@ public class MainActivity extends Activity {
                 }
             }
             break;
-            case REQ_GAMEACTIVITY: {
+            case REQ_SURVIVALGAMEACTIVITY: {
                 if (SharedPreferencesHandler.isFirstRun(context)) {
                     startFirstRunActivity();
                 } else {
@@ -99,10 +103,10 @@ public class MainActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (event.getRepeatCount() == 0 && !event.isLongPress()) {
                 if (userType == SharedPreferencesHandler.USER_BLIND) {
-                    startGameActivity();
+                    startSurvivalGameActivity();
                 } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
                     if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                        startGameActivity();
+                        startSurvivalGameActivity();
                     } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                         announcementHandler.playDeafBlindInstructions();
                     }
@@ -132,8 +136,10 @@ public class MainActivity extends Activity {
         public void onClick(View v) {
             if (imgbutToggleVolume.equals(v)) {
                 volumeToggleHelper.toggleMute();
-            } else if (butNewGame.equals(v)) {
-                startGameActivity();
+            } else if (butNewSurvivalGame.equals(v)) {
+                startSurvivalGameActivity();
+            } else if (butNewTimeTrialGame.equals(v)) {
+                startTimeTrialGameActivity();
             } else if (butHelp.equals(v)) {
                 startInstructionsActivity();
             } else if (butSettings.equals(v)) {
@@ -143,8 +149,12 @@ public class MainActivity extends Activity {
     };
 
 
-    private void startGameActivity() {
-        startActivityForResult(new Intent(context, GameActivity.class), REQ_GAMEACTIVITY);
+    private void startSurvivalGameActivity() {
+        startActivityForResult(new Intent(context, SurvivalGameActivity.class), REQ_SURVIVALGAMEACTIVITY);
+    }
+
+    private void startTimeTrialGameActivity() {
+        startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
     }
 
     private void startFirstRunActivity() {

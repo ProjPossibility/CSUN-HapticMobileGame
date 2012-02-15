@@ -75,7 +75,7 @@ public class AnnouncementHandler {
     }
 
     public void levelWon(float time, int wonLevel) {
-        vibrationHandler.playHappy();
+
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
             if (wonLevel > 8) {
@@ -96,7 +96,7 @@ public class AnnouncementHandler {
     }
 
     public void levelLost(int level, int picksLeft) {
-        vibrationHandler.playSad();
+
 
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
@@ -118,11 +118,10 @@ public class AnnouncementHandler {
     }
 
     public void gameOver(int maxLevel) {
-        vibrationHandler.playSad();
 
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
-            if (new SharedPreferencesHandler(context).getHighScore() < maxLevel) {
+            if (new SharedPreferencesHandler(context).getSurvivalHighScore() < maxLevel) {
                 tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". A new high score! Press volume for a new game.");
             } else {
                 tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". Press volume for a new game.");

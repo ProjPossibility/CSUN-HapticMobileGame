@@ -1,28 +1,24 @@
-package com.Norvan.LockPick;
+package com.Norvan.LockPick.SurvivalMode;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import com.Norvan.LockPick.*;
 import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 
-public class GameActivity extends Activity
+public class SurvivalGameActivity extends Activity
 
 {
     LinearLayout linearChrono;
     VolumeToggleHelper volumeToggleHelper;
     VibrationHandler vibrationHandler;
-    GameHandler gameHandler;
+    SurvivalGameHandler gameHandler;
     TextView textPicksLeft, textLevelLabel, textGameOver, textHighScore;
     ImageButton imgbutToggleVolume;
     Button butGameButton;
@@ -37,10 +33,10 @@ public class GameActivity extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gamelayout);
+        setContentView(R.layout.survivalgamelayout);
         context = this;
         vibrationHandler = new VibrationHandler(this);
-        gameHandler = new GameHandler(this, gameStatusInterface, vibrationHandler);
+        gameHandler = new SurvivalGameHandler(this, gameStatusInterface, vibrationHandler);
         textPicksLeft = (TextView) findViewById(R.id.textPicksLeft);
         textLevelLabel = (TextView) findViewById(R.id.textLevelLabel);
         textGameOver = (TextView) findViewById(R.id.textGameOverLabel);
@@ -55,8 +51,8 @@ public class GameActivity extends Activity
 
         chronoTimer.setKeepScreenOn(true);
         prefs = new SharedPreferencesHandler(this);
-        setHighScore(prefs.getHighScore() + 1);
-        setUiGameState(GameHandler.STATE_FRESHLOAD);
+        setHighScore(prefs.getSurvivalHighScore() + 1);
+        setUiGameState(SurvivalGameHandler.STATE_FRESHLOAD);
         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
 
         chronoTimer.setOnChronometerTickListener(onTick);
@@ -85,7 +81,7 @@ public class GameActivity extends Activity
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (!event.isLongPress() && event.getRepeatCount() == 0) {
-                if (gameHandler.getGameState() == GameHandler.STATE_INGAME) {
+                if (gameHandler.getGameState() == SurvivalGameHandler.STATE_INGAME) {
                     gameHandler.gotKeyDown();
                 } else {
                     gameHandler.playCurrentLevel();
@@ -117,16 +113,16 @@ public class GameActivity extends Activity
     };
 
 
-    public GameHandler.GameStatusInterface gameStatusInterface = new GameHandler.GameStatusInterface() {
+    public SurvivalGameHandler.GameStatusInterface gameStatusInterface = new SurvivalGameHandler.GameStatusInterface() {
         @Override
         public void newGameStart() {
-            setUiGameState(GameHandler.STATE_FRESHLOAD);
-            setHighScore(prefs.getHighScore() + 1);
+            setUiGameState(SurvivalGameHandler.STATE_FRESHLOAD);
+            setHighScore(prefs.getSurvivalHighScore() + 1);
         }
 
         @Override
         public void levelStart(int level, int picksLeft) {
-            setUiGameState(GameHandler.STATE_INGAME);
+            setUiGameState(SurvivalGameHandler.STATE_INGAME);
             chronoTimer.setBase(SystemClock.elapsedRealtime());
             chronoTimer.start();
             setPicksLeft(picksLeft);
@@ -146,7 +142,7 @@ public class GameActivity extends Activity
 
         @Override
         public void levelWon(int levelWon, int picksLeft) {
-            setUiGameState(GameHandler.STATE_BETWEENLEVELS);
+            setUiGameState(SurvivalGameHandler.STATE_BETWEENLEVELS);
             butGameButton.setText("Next Level");
             chronoTimer.stop();
             float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
@@ -158,7 +154,7 @@ public class GameActivity extends Activity
 
         @Override
         public void levelLost(int level, int picksLeft) {
-            setUiGameState(GameHandler.STATE_BETWEENLEVELS);
+            setUiGameState(SurvivalGameHandler.STATE_BETWEENLEVELS);
 
             butGameButton.setText("Try Again");
             chronoTimer.stop();
@@ -169,15 +165,15 @@ public class GameActivity extends Activity
 
         @Override
         public void gameOver(int maxLevel) {
-            setUiGameState(GameHandler.STATE_GAMEOVER);
+            setUiGameState(SurvivalGameHandler.STATE_GAMEOVER);
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
-            if (prefs.getHighScore() < maxLevel) {
+            if (prefs.getSurvivalHighScore() < maxLevel) {
                 textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel) + "\nNEW RECORD!");
-                prefs.setHighScore(maxLevel);
+                prefs.setSurvivalHighScore(maxLevel);
                 setHighScore(maxLevel + 1);
             } else {
-                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel + 1) + "\nRecord: " + String.valueOf(prefs.getHighScore()));
+                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel + 1) + "\nRecord: " + String.valueOf(prefs.getSurvivalHighScore()));
             }
 
 
@@ -205,7 +201,7 @@ public class GameActivity extends Activity
 
     @Override
     protected void onResume() {
-        if (gameHandler.getGameState() == GameHandler.STATE_INGAME) {
+        if (gameHandler.getGameState() == SurvivalGameHandler.STATE_INGAME) {
             gameHandler.setSensorPollingState(true);
             chronoTimer.setBase(getCurrentTime() - gamePausedChronoProgress);
             chronoTimer.start();
@@ -216,7 +212,7 @@ public class GameActivity extends Activity
     @Override
     protected void onPause() {
         gameHandler.setSensorPollingState(false);
-        if (gameHandler.getGameState() == GameHandler.STATE_INGAME) {
+        if (gameHandler.getGameState() == SurvivalGameHandler.STATE_INGAME) {
             gamePausedChronoProgress = getCurrentTime() - chronoTimer.getBase();
             chronoTimer.stop();
         }
@@ -238,7 +234,7 @@ public class GameActivity extends Activity
 
     private void setUiGameState(int gameState) {
         switch (gameState) {
-            case GameHandler.STATE_FRESHLOAD: {
+            case SurvivalGameHandler.STATE_FRESHLOAD: {
                 butGameButton.setVisibility(View.VISIBLE);
                 textGameOver.setVisibility(View.GONE);
                 linearChrono.setVisibility(View.GONE);
@@ -248,7 +244,7 @@ public class GameActivity extends Activity
                 setLevelLabel(0);
             }
             break;
-            case GameHandler.STATE_INGAME: {
+            case SurvivalGameHandler.STATE_INGAME: {
                 textLevelLabel.setVisibility(View.VISIBLE);
                 butGameButton.setVisibility(View.GONE);
                 textGameOver.setVisibility(View.GONE);
@@ -258,7 +254,7 @@ public class GameActivity extends Activity
 
             }
             break;
-            case GameHandler.STATE_BETWEENLEVELS: {
+            case SurvivalGameHandler.STATE_BETWEENLEVELS: {
                 textLevelLabel.setVisibility(View.VISIBLE);
                 butGameButton.setVisibility(View.VISIBLE);
                 textGameOver.setVisibility(View.GONE);
@@ -267,7 +263,7 @@ public class GameActivity extends Activity
                 textHighScore.setVisibility(View.GONE);
             }
             break;
-            case GameHandler.STATE_GAMEOVER: {
+            case SurvivalGameHandler.STATE_GAMEOVER: {
                 textLevelLabel.setVisibility(View.GONE);
                 butGameButton.setVisibility(View.VISIBLE);
                 textGameOver.setVisibility(View.VISIBLE);

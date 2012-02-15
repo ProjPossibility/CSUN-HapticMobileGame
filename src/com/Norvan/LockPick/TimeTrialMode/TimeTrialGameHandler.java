@@ -1,20 +1,19 @@
-package com.Norvan.LockPick;
+package com.Norvan.LockPick.TimeTrialMode;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
+import com.Norvan.LockPick.LevelHandler;
+import com.Norvan.LockPick.SensorHandler;
+import com.Norvan.LockPick.VibrationHandler;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ngorgi
- * Date: 2/5/12
- * Time: 12:38 AM
+ * User: ngorgi-dev
+ * Date: 2/14/12
+ * Time: 3:34 PM
  * To change this template use File | Settings | File Templates.
  */
-public class GameHandler {
-    int numberOfPicksLeft = 5;
+public class TimeTrialGameHandler {
     int currentLevel = 0;
     VibrationHandler vibrationHandler;
     SensorHandler sensorHandler;
@@ -32,21 +31,29 @@ public class GameHandler {
     public static final int STATE_BETWEENLEVELS = 2;
     public static final int STATE_GAMEOVER = 3;
     boolean gyroExists;
+    TimingHandler timingHandler;
 
-    public GameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler) {
+    boolean isPaused = false;
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public TimeTrialGameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler, TimingHandler timingHandler) {
         this.context = context;
         this.gameStatusInterface = gameStatusInterface;
+        this.timingHandler = timingHandler;
         this.vibrationHandler = vibrationHandler;
+        this.vibrationHandler.setVibrationCompletedInterface(vibrationCompletedInterface);
         levelHandler = new LevelHandler(0);
         sensorHandler = new SensorHandler(context, sensorHandlerInterface);
         currentLevel = 0;
-        gyroExists = context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)  ;
+        gyroExists = SensorHandler.hasGyro(context);
 
-
+        timingHandler.setTimingHandlerInterface(timingHandlerInterface);
         if (!gyroExists) {
             angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * 500;
         }
-
     }
 
     public void setSensorPollingState(boolean state) {
@@ -70,12 +77,25 @@ public class GameHandler {
 
 
     public void playCurrentLevel() {
-        levelHandler = new LevelHandler(currentLevel);
-        keyPressed = false;
-        gameStatusInterface.levelStart(currentLevel, numberOfPicksLeft);
-        gameState = STATE_INGAME;
-        if (!isPolling) {
-            sensorHandler.startPolling();
+        if (gameState == STATE_BETWEENLEVELS) {
+
+            levelHandler = new LevelHandler(currentLevel);
+            keyPressed = false;
+            gameStatusInterface.levelStart(currentLevel, timingHandler.getTimeLeft());
+            gameState = STATE_INGAME;
+            if (!isPolling) {
+                sensorHandler.startPolling();
+            }
+        } else if (gameState == STATE_FRESHLOAD || gameState == STATE_GAMEOVER) {
+
+            levelHandler = new LevelHandler(currentLevel);
+            keyPressed = false;
+            timingHandler.startTimerNew();
+            gameStatusInterface.levelStart(currentLevel, timingHandler.getTimeLeft());
+            gameState = STATE_INGAME;
+            if (!isPolling) {
+                sensorHandler.startPolling();
+            }
         }
     }
 
@@ -127,10 +147,10 @@ public class GameHandler {
                     if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
                         int intensity = levelHandler.getIntensityForPosition(tilt);
                         if (!gyroExists) {
-                            intensity = (int)(intensity *0.7) ;
+                            intensity = (int) (intensity * 0.7);
                         }
 
-                        if (intensity <0) {
+                        if (intensity < 0) {
                             vibrationHandler.stopVibrate();
                         } else {
                             vibrationHandler.pulsePWM(intensity);
@@ -150,24 +170,51 @@ public class GameHandler {
         }
     };
 
+    VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
+        @Override
+        public void vibrationCompleted() {
+            if (gameState == STATE_BETWEENLEVELS) {
+                playCurrentLevel();
+                timingHandler.resumeTimer();
+            }
+        }
+    };
+
+    TimingHandler.TimingHandlerInterface timingHandlerInterface = new TimingHandler.TimingHandlerInterface() {
+        @Override
+        public void gotSecondsTick(long timeLeft) {
+            gameStatusInterface.updateTimeLeft(timeLeft);
+        }
+
+        @Override
+        public void timeIsUp() {
+            gameOver();
+        }
+    };
+
+    private void gameOver() {
+        gameState = STATE_GAMEOVER;
+        timingHandler.pauseTimer();
+        gameStatusInterface.gameOver(currentLevel);
+        currentLevel = 0;
+    }
+
     private void levelLost() {
         vibrationHandler.stopVibrate();
+        timingHandler.pauseTimer();
+        vibrationHandler.playSadNotified();
         gameState = STATE_BETWEENLEVELS;
-        if (numberOfPicksLeft == 0) {
-            gameState = STATE_GAMEOVER;
-            gameStatusInterface.gameOver(currentLevel);
-            currentLevel = 0;
-            numberOfPicksLeft = 5;
-        } else {
-            numberOfPicksLeft--;
-            gameStatusInterface.levelLost(currentLevel, numberOfPicksLeft);
-        }
+        gameStatusInterface.levelLost(currentLevel);
+
     }
 
     private void levelWon() {
         gameState = STATE_BETWEENLEVELS;
         vibrationHandler.stopVibrate();
-        gameStatusInterface.levelWon(currentLevel, numberOfPicksLeft);
+        timingHandler.pauseTimer();
+        timingHandler.addLevelWinTime(currentLevel);
+        vibrationHandler.playHappyNotified();
+        gameStatusInterface.levelWon(currentLevel);
         currentLevel++;
 
     }
@@ -175,21 +222,39 @@ public class GameHandler {
     public interface GameStatusInterface {
         public void newGameStart();
 
-        public void levelStart(int level, int picksLeft);
+        public void levelStart(int level, long timeLeft);
 
-        public void levelWon(int newLevel, int picksLeft);
+        public void levelWon(int level);
 
-        public void levelLost(int level, int picksLeft);
+        public void levelLost(int level);
 
         public void gameOver(int maxLevel);
+
+        public void updateTimeLeft(long timeLeft);
     }
 
-    public int[] getLevelData() {
-        //TODO remove
-        return levelHandler.getLevelData();
+    public void pauseGame() {
+        isPaused = true;
+        timingHandler.pauseTimer();
     }
 
-    public int getTargetLocation() {
-        return levelHandler.getTargetLocation();
+    public void resumeGame() {
+        isPaused = false;
+        timingHandler.resumeTimer();
     }
+
+    public boolean togglePause() {
+        if (isPaused) {
+            isPaused = false;
+            timingHandler.resumeTimer();
+            return false;
+        } else {
+            isPaused = true;
+            timingHandler.pauseTimer();
+            return true;
+
+        }
+    }
+
+
 }

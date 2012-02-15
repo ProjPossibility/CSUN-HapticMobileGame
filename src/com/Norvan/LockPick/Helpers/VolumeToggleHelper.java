@@ -28,7 +28,7 @@ public class VolumeToggleHelper {
     }
 
     private void setVolumeToggleImage(boolean isMute) {
-        toggleImage.setImageResource(isMute ? R.drawable.ic_audio_vol : R.drawable.ic_audio_vol_mute);
+        toggleImage.setImageResource(isMute ? R.drawable.ic_audio_vol_mute : R.drawable.ic_audio_vol);
     }
 
     public boolean toggleMute(){

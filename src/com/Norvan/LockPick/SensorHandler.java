@@ -42,8 +42,7 @@ public class SensorHandler {
         this.context = context;
         this.sensorHandlerInterface = sensorHandlerInterface;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        PackageManager paM = context.getPackageManager();
-        gyroExists = paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
+        gyroExists = hasGyro(context);
         angularVelocityBuffer = new ArrayList<Float>();
         angularVelocityBuffer.add(0f);
         angularVelocityBuffer.add(0f);
@@ -201,6 +200,11 @@ public class SensorHandler {
         public void newValues(float angularVelocity, int tilt);
         public void notOnSide();
 
+    }
+
+    public static boolean hasGyro(Context context){
+        PackageManager paM = context.getPackageManager();
+        return paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
     }
 
 
