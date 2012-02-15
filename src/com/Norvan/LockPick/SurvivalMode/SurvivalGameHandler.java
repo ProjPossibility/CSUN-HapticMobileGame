@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
+import com.Norvan.LockPick.Helpers.GameVariables;
 import com.Norvan.LockPick.LevelHandler;
 import com.Norvan.LockPick.SensorHandler;
 import com.Norvan.LockPick.VibrationHandler;
@@ -54,7 +55,7 @@ public class SurvivalGameHandler {
 
 
         if (!gyroExists) {
-            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * 500;
+            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * GameVariables.nonGyroSensativityScalar;
         }
 
     }

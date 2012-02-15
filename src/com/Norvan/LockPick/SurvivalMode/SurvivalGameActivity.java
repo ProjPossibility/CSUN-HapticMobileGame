@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 import com.Norvan.LockPick.*;
+import com.Norvan.LockPick.Helpers.AnalyticsHelper;
 import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameHandler;
@@ -30,6 +31,7 @@ public class SurvivalGameActivity extends Activity
     ResponseHelper responseHelper;
     long gamePausedChronoProgress;
     GraphView graphView;
+    AnalyticsHelper analyticsHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,8 @@ public class SurvivalGameActivity extends Activity
         chronoTimer.setOnChronometerTickListener(onTick);
         responseHelper = new ResponseHelper(context);
 
+        analyticsHelper = new AnalyticsHelper(this);
+        analyticsHelper.startSurvivalActivity();
 
     }
 
@@ -105,6 +109,7 @@ public class SurvivalGameActivity extends Activity
         @Override
         public void onClick(View view) {
             if (butGameButton.equals(view)) {
+
                 gameHandler.playCurrentLevel();
             } else if (imgbutToggleVolume.equals(view)) {
                 volumeToggleHelper.toggleMute();
@@ -126,6 +131,7 @@ public class SurvivalGameActivity extends Activity
         public void newGameStart() {
             setUiGameState(SurvivalGameHandler.STATE_FRESHLOAD);
             setHighScore(prefs.getSurvivalHighScore() + 1);
+            analyticsHelper.newSurvivalGame();
         }
 
         @Override
@@ -154,7 +160,7 @@ public class SurvivalGameActivity extends Activity
             butGameButton.setText("Next Level");
             chronoTimer.stop();
             float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
-
+            analyticsHelper.winSurvivalLevel(levelWon, (int) levelTime, picksLeft);
             setPicksLeft(picksLeft);
             announcementHandler.levelWon(levelTime, levelWon);
 
@@ -166,7 +172,7 @@ public class SurvivalGameActivity extends Activity
 
             butGameButton.setText("Try Again");
             chronoTimer.stop();
-
+            analyticsHelper.loseSurvivalLevel(level, (int) (SystemClock.elapsedRealtime() - chronoTimer.getBase()), picksLeft);
             setPicksLeft(picksLeft);
             announcementHandler.levelLost(level, picksLeft);
         }
@@ -176,6 +182,7 @@ public class SurvivalGameActivity extends Activity
             setUiGameState(SurvivalGameHandler.STATE_GAMEOVER);
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
+            analyticsHelper.gameOverSurvival(maxLevel);
             if (prefs.getSurvivalHighScore() < maxLevel) {
                 textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel) + "\nNEW RECORD!");
                 prefs.setSurvivalHighScore(maxLevel);
@@ -248,7 +255,8 @@ public class SurvivalGameActivity extends Activity
         vibrationHandler = null;
         gameHandler = null;
         prefs = null;
-
+        analyticsHelper.exitSurvival();
+        analyticsHelper = null;
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
     }
 

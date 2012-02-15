@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import com.Norvan.LockPick.Helpers.AnalyticsHelper;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.SurvivalMode.SurvivalGameActivity;
 import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameActivity;
@@ -68,6 +69,9 @@ public class MainActivity extends Activity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         userType = SharedPreferencesHandler.getUserType(context);
         announcementHandler.mainActivityLaunch();
+        AnalyticsHelper analyticsHelper = new AnalyticsHelper(this);
+        analyticsHelper.startApp(userType);
+        analyticsHelper = null;
     }
 
 

@@ -204,7 +204,10 @@ public class SensorHandler {
 
     public static boolean hasGyro(Context context){
         PackageManager paM = context.getPackageManager();
-        return paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
+        boolean hasGyro = paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
+
+
+        return hasGyro;
     }
 
 

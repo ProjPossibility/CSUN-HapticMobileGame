@@ -3,6 +3,7 @@ package com.Norvan.LockPick;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
+import com.Norvan.LockPick.Helpers.AnalyticsHelper;
 import com.Norvan.LockPick.R;
 
 /**
@@ -14,7 +15,7 @@ import com.Norvan.LockPick.R;
  */
 public class Instructions extends Activity {
     VibrationHandler vibrationHandler;
-
+    AnalyticsHelper analyticsHelper;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.instructionslayout);
@@ -29,6 +30,8 @@ public class Instructions extends Activity {
             vibrationHandler.playString(getResources().getString(R.string.instructionsDeafBlind));
 
         }
+        analyticsHelper = new AnalyticsHelper(this);
+        analyticsHelper.startHelpScreenActivity();
     }
 
     @Override
@@ -37,5 +40,11 @@ public class Instructions extends Activity {
         if (vibrationHandler != null) {
             vibrationHandler.stopVibrate();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
+        analyticsHelper.exitHelpScreen();
     }
 }

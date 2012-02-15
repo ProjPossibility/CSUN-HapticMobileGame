@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 import com.Norvan.LockPick.*;
+import com.Norvan.LockPick.Helpers.AnalyticsHelper;
 import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 
@@ -31,6 +32,8 @@ public class TimeTrialGameActivity extends Activity {
     Context context;
     ResponseHelper responseHelper;
     TimingHandler timingHandler;
+
+    AnalyticsHelper analyticsHelper;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +62,8 @@ public class TimeTrialGameActivity extends Activity {
         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
         responseHelper = new ResponseHelper(context);
 
+        analyticsHelper = new AnalyticsHelper(this);
+        analyticsHelper.startTimeTrialActivity();
 
     }
 
@@ -109,6 +114,7 @@ public class TimeTrialGameActivity extends Activity {
         public void newGameStart() {
             setUiGameState(TimeTrialGameHandler.STATE_FRESHLOAD);
             setHighScore(prefs.getTimeTrialHighScore() + 1);
+            analyticsHelper.newTimeTrialGame();
         }
 
         @Override
@@ -117,6 +123,7 @@ public class TimeTrialGameActivity extends Activity {
 //            chronoTimer.setBase(SystemClock.elapsedRealtime());
 //            chronoTimer.start();
             setLevelLabel(level);
+
 //            announcementHandler.levelStart(level, picksLeft);
         }
 
@@ -124,7 +131,7 @@ public class TimeTrialGameActivity extends Activity {
         public void levelWon(int level) {
             textLevelResult.setText("Lock Picked!");
             setUiGameState(TimeTrialGameHandler.STATE_BETWEENLEVELS);
-
+            analyticsHelper.winTimeTrialLevel(level, gameHandler.getSecondsLeft());
 //            butGameButton.setText("Next Level");
 //            chronoTimer.stop();
 //            float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
@@ -136,6 +143,7 @@ public class TimeTrialGameActivity extends Activity {
         public void levelLost(int level) {
             textLevelResult.setText("Pick Broke");
             setUiGameState(TimeTrialGameHandler.STATE_BETWEENLEVELS);
+            analyticsHelper.loseTimeTrialLevel(level, gameHandler.getSecondsLeft());
 
 //            butGameButton.setText("Try Again");
 //            chronoTimer.stop();
@@ -149,6 +157,7 @@ public class TimeTrialGameActivity extends Activity {
             setUiGameState(TimeTrialGameHandler.STATE_GAMEOVER);
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
+            analyticsHelper.gameOverTimeTrial(maxLevel);
             if (prefs.getTimeTrialHighScore() < maxLevel) {
                 textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel) + "\nNEW RECORD!");
                 prefs.setTimeTrialHighScore(maxLevel);
@@ -212,6 +221,8 @@ public class TimeTrialGameActivity extends Activity {
         vibrationHandler = null;
         gameHandler = null;
         prefs = null;
+        analyticsHelper.exitTimeTrial();
+        analyticsHelper = null;
 
     }
 
