@@ -54,9 +54,9 @@ public class TTSHandler {
     };
 
 
-
     public void speakPhrase(String phrase) {
         if (goodToGo) {
+            mTts.setSpeechRate(1);
             mTts.speak(phrase, TextToSpeech.QUEUE_FLUSH, null);
         } else {
             notReadyBuffer = phrase;
@@ -64,7 +64,7 @@ public class TTSHandler {
         }
     }
 
-    public void shutUp(){
+    public void shutUp() {
         mTts.stop();
     }
 
@@ -73,6 +73,15 @@ public class TTSHandler {
             mTts.shutdown();
         } catch (Exception e) {
         }
+    }
+
+    public void speakFast(String phrase) {   if (goodToGo) {
+        mTts.setSpeechRate(1.3f);
+        mTts.speak(phrase, TextToSpeech.QUEUE_FLUSH, null);
+    } else {
+        notReadyBuffer = phrase;
+
+    }
     }
 
 

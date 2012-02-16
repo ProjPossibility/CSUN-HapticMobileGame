@@ -34,7 +34,7 @@ public class TimeTrialGameHandler {
     public static final int STATE_PAUSED = 4;
     boolean gyroExists;
     TimingHandler timingHandler;
-
+    long levelStartTimeLeft;
 
     public TimeTrialGameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler, TimingHandler timingHandler) {
         this.context = context;
@@ -75,14 +75,14 @@ public class TimeTrialGameHandler {
 
     public void playCurrentLevel() {
         if (gameState == STATE_BETWEENLEVELS) {
-
+            levelStartTimeLeft = timingHandler.getTimeLeft();
             levelHandler = new LevelHandler(currentLevel);
             keyPressed = false;
             gameStatusInterface.levelStart(currentLevel, timingHandler.getTimeLeft());
             gameState = STATE_INGAME;
 
         } else if (gameState == STATE_FRESHLOAD || gameState == STATE_GAMEOVER) {
-
+            levelStartTimeLeft = 0;
             levelHandler = new LevelHandler(currentLevel);
             keyPressed = false;
             timingHandler.startTimerNew();
@@ -112,7 +112,6 @@ public class TimeTrialGameHandler {
                 if (keyPressed) {
                     switch (levelHandler.getUnlockedState(tilt)) {
                         case -1://Pick Broken
-                            gameState = STATE_BETWEENLEVELS;
                             levelLost();
                             break;
                         case 0: //In Progress
@@ -131,7 +130,6 @@ public class TimeTrialGameHandler {
                         case 1: //A WINRAR IS YOU!!!
 
                             levelWon();
-                            gameState = STATE_BETWEENLEVELS;
                             break;
                     }
                 } else {
@@ -205,9 +203,11 @@ public class TimeTrialGameHandler {
         gameState = STATE_BETWEENLEVELS;
         vibrationHandler.stopVibrate();
         timingHandler.pauseTimer();
+        long levelTime = levelStartTimeLeft - timingHandler.getTimeLeft();
         timingHandler.addLevelWinTime(currentLevel);
         vibrationHandler.playHappyNotified();
-        gameStatusInterface.levelWon(currentLevel);
+        Log.i("AMP", "leveltim "+ String.valueOf(levelTime));
+        gameStatusInterface.levelWon(currentLevel, levelTime );
         currentLevel++;
 
     }
@@ -215,9 +215,9 @@ public class TimeTrialGameHandler {
     public interface GameStatusInterface {
         public void newGameStart();
 
-        public void levelStart(int level, long timeLeft);
+        public void levelStart(int level, long levelTime);
 
-        public void levelWon(int level);
+        public void levelWon(int level, long time);
 
         public void levelLost(int level);
 
@@ -229,6 +229,7 @@ public class TimeTrialGameHandler {
     public void pauseGame() {
         gameState = STATE_PAUSED;
         timingHandler.pauseTimer();
+        vibrationHandler.stopVibrate();
     }
 
     public void resumeGame() {

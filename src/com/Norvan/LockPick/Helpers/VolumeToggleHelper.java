@@ -21,7 +21,6 @@ public class VolumeToggleHelper {
     public VolumeToggleHelper(Context context, ImageButton toggleImage) {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         isMuted = isVolumeMuted();
-        Log.i("AMP", "ismuted " + String.valueOf(isMuted));
         this.toggleImage = toggleImage;
         setVolumeToggleImage(isMuted);
 

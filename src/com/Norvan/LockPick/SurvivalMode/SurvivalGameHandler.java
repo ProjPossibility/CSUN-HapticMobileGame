@@ -209,12 +209,12 @@ public class SurvivalGameHandler {
     VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
         @Override
         public void vibrationCompleted() {
-             Log.i("AMP", "vibeDone");
         }
     };
 
     public void pauseGame() {
         gameState = STATE_PAUSED;
+        vibrationHandler.stopVibrate();
 
     }
 

@@ -1,6 +1,7 @@
 package com.Norvan.LockPick;
 
 import android.content.Context;
+import android.widget.Toast;
 import com.Norvan.LockPick.Helpers.ResponseHelper;
 
 /**
@@ -145,6 +146,29 @@ public class AnnouncementHandler {
     private String getTimeString(float time) {
         int seconds = (int) time / 1000;
         return String.valueOf(seconds) + " seconds";
+
+    }
+
+    public void announceTimeLeft(int secondsLeft) {
+        if (secondsLeft <= 60 && secondsLeft > 25) {
+            if (secondsLeft % 10 == 0) { //Every 10 seconds between 60 and 25 seconds
+                tts.speakFast(String.valueOf(secondsLeft) + " seconds remaining");
+            }
+        } else if (secondsLeft <= 25 && secondsLeft > 10) {
+            if (secondsLeft % 5 == 0) { //Every 5 seconds between 25 and 10 seconds 
+                tts.speakPhrase(String.valueOf(secondsLeft) + " seconds");
+            }
+        } else if (secondsLeft <= 10 && secondsLeft > 1) {
+            tts.speakPhrase(String.valueOf(secondsLeft));
+        }
+    }
+    
+    
+    public void confirmBackButton() {
+        if (userType == SharedPreferencesHandler.USER_BLIND) {
+            tts.speakPhrase("Press back again to exit");
+        }
+        Toast.makeText(context, "Press back again to quit", Toast.LENGTH_SHORT).show();
 
     }
 }

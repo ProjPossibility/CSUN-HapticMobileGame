@@ -20,12 +20,12 @@
                 android:id="@+id/butMainNewSurvivalGame"
                 android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
         <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:textSize="35sp"
-                android:text="Time Trial Mode" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"
+                android:text="Time Attack" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"
                 android:layout_above="@+id/mainCenter" android:contentDescription="New Game"
                 android:id="@+id/butMainNewTimeTrialGame"
                 android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
         <ImageView android:layout_height="0px" android:layout_width="0px" android:id="@+id/mainCenter"
-                   android:layout_centerInParent="true" />
+                   android:layout_centerInParent="true"/>
         <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:textSize="35sp"
                 android:id="@+id/butMainHelp" android:layout_below="@+id/mainCenter" android:contentDescription="Help"
                 android:text="Help" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"

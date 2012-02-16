@@ -9,10 +9,14 @@
                  android:layout_height="50dp" android:scaleType="fitCenter"
                  android:layout_margin="10dp" android:id="@+id/imgbutGameVolume"
                  android:layout_alignParentRight="true" android:src="@drawable/ic_audio_vol_mute"/>
-
+    <TextView android:id="@+id/textModeDescription" android:layout_height="fill_parent" android:textSize="40sp"
+              android:layout_margin="10dp"
+              android:text="\nTime Attack\n\nStart with 30 seconds and pick locks to get more time"
+              android:gravity="center_horizontal"
+              android:layout_width="fill_parent"  />
 
     <TextView
-            android:layout_width="fill_parent" android:id="@+id/textLevelLabel" android:text="Level 1"
+            android:layout_width="fill_parent" android:id="@+id/textLevelLabel" android:text=""
             android:layout_above="@+id/betweenCenter" android:gravity="center" android:textStyle="bold"
             android:contentDescription="Current Level"
             android:layout_height="fill_parent" android:textSize="65sp"

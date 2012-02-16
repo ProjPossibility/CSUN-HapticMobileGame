@@ -20,6 +20,12 @@ public class TimingHandler {
         this.timingHandlerInterface = timingHandlerInterface;
     }
 
+    UpdateTimeLeftInterface updateTimeLeftInterface;
+
+    public void setUpdateTimeLeftInterface(UpdateTimeLeftInterface updateTimeLeftInterface) {
+        this.updateTimeLeftInterface = updateTimeLeftInterface;
+    }
+
     TimingHandlerInterface timingHandlerInterface;
     private long pauseChronoElapsed = 0;
 
@@ -94,6 +100,7 @@ public class TimingHandler {
                 timingHandlerInterface.timeIsUp();
             } else {
                 timingHandlerInterface.gotSecondsTick(timeleft);
+                updateTimeLeftInterface.updateTimeLeft(timeleft);
             }
 
         }
@@ -103,6 +110,10 @@ public class TimingHandler {
         public void gotSecondsTick(long timeLeft);
 
         public void timeIsUp();
+    }
+
+    public interface UpdateTimeLeftInterface {
+        public void updateTimeLeft(long timeLeft);
     }
 
     private long getCurrentTime() {

@@ -12,22 +12,21 @@ import java.util.Random;
  * To change this template use File | Settings | File Templates.
  */
 public class LevelHandler {
-    private static final double sweetSpot = 0.25;
-    private static final double curvePower = 2;
+    private static final double sweetSpot = 0.3;
+    private static final double curvePower = 1.5;
     private static final int startingDifficulty = 1000;
     private static final float unlockDistanceMultiplier = 1.5f;
-    private boolean exponential = false;
+    private boolean exponential = true;
     private int targetLocation;
     private int difficulty;
     private int keyPressPosition;
     private float buttonPressProximity;
     private boolean currentTryWinnable = false;
     int[] levelData;
-    int[][] falsePositiveData;
-    int[] falsePositiveLocations;
+
 
     public LevelHandler(int levelNumber) {
-        difficulty = startingDifficulty - (levelNumber/3) * 100;
+        difficulty = startingDifficulty - (levelNumber / 3) * 100;
         if (difficulty < 150) {
             difficulty = 150;
         }
@@ -37,7 +36,7 @@ public class LevelHandler {
         for (int i = 0; i < difficulty; i++) {
             double percentage = 1.0f - (((double) i) / difficulty);
             if (exponential) {
-                levelData[i] = (int) (100 * (Math.pow(percentage, curvePower)));
+                levelData[i] = (int) (100 * (Math.pow(percentage+2, curvePower)));
             } else {
                 levelData[i] = (int) (100 * percentage);
             }
@@ -49,6 +48,7 @@ public class LevelHandler {
         keyPressPosition = position;
         buttonPressProximity = ((float) Math.abs(keyPressPosition - targetLocation)) / difficulty;
         currentTryWinnable = isCurrentTryWinnable();
+        Log.i("AMP", "location "+ String.valueOf(((float) Math.abs(keyPressPosition - targetLocation)) / difficulty));
     }
 
     public int getUnlockedState(int currentPosition) {
@@ -58,10 +58,20 @@ public class LevelHandler {
             } else {
                 return -1;
             }
-        } else if (((float) Math.abs(keyPressPosition - targetLocation) * unlockDistanceMultiplier) / difficulty > 1) {
+        } else if (isPickBroken(currentPosition)) {
             return -1;
         }
         return 0;
+    }
+
+    private boolean isPickBroken(int currentPosition) {
+        if (keyPressPosition - currentPosition < 20) {
+            return false;
+        } else if (((float) Math.abs(keyPressPosition - targetLocation) * unlockDistanceMultiplier) / difficulty > 1) {
+            return true;
+        }
+        return false;
+
     }
 
     private boolean isCurrentTryWinnable() {
@@ -118,7 +128,7 @@ public class LevelHandler {
         return levelData;
     }
 
-    public int getTargetLocation(){
+    public int getTargetLocation() {
         return targetLocation;
     }
 }

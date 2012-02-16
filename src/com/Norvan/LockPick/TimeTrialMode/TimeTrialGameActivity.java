@@ -3,6 +3,7 @@ package com.Norvan.LockPick.TimeTrialMode;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.Norvan.LockPick.*;
 import com.Norvan.LockPick.Helpers.AnalyticsHelper;
 import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
+import com.Norvan.LockPick.SurvivalMode.SurvivalGameHandler;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,7 +25,7 @@ public class TimeTrialGameActivity extends Activity {
     VolumeToggleHelper volumeToggleHelper;
     VibrationHandler vibrationHandler;
     TimeTrialGameHandler gameHandler;
-    TextView textLevelLabel, textGameOver, textHighScore, textTime, textLevelResult;
+    TextView textLevelLabel, textGameOver, textHighScore, textTime, textLevelResult, textModeDescription;
     ImageButton imgbutToggleVolume, imgbutTogglePause;
     Button butGameButton;
     Chronometer chronoTimer;
@@ -32,7 +34,7 @@ public class TimeTrialGameActivity extends Activity {
     Context context;
     ResponseHelper responseHelper;
     TimingHandler timingHandler;
-
+    ScoreHandler scoreHandler;
     AnalyticsHelper analyticsHelper;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class TimeTrialGameActivity extends Activity {
         textLevelLabel = (TextView) findViewById(R.id.textLevelLabel);
         textTime = (TextView) findViewById(R.id.textTime);
         textGameOver = (TextView) findViewById(R.id.textGameOverLabel);
+        textModeDescription = (TextView) findViewById(R.id.textModeDescription);
         textLevelResult = (TextView) findViewById(R.id.textLevelResult);
         textHighScore = (TextView) findViewById(R.id.textHighScore);
         imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutGameVolume);
@@ -64,6 +67,8 @@ public class TimeTrialGameActivity extends Activity {
 
         analyticsHelper = new AnalyticsHelper(this);
         analyticsHelper.startTimeTrialActivity();
+        timingHandler.setUpdateTimeLeftInterface(updateTimeLeftInterface);
+        scoreHandler = new ScoreHandler(prefs, ScoreHandler.MODE_TIMETRIAL);
 
     }
 
@@ -75,6 +80,7 @@ public class TimeTrialGameActivity extends Activity {
                 if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
                     gameHandler.gotKeyDown();
                 } else if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_FRESHLOAD || gameHandler.getGameState() == TimeTrialGameHandler.STATE_GAMEOVER) {
+                    textModeDescription.setVisibility(View.GONE);
                     gameHandler.playCurrentLevel();
                 }
             }
@@ -88,16 +94,44 @@ public class TimeTrialGameActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             gameHandler.gotKeyUp();
             return true;
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (backButtonPressed) {
+                finish();
+            } else if (gameHandler.getGameState() != TimeTrialGameHandler.STATE_FRESHLOAD && gameHandler.getGameState() != TimeTrialGameHandler.STATE_GAMEOVER) {
+                if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
+                    gameHandler.pauseGame();
+                    setTogglePauseImage(true);
+                }
+                showBackButtonConfirmation();
+            }  else{
+                finish();
+            }
+            return true;
         }
         return super.onKeyUp(keyCode, event);
     }
+
+    boolean backButtonPressed = false;
+
+    public void showBackButtonConfirmation() {
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(backButtonConfirm, 5000);
+        announcementHandler.confirmBackButton();
+        backButtonPressed = true;
+    }
+
+    Runnable backButtonConfirm = new Runnable() {
+        @Override
+        public void run() {
+            backButtonPressed = false;
+        }
+    };
 
     View.OnClickListener onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (butGameButton.equals(view)) {
-
-
+                textModeDescription.setVisibility(View.GONE);
                 gameHandler.playCurrentLevel();
             } else if (imgbutToggleVolume.equals(view)) {
                 volumeToggleHelper.toggleMute();
@@ -113,7 +147,8 @@ public class TimeTrialGameActivity extends Activity {
         @Override
         public void newGameStart() {
             setUiGameState(TimeTrialGameHandler.STATE_FRESHLOAD);
-            setHighScore(prefs.getTimeTrialHighScore() + 1);
+            setHighScore(scoreHandler.getHighScore());
+            scoreHandler.newGame();
             analyticsHelper.newTimeTrialGame();
         }
 
@@ -128,10 +163,11 @@ public class TimeTrialGameActivity extends Activity {
         }
 
         @Override
-        public void levelWon(int level) {
+        public void levelWon(int level, long levelTime) {
             textLevelResult.setText("Lock Picked!");
             setUiGameState(TimeTrialGameHandler.STATE_BETWEENLEVELS);
             analyticsHelper.winTimeTrialLevel(level, gameHandler.getSecondsLeft());
+            scoreHandler.wonLevel(levelTime);
 //            butGameButton.setText("Next Level");
 //            chronoTimer.stop();
 //            float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
@@ -158,12 +194,11 @@ public class TimeTrialGameActivity extends Activity {
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
             analyticsHelper.gameOverTimeTrial(maxLevel);
-            if (prefs.getTimeTrialHighScore() < maxLevel) {
-                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel) + "\nNEW RECORD!");
-                prefs.setTimeTrialHighScore(maxLevel);
-                setHighScore(maxLevel + 1);
+            if (scoreHandler.gameOver()) {
+                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\nNEW RECORD!");
+                setHighScore(scoreHandler.getCurrentScore());
             } else {
-                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel + 1) + "\nRecord: " + String.valueOf(prefs.getTimeTrialHighScore()));
+                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\nRecord: " + String.valueOf(scoreHandler.getHighScore()));
             }
 
 
@@ -236,7 +271,7 @@ public class TimeTrialGameActivity extends Activity {
                 imgbutTogglePause.setVisibility(View.GONE);
                 textHighScore.setVisibility(View.GONE);
                 textLevelLabel.setVisibility(View.VISIBLE);
-                setLevelLabel(0);
+//                setLevelLabel(0);
             }
             break;
             case TimeTrialGameHandler.STATE_INGAME: {
@@ -279,5 +314,13 @@ public class TimeTrialGameActivity extends Activity {
 
 
     }
+
+    TimingHandler.UpdateTimeLeftInterface updateTimeLeftInterface = new TimingHandler.UpdateTimeLeftInterface() {
+        @Override
+        public void updateTimeLeft(long timeLeft) {
+            int secondsLeft = (int) (timeLeft / 1000);
+            announcementHandler.announceTimeLeft(secondsLeft);
+        }
+    };
 
 }

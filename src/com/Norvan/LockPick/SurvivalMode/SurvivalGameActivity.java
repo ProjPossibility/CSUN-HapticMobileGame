@@ -3,6 +3,7 @@ package com.Norvan.LockPick.SurvivalMode;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -21,7 +22,7 @@ public class SurvivalGameActivity extends Activity
     VolumeToggleHelper volumeToggleHelper;
     VibrationHandler vibrationHandler;
     SurvivalGameHandler gameHandler;
-    TextView textPicksLeft, textLevelLabel, textGameOver, textHighScore;
+    TextView textPicksLeft, textLevelLabel, textGameOver, textHighScore, textModeDescription, textCurrentScore;
     ImageButton imgbutToggleVolume, imgbutTogglePause;
     Button butGameButton;
     Chronometer chronoTimer;
@@ -32,6 +33,7 @@ public class SurvivalGameActivity extends Activity
     long gamePausedChronoProgress;
     GraphView graphView;
     AnalyticsHelper analyticsHelper;
+    ScoreHandler scoreHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,9 @@ public class SurvivalGameActivity extends Activity
         gameHandler = new SurvivalGameHandler(this, gameStatusInterface, vibrationHandler);
         textPicksLeft = (TextView) findViewById(R.id.textPicksLeft);
         textLevelLabel = (TextView) findViewById(R.id.textLevelLabel);
+        textCurrentScore = (TextView) findViewById(R.id.textCurrentScore);
         textGameOver = (TextView) findViewById(R.id.textGameOverLabel);
+        textModeDescription = (TextView) findViewById(R.id.textModeDescription);
         textHighScore = (TextView) findViewById(R.id.textHighScore);
         linearChrono = (LinearLayout) findViewById(R.id.linearChrono);
         imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutGameVolume);
@@ -66,6 +70,7 @@ public class SurvivalGameActivity extends Activity
         analyticsHelper = new AnalyticsHelper(this);
         analyticsHelper.startSurvivalActivity();
 
+        scoreHandler = new ScoreHandler(prefs, ScoreHandler.MODE_SURVIVAL);
     }
 
     Chronometer.OnChronometerTickListener onTick = new Chronometer.OnChronometerTickListener() {
@@ -88,6 +93,7 @@ public class SurvivalGameActivity extends Activity
                 if (gameHandler.getGameState() == SurvivalGameHandler.STATE_INGAME) {
                     gameHandler.gotKeyDown();
                 } else if (gameHandler.getGameState() != SurvivalGameHandler.STATE_PAUSED) {
+                    textModeDescription.setVisibility(View.GONE);
                     gameHandler.playCurrentLevel();
                 }
             }
@@ -101,15 +107,45 @@ public class SurvivalGameActivity extends Activity
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             gameHandler.gotKeyUp();
             return true;
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (backButtonPressed) {
+                finish();
+            } else if (gameHandler.getGameState() != TimeTrialGameHandler.STATE_FRESHLOAD && gameHandler.getGameState() != TimeTrialGameHandler.STATE_GAMEOVER) {
+                if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
+                    gameHandler.pauseGame();
+                    setTogglePauseImage(true);
+                }
+                showBackButtonConfirmation();
+            } else {
+                finish();
+            }
+            return true;
         }
         return super.onKeyUp(keyCode, event);
     }
+
+    boolean backButtonPressed = false;
+
+    public void showBackButtonConfirmation() {
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(backButtonConfirm, 5000);
+        announcementHandler.confirmBackButton();
+        backButtonPressed = true;
+    }
+
+    Runnable backButtonConfirm = new Runnable() {
+        @Override
+        public void run() {
+            backButtonPressed = false;
+        }
+    };
+
 
     View.OnClickListener onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (butGameButton.equals(view)) {
-
+                textModeDescription.setVisibility(View.GONE);
                 gameHandler.playCurrentLevel();
             } else if (imgbutToggleVolume.equals(view)) {
                 volumeToggleHelper.toggleMute();
@@ -120,7 +156,7 @@ public class SurvivalGameActivity extends Activity
                 } else {
                     resumeGame();
                 }
-                setTogglePauseImage(isPaused);
+
             }
         }
     };
@@ -130,7 +166,8 @@ public class SurvivalGameActivity extends Activity
         @Override
         public void newGameStart() {
             setUiGameState(SurvivalGameHandler.STATE_FRESHLOAD);
-            setHighScore(prefs.getSurvivalHighScore() + 1);
+            scoreHandler.newGame();
+            setHighScore(scoreHandler.getHighScore());
             analyticsHelper.newSurvivalGame();
         }
 
@@ -141,6 +178,7 @@ public class SurvivalGameActivity extends Activity
             chronoTimer.start();
             setPicksLeft(picksLeft);
             setLevelLabel(level);
+            setScore();
             announcementHandler.levelStart(level, picksLeft);
 //            boolean needsToAdd = false;
 //            if (graphView == null) {
@@ -160,6 +198,7 @@ public class SurvivalGameActivity extends Activity
             butGameButton.setText("Next Level");
             chronoTimer.stop();
             float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
+            setTimeBonus(scoreHandler.wonLevel(levelTime));
             analyticsHelper.winSurvivalLevel(levelWon, (int) levelTime, picksLeft);
             setPicksLeft(picksLeft);
             announcementHandler.levelWon(levelTime, levelWon);
@@ -169,7 +208,7 @@ public class SurvivalGameActivity extends Activity
         @Override
         public void levelLost(int level, int picksLeft) {
             setUiGameState(SurvivalGameHandler.STATE_BETWEENLEVELS);
-
+            textCurrentScore.setVisibility(View.GONE);
             butGameButton.setText("Try Again");
             chronoTimer.stop();
             analyticsHelper.loseSurvivalLevel(level, (int) (SystemClock.elapsedRealtime() - chronoTimer.getBase()), picksLeft);
@@ -183,12 +222,11 @@ public class SurvivalGameActivity extends Activity
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
             analyticsHelper.gameOverSurvival(maxLevel);
-            if (prefs.getSurvivalHighScore() < maxLevel) {
-                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel) + "\nNEW RECORD!");
-                prefs.setSurvivalHighScore(maxLevel);
-                setHighScore(maxLevel + 1);
+            if (scoreHandler.gameOver()) {
+                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\nNEW RECORD!");
+
             } else {
-                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(maxLevel + 1) + "\nRecord: " + String.valueOf(prefs.getSurvivalHighScore()));
+                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\nRecord: " + String.valueOf(scoreHandler.getHighScore()));
             }
 
 
@@ -200,6 +238,13 @@ public class SurvivalGameActivity extends Activity
         }
     };
 
+    void setTimeBonus(int bonus) {
+        textCurrentScore.setText("Time Bonus: " + String.valueOf(bonus));
+    }
+
+    void setScore() {
+        textCurrentScore.setText("Score: " + String.valueOf(scoreHandler.getCurrentScore()));
+    }
 
     void setPicksLeft(int picks) {
         textPicksLeft.setText("Picks Left: " + String.valueOf(picks));
@@ -217,11 +262,13 @@ public class SurvivalGameActivity extends Activity
         gameHandler.pauseGame();
         gamePausedChronoProgress = getCurrentTime() - chronoTimer.getBase();
         chronoTimer.stop();
+        setTogglePauseImage(true);
     }
 
     private void resumeGame() {
         chronoTimer.setBase(getCurrentTime() - gamePausedChronoProgress);
         chronoTimer.start();
+        setTogglePauseImage(false);
     }
 
     @Override
@@ -268,9 +315,10 @@ public class SurvivalGameActivity extends Activity
                 linearChrono.setVisibility(View.GONE);
                 textPicksLeft.setVisibility(View.GONE);
                 textHighScore.setVisibility(View.GONE);
+                textCurrentScore.setVisibility(View.GONE);
                 textLevelLabel.setVisibility(View.VISIBLE);
                 imgbutTogglePause.setVisibility(View.GONE);
-                setLevelLabel(0);
+//                setLevelLabel(0);
             }
             break;
             case SurvivalGameHandler.STATE_INGAME: {
@@ -279,6 +327,7 @@ public class SurvivalGameActivity extends Activity
                 textGameOver.setVisibility(View.GONE);
                 linearChrono.setVisibility(View.VISIBLE);
                 textPicksLeft.setVisibility(View.VISIBLE);
+                textCurrentScore.setVisibility(View.VISIBLE);
                 imgbutTogglePause.setVisibility(View.VISIBLE);
                 textHighScore.setVisibility(View.VISIBLE);
 
@@ -290,6 +339,7 @@ public class SurvivalGameActivity extends Activity
                 textGameOver.setVisibility(View.GONE);
                 linearChrono.setVisibility(View.GONE);
                 textPicksLeft.setVisibility(View.GONE);
+                textCurrentScore.setVisibility(View.VISIBLE);
                 imgbutTogglePause.setVisibility(View.GONE);
                 textHighScore.setVisibility(View.GONE);
             }
@@ -300,6 +350,7 @@ public class SurvivalGameActivity extends Activity
                 textGameOver.setVisibility(View.VISIBLE);
                 linearChrono.setVisibility(View.GONE);
                 textPicksLeft.setVisibility(View.GONE);
+                textCurrentScore.setVisibility(View.GONE);
                 imgbutTogglePause.setVisibility(View.GONE);
                 textHighScore.setVisibility(View.GONE);
             }
@@ -313,8 +364,6 @@ public class SurvivalGameActivity extends Activity
 
     private void setTogglePauseImage(boolean isPaused) {
         imgbutTogglePause.setImageResource(isPaused ? R.drawable.ic_media_play : R.drawable.ic_media_pause);
-
-
     }
 }
 
