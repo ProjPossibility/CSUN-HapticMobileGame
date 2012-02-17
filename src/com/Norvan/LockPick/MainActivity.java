@@ -92,12 +92,13 @@ public class MainActivity extends Activity {
             break;
             case REQ_SURVIVALGAMEACTIVITY: {
 
-                    if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
-                        finish();
-                    }
+                if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
+                    finish();
+                }
 
-            } break;
-            case REQ_TIMETRIALGAMEACTIVITY:{
+            }
+            break;
+            case REQ_TIMETRIALGAMEACTIVITY: {
                 if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
                     finish();
                 }
@@ -108,12 +109,12 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
-   
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (event.getRepeatCount() == 0 && !event.isLongPress()) {
-                if (userType == SharedPreferencesHandler.USER_BLIND||userType == SharedPreferencesHandler.USER_DEAFBLIND) {
+                if (userType == SharedPreferencesHandler.USER_BLIND || userType == SharedPreferencesHandler.USER_DEAFBLIND) {
 
                     if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                         startSurvivalGameActivity();
@@ -163,18 +164,22 @@ public class MainActivity extends Activity {
 
 
     private void startSurvivalGameActivity() {
+        announcementHandler.shutUp();
         startActivityForResult(new Intent(context, SurvivalGameActivity.class), REQ_SURVIVALGAMEACTIVITY);
     }
 
     private void startTimeTrialGameActivity() {
+        announcementHandler.shutUp();
         startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
     }
 
     private void startFirstRunActivity() {
+        announcementHandler.shutUp();
         startActivityForResult(new Intent(context, FirstRunActivity.class), REQ_FIRSTRUNACTIVITY);
     }
 
     private void startInstructionsActivity() {
+        announcementHandler.shutUp();
         startActivityForResult(new Intent(context, Instructions.class), REQ_INSTRUCTIONS);
     }
 

@@ -31,6 +31,11 @@ public class AnnouncementHandler {
         tts.shutDownTTS();
     }
 
+    
+    public void shutUp(){
+        tts.shutUp();
+        vibrationHandler.stopVibrate();
+    }
    
 
     public void mainActivityLaunch() {

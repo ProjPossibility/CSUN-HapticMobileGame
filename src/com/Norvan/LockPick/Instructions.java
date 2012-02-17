@@ -16,13 +16,14 @@ import com.Norvan.LockPick.R;
 public class Instructions extends Activity {
     VibrationHandler vibrationHandler;
     AnalyticsHelper analyticsHelper;
+    TTSHandler tts;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.instructionslayout);
         TextView textInstructions = (TextView) findViewById(R.id.textInstructions);
         textInstructions.setText(getResources().getString(R.string.instructionsNormal));
         if (SharedPreferencesHandler.getUserType(this) == SharedPreferencesHandler.USER_BLIND) {
-            TTSHandler tts = new TTSHandler(this);
+         tts  = new TTSHandler(this);
             tts.speakPhrase(getResources().getString(R.string.instructionsBlind));
 
         } else if (SharedPreferencesHandler.getUserType(this) == SharedPreferencesHandler.USER_DEAFBLIND) {
@@ -39,6 +40,9 @@ public class Instructions extends Activity {
         super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
         if (vibrationHandler != null) {
             vibrationHandler.stopVibrate();
+        }
+        if (tts!=null) {
+            tts.shutUp();
         }
     }
 
