@@ -1,6 +1,7 @@
 package com.Norvan.LockPick;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 import com.Norvan.LockPick.Helpers.ResponseHelper;
 
@@ -30,14 +31,11 @@ public class AnnouncementHandler {
         tts.shutDownTTS();
     }
 
-    public void cancelAnnouncement() {
-        tts.shutUp();
-        vibrationHandler.stopVibrate();
-
-    }
+   
 
     public void mainActivityLaunch() {
-        if (userType == SharedPreferencesHandler.USER_BLIND) {
+        userType = SharedPreferencesHandler.getUserType(context);
+         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
             tts.speakPhrase(context.getResources().getString(R.string.mainactivityBlind));
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {

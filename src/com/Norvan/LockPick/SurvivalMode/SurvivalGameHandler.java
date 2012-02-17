@@ -137,11 +137,10 @@ public class SurvivalGameHandler {
 
                     if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
                         int intensity = levelHandler.getIntensityForPosition(tilt);
-                        if (!gyroExists) {
+                         if (!gyroExists) {
                             intensity = (int) (intensity * 0.7);
                         }
-
-                        if (intensity < 0) {
+                         if (intensity < 0) {
                             vibrationHandler.stopVibrate();
                         } else {
                             vibrationHandler.pulsePWM(intensity);
@@ -163,7 +162,7 @@ public class SurvivalGameHandler {
 
     private void levelLost() {
         vibrationHandler.stopVibrate();
-        vibrationHandler.playSadNotified();
+        vibrationHandler.playSad();
         gameState = STATE_BETWEENLEVELS;
         if (numberOfPicksLeft == 0) {
             gameState = STATE_GAMEOVER;
@@ -179,7 +178,7 @@ public class SurvivalGameHandler {
     private void levelWon() {
         gameState = STATE_BETWEENLEVELS;
         vibrationHandler.stopVibrate();
-        vibrationHandler.playHappyNotified();
+        vibrationHandler.playHappy();
         gameStatusInterface.levelWon(currentLevel, numberOfPicksLeft);
         currentLevel++;
 

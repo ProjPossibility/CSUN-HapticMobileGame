@@ -105,6 +105,7 @@ public class FirstRunActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
         vibrator.cancel();
+
         mHandler.removeCallbacks(playAccessibleInfo);
 
     }

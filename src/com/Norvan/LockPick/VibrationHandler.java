@@ -29,7 +29,7 @@ public class VibrationHandler {
 
     public VibrationHandler(Context context) {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        gyroExists = context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
+        gyroExists = SensorHandler.hasGyro(context);
         if (!gyroExists) {
             PWMsegmentLength = PWMsegmentLengthNoGyro;
         }
@@ -67,6 +67,7 @@ public class VibrationHandler {
         if (onTime < 2) {
             onTime = 1;
         }
+
         long[] pattern = {0, onTime, offTime};
 
 

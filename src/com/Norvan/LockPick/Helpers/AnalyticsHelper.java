@@ -1,6 +1,7 @@
 package com.Norvan.LockPick.Helpers;
 
 import android.content.Context;
+import com.Norvan.LockPick.SensorHandler;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 /**
@@ -13,6 +14,7 @@ import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 public class AnalyticsHelper {
     GoogleAnalyticsTracker tracker;
     boolean DEV_MODE = false;
+    boolean hasGyro;
 
     public AnalyticsHelper(Context context) {
         tracker = GoogleAnalyticsTracker.getInstance();
@@ -20,16 +22,17 @@ public class AnalyticsHelper {
             tracker.startNewSession("UA-29206443-1", context);
 
         } else {
-            tracker.startNewSession("UA-29193154-1", context);
+            tracker.startNewSession("UA-29193154-2", context);
         }
+        hasGyro = SensorHandler.hasGyro(context);
     }
 
-    public void startApp(int userType){
-        tracker.trackPageView("/mainPage_"+String.valueOf(userType));
+    public void startApp(int userType) {
+        tracker.trackPageView("/mainPage_" + String.valueOf(userType));
         tracker.dispatch();
         tracker.stopSession();
     }
-    
+
     public void startSurvivalActivity() {
         tracker.trackPageView("/survivalMode");
     }
@@ -54,10 +57,10 @@ public class AnalyticsHelper {
                 time);       // Value
     }
 
-    public void gameOverSurvival(int maxLevel) {
+    public void gameOverSurvival(int score, int maxlevel) {
         tracker.trackEvent(
                 "Survival",  // Category
-                "GAME OVER", String.valueOf(maxLevel), maxLevel);       // Value
+                "GAME OVER", String.valueOf(maxlevel) + " " + String.valueOf(hasGyro), score);       // Value
     }
 
     public void winTimeTrialLevel(int level, int timeLeft) {
@@ -76,10 +79,10 @@ public class AnalyticsHelper {
                 timeLeft);       // Value
     }
 
-    public void gameOverTimeTrial(int maxLevel) {
+    public void gameOverTimeTrial(int score, int maxlevel) {
         tracker.trackEvent(
                 "TimeTrial",  // Category
-                "GAME OVER", String.valueOf(maxLevel), maxLevel);       // Value
+                "GAME OVER", String.valueOf(maxlevel) + " " + String.valueOf(hasGyro), score);       // Value
     }
 
     public void exitTimeTrial() {

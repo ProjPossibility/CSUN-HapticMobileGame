@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -82,6 +83,7 @@ public class MainActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     userType = SharedPreferencesHandler.getUserType(context);
                     announcementHandler = new AnnouncementHandler(context, vibrationHandler);
+                    Log.i("AMP", "goonnnaaadoittt");
                     announcementHandler.mainActivityLaunch();
                 } else {
                     startFirstRunActivity();
@@ -106,6 +108,7 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
+   
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
@@ -136,6 +139,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
+        vibrationHandler.stopVibrate();
+        announcementHandler.shutDown();
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {

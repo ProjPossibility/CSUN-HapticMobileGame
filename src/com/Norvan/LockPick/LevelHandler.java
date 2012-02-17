@@ -16,7 +16,7 @@ public class LevelHandler {
     private static final double curvePower = 1.5;
     private static final int startingDifficulty = 1000;
     private static final float unlockDistanceMultiplier = 1.5f;
-    private boolean exponential = true;
+    private boolean exponential = false;
     private int targetLocation;
     private int difficulty;
     private int keyPressPosition;
@@ -36,11 +36,17 @@ public class LevelHandler {
         for (int i = 0; i < difficulty; i++) {
             double percentage = 1.0f - (((double) i) / difficulty);
             if (exponential) {
-                levelData[i] = (int) (100 * (Math.pow(percentage+2, curvePower)));
+                levelData[i] = (int) (10 * (Math.pow(percentage+2, curvePower)));
             } else {
                 levelData[i] = (int) (100 * percentage);
             }
         }
+        StringBuilder sb = new StringBuilder();
+        for (int i : levelData) {
+            sb.append(i);
+            sb.append(" ");
+        }
+        Log.i("AMP", "level "+ String.valueOf(sb.toString()));
     }
 
 

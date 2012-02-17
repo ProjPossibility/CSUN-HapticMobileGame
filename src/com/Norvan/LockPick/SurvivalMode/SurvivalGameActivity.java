@@ -216,7 +216,7 @@ public class SurvivalGameActivity extends Activity
             setUiGameState(SurvivalGameHandler.STATE_GAMEOVER);
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
-            analyticsHelper.gameOverSurvival(maxLevel);
+            analyticsHelper.gameOverSurvival(scoreHandler.getCurrentScore(),maxLevel);
             boolean isHighScore = scoreHandler.gameOver();
             if (isHighScore) {
                 textGameOver.setText("GAME OVER\n\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\n\nNEW RECORD!");

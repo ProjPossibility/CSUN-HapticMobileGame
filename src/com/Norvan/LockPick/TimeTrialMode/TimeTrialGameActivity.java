@@ -194,7 +194,7 @@ public class TimeTrialGameActivity extends Activity {
             setUiGameState(TimeTrialGameHandler.STATE_GAMEOVER);
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
-            analyticsHelper.gameOverTimeTrial(maxLevel);
+            analyticsHelper.gameOverTimeTrial(currentScore,maxLevel);
             if (isHighScore) {
                 textGameOver.setText("GAME OVER\n\nScore: " + String.valueOf(currentScore) + "\n\nNEW RECORD!");
                 setHighScore(gameHandler.getHighScore());
