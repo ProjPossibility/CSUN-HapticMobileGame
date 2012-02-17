@@ -60,7 +60,7 @@ public class SurvivalGameActivity extends Activity
 
         chronoTimer.setKeepScreenOn(true);
         prefs = new SharedPreferencesHandler(this);
-        setHighScore(prefs.getSurvivalHighScore() + 1);
+
         setUiGameState(SurvivalGameHandler.STATE_FRESHLOAD);
         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
 
@@ -71,6 +71,12 @@ public class SurvivalGameActivity extends Activity
         analyticsHelper.startSurvivalActivity();
 
         scoreHandler = new ScoreHandler(prefs, ScoreHandler.MODE_SURVIVAL);
+
+        setUiGameState(SurvivalGameHandler.STATE_FRESHLOAD);
+        scoreHandler.newGame();
+        setHighScore(scoreHandler.getHighScore());
+        analyticsHelper.newSurvivalGame();
+        announcementHandler.playPuzzleDescription();
     }
 
     Chronometer.OnChronometerTickListener onTick = new Chronometer.OnChronometerTickListener() {
@@ -93,7 +99,6 @@ public class SurvivalGameActivity extends Activity
                 if (gameHandler.getGameState() == SurvivalGameHandler.STATE_INGAME) {
                     gameHandler.gotKeyDown();
                 } else if (gameHandler.getGameState() != SurvivalGameHandler.STATE_PAUSED) {
-                    textModeDescription.setVisibility(View.GONE);
                     gameHandler.playCurrentLevel();
                 }
             }
@@ -145,7 +150,6 @@ public class SurvivalGameActivity extends Activity
         @Override
         public void onClick(View view) {
             if (butGameButton.equals(view)) {
-                textModeDescription.setVisibility(View.GONE);
                 gameHandler.playCurrentLevel();
             } else if (imgbutToggleVolume.equals(view)) {
                 volumeToggleHelper.toggleMute();
@@ -179,16 +183,7 @@ public class SurvivalGameActivity extends Activity
             setPicksLeft(picksLeft);
             setLevelLabel(level);
             setScore();
-            announcementHandler.levelStart(level, picksLeft);
-//            boolean needsToAdd = false;
-//            if (graphView == null) {
-//                needsToAdd = true;
-//            }
-//            graphView = new GraphView(context, gameHandler.getLevelData(), GraphView.LINE);
-//            if (needsToAdd) {
-//                ((LinearLayout) findViewById(R.id.linearMain)).addView(graphView);
-//            }
-//            graphView.setVisibility(View.VISIBLE);
+            announcementHandler.puzzlelevelStart(level, picksLeft);
 
         }
 
@@ -201,7 +196,7 @@ public class SurvivalGameActivity extends Activity
             setTimeBonus(scoreHandler.wonLevel(levelTime));
             analyticsHelper.winSurvivalLevel(levelWon, (int) levelTime, picksLeft);
             setPicksLeft(picksLeft);
-            announcementHandler.levelWon(levelTime, levelWon);
+            announcementHandler.puzzlelevelWon( levelWon);
 
         }
 
@@ -213,7 +208,7 @@ public class SurvivalGameActivity extends Activity
             chronoTimer.stop();
             analyticsHelper.loseSurvivalLevel(level, (int) (SystemClock.elapsedRealtime() - chronoTimer.getBase()), picksLeft);
             setPicksLeft(picksLeft);
-            announcementHandler.levelLost(level, picksLeft);
+            announcementHandler.puzzlelevelLost(level, picksLeft);
         }
 
         @Override
@@ -222,24 +217,25 @@ public class SurvivalGameActivity extends Activity
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
             analyticsHelper.gameOverSurvival(maxLevel);
-            if (scoreHandler.gameOver()) {
-                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\nNEW RECORD!");
+            boolean isHighScore = scoreHandler.gameOver();
+            if (isHighScore) {
+                textGameOver.setText("GAME OVER\n\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\n\nNEW RECORD!");
 
             } else {
-                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\nRecord: " + String.valueOf(scoreHandler.getHighScore()));
+                textGameOver.setText("GAME OVER\n\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\n\nRecord: " + String.valueOf(scoreHandler.getHighScore()));
             }
 
 
             chronoTimer.stop();
 
-
-            announcementHandler.gameOver(maxLevel);
+            setHighScore(scoreHandler.getHighScore());
+            announcementHandler.gameOver(scoreHandler.getCurrentScore(), isHighScore);
 
         }
     };
 
     void setTimeBonus(int bonus) {
-        textCurrentScore.setText("Time Bonus: " + String.valueOf(bonus));
+        textCurrentScore.setText("Score Bonus: " + String.valueOf(bonus));
     }
 
     void setScore() {
@@ -318,6 +314,7 @@ public class SurvivalGameActivity extends Activity
                 textCurrentScore.setVisibility(View.GONE);
                 textLevelLabel.setVisibility(View.VISIBLE);
                 imgbutTogglePause.setVisibility(View.GONE);
+                textModeDescription.setVisibility(View.VISIBLE);
 //                setLevelLabel(0);
             }
             break;
@@ -330,6 +327,7 @@ public class SurvivalGameActivity extends Activity
                 textCurrentScore.setVisibility(View.VISIBLE);
                 imgbutTogglePause.setVisibility(View.VISIBLE);
                 textHighScore.setVisibility(View.VISIBLE);
+                textModeDescription.setVisibility(View.GONE);
 
             }
             break;
@@ -342,6 +340,8 @@ public class SurvivalGameActivity extends Activity
                 textCurrentScore.setVisibility(View.VISIBLE);
                 imgbutTogglePause.setVisibility(View.GONE);
                 textHighScore.setVisibility(View.GONE);
+                textModeDescription.setVisibility(View.GONE);
+
             }
             break;
             case SurvivalGameHandler.STATE_GAMEOVER: {
@@ -353,6 +353,8 @@ public class SurvivalGameActivity extends Activity
                 textCurrentScore.setVisibility(View.GONE);
                 imgbutTogglePause.setVisibility(View.GONE);
                 textHighScore.setVisibility(View.GONE);
+                textModeDescription.setVisibility(View.GONE);
+
             }
             break;
         }

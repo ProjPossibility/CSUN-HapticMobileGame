@@ -25,7 +25,7 @@ public class TimeTrialGameActivity extends Activity {
     VolumeToggleHelper volumeToggleHelper;
     VibrationHandler vibrationHandler;
     TimeTrialGameHandler gameHandler;
-    TextView textLevelLabel, textGameOver, textHighScore, textTime, textLevelResult, textModeDescription;
+    TextView textLevelLabel, textGameOver, textHighScore, textTime, textLevelResult, textModeDescription, textCurrentScore;
     ImageButton imgbutToggleVolume, imgbutTogglePause;
     Button butGameButton;
     Chronometer chronoTimer;
@@ -34,8 +34,7 @@ public class TimeTrialGameActivity extends Activity {
     Context context;
     ResponseHelper responseHelper;
     TimingHandler timingHandler;
-    ScoreHandler scoreHandler;
-    AnalyticsHelper analyticsHelper;
+     AnalyticsHelper analyticsHelper;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +46,7 @@ public class TimeTrialGameActivity extends Activity {
         textGameOver = (TextView) findViewById(R.id.textGameOverLabel);
         textModeDescription = (TextView) findViewById(R.id.textModeDescription);
         textLevelResult = (TextView) findViewById(R.id.textLevelResult);
+        textCurrentScore = (TextView) findViewById(R.id.textCurrentScore);
         textHighScore = (TextView) findViewById(R.id.textHighScore);
         imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutGameVolume);
         imgbutToggleVolume.setOnClickListener(onClick);
@@ -68,8 +68,9 @@ public class TimeTrialGameActivity extends Activity {
         analyticsHelper = new AnalyticsHelper(this);
         analyticsHelper.startTimeTrialActivity();
         timingHandler.setUpdateTimeLeftInterface(updateTimeLeftInterface);
-        scoreHandler = new ScoreHandler(prefs, ScoreHandler.MODE_TIMETRIAL);
-
+        ScoreHandler scoreHandler = new ScoreHandler(prefs, ScoreHandler.MODE_TIMETRIAL);
+        gameHandler.setScoreHandler(scoreHandler);
+        announcementHandler.playTimeAttackDescription();
     }
 
 
@@ -147,9 +148,8 @@ public class TimeTrialGameActivity extends Activity {
         @Override
         public void newGameStart() {
             setUiGameState(TimeTrialGameHandler.STATE_FRESHLOAD);
-            setHighScore(scoreHandler.getHighScore());
-            scoreHandler.newGame();
-            analyticsHelper.newTimeTrialGame();
+            setHighScore(gameHandler.getHighScore());
+             analyticsHelper.newTimeTrialGame();
         }
 
         @Override
@@ -158,16 +158,16 @@ public class TimeTrialGameActivity extends Activity {
 //            chronoTimer.setBase(SystemClock.elapsedRealtime());
 //            chronoTimer.start();
             setLevelLabel(level);
-
+            setCurrentScore(gameHandler.getCurrentScore());
 //            announcementHandler.levelStart(level, picksLeft);
         }
 
         @Override
-        public void levelWon(int level, long levelTime) {
+        public void levelWon(int level, long levelTime, int bonus) {
             textLevelResult.setText("Lock Picked!");
             setUiGameState(TimeTrialGameHandler.STATE_BETWEENLEVELS);
+             setScoreBonus(bonus);
             analyticsHelper.winTimeTrialLevel(level, gameHandler.getSecondsLeft());
-            scoreHandler.wonLevel(levelTime);
 //            butGameButton.setText("Next Level");
 //            chronoTimer.stop();
 //            float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
@@ -178,6 +178,7 @@ public class TimeTrialGameActivity extends Activity {
         @Override
         public void levelLost(int level) {
             textLevelResult.setText("Pick Broke");
+            textCurrentScore.setVisibility(View.GONE);
             setUiGameState(TimeTrialGameHandler.STATE_BETWEENLEVELS);
             analyticsHelper.loseTimeTrialLevel(level, gameHandler.getSecondsLeft());
 
@@ -189,18 +190,19 @@ public class TimeTrialGameActivity extends Activity {
 
 
         @Override
-        public void gameOver(int maxLevel) {
+        public void gameOver(int maxLevel, boolean isHighScore, int currentScore) {
             setUiGameState(TimeTrialGameHandler.STATE_GAMEOVER);
             Log.i("AMP", "gameOver");
             butGameButton.setText("New Game");
             analyticsHelper.gameOverTimeTrial(maxLevel);
-            if (scoreHandler.gameOver()) {
-                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\nNEW RECORD!");
-                setHighScore(scoreHandler.getCurrentScore());
+            if (isHighScore) {
+                textGameOver.setText("GAME OVER\n\nScore: " + String.valueOf(currentScore) + "\n\nNEW RECORD!");
+                setHighScore(gameHandler.getHighScore());
             } else {
-                textGameOver.setText("GAME OVER\nScore: " + String.valueOf(scoreHandler.getCurrentScore()) + "\nRecord: " + String.valueOf(scoreHandler.getHighScore()));
+                textGameOver.setText("GAME OVER\n\nScore: " + String.valueOf(currentScore) + "\n\nRecord: " + String.valueOf(gameHandler.getHighScore()));
             }
 
+            announcementHandler.gameOver(currentScore, isHighScore);
 
 //            announcementHandler.gameOver(maxLevel);
 
@@ -212,7 +214,14 @@ public class TimeTrialGameActivity extends Activity {
         }
     };
 
-
+    void setScoreBonus(int bonus) {
+        textCurrentScore.setText("Score Bonus: "+String.valueOf(bonus));
+    }
+    
+    void setCurrentScore(int score){
+        textCurrentScore.setText("Score: "+String.valueOf(score));
+    }
+    
     void setTimeLeft(long time) {
         textTime.setText("Time: " + String.valueOf(time / 1000));
     }
@@ -268,6 +277,7 @@ public class TimeTrialGameActivity extends Activity {
                 textGameOver.setVisibility(View.GONE);
                 textLevelResult.setVisibility(View.GONE);
                 textTime.setVisibility(View.GONE);
+                textCurrentScore.setVisibility(View.GONE);
                 imgbutTogglePause.setVisibility(View.GONE);
                 textHighScore.setVisibility(View.GONE);
                 textLevelLabel.setVisibility(View.VISIBLE);
@@ -278,6 +288,7 @@ public class TimeTrialGameActivity extends Activity {
                 textLevelLabel.setVisibility(View.VISIBLE);
                 butGameButton.setVisibility(View.GONE);
                 textGameOver.setVisibility(View.GONE);
+                textCurrentScore.setVisibility(View.VISIBLE);
                 textLevelResult.setVisibility(View.GONE);
                 textTime.setVisibility(View.VISIBLE);
                 imgbutTogglePause.setVisibility(View.VISIBLE);
@@ -288,6 +299,7 @@ public class TimeTrialGameActivity extends Activity {
             case TimeTrialGameHandler.STATE_BETWEENLEVELS: {
                 textLevelLabel.setVisibility(View.VISIBLE);
                 butGameButton.setVisibility(View.GONE);
+                textCurrentScore.setVisibility(View.VISIBLE);
                 textGameOver.setVisibility(View.GONE);
                 textLevelResult.setVisibility(View.VISIBLE);
                 textTime.setVisibility(View.GONE);
@@ -299,6 +311,7 @@ public class TimeTrialGameActivity extends Activity {
                 textLevelLabel.setVisibility(View.GONE);
                 butGameButton.setVisibility(View.VISIBLE);
                 textGameOver.setVisibility(View.VISIBLE);
+                textCurrentScore.setVisibility(View.GONE);
                 textLevelResult.setVisibility(View.GONE);
                 textTime.setVisibility(View.GONE);
                 imgbutTogglePause.setVisibility(View.GONE);

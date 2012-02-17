@@ -23,9 +23,9 @@
             />
     <TextView android:layout_width="fill_parent" android:id="@+id/textGameOverLabel"
               android:text="GAME OVER\nScore: 1700\nRecord: 2500"
-              android:layout_above="@+id/betweenCenter" android:gravity="center"
+              android:layout_below="@+id/imgbutGameVolume" android:gravity="center_horizontal"
               android:contentDescription="Current Level" android:visibility="gone"
-              android:layout_height="fill_parent" android:textSize="55sp"
+              android:layout_height="fill_parent" android:textSize="45sp"
             />
     <ImageView android:layout_height="0px" android:layout_width="0px" android:id="@+id/betweenCenter"
                android:layout_centerInParent="true"/>

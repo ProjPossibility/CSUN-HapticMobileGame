@@ -47,23 +47,30 @@ public class AnnouncementHandler {
         }
     }
 
-    public void playDeafBlindInstructions() {
-        vibrationHandler.playString(context.getResources().getString(R.string.instructionsDeafBlind));
-    }
-
-    public void newLaunch() {
+    public void playPuzzleDescription() {
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
-            tts.speakPhrase("Press either volume button to begin.");
+            tts.speakPhrase(context.getResources().getString(R.string.puzzleBlind));
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
             vibrationHandler.stopVibrate();
-            vibrationHandler.playString("press vol to begin");
+            vibrationHandler.playString(context.getResources().getString(R.string.puzzleDeafBlind));
         }
-
     }
 
-    public void levelStart(int level, int picksLeft) {
+    public void playTimeAttackDescription() {
+        if (userType == SharedPreferencesHandler.USER_BLIND) {
+            //tts
+            tts.speakPhrase(context.getResources().getString(R.string.timeattackBlind));
+        } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
+            //morse
+            vibrationHandler.stopVibrate();
+            vibrationHandler.playString(context.getResources().getString(R.string.timeattackDeafBlind));
+        }
+    }
+
+
+    public void puzzlelevelStart(int level, int picksLeft) {
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
             tts.speakPhrase("Level " + String.valueOf(level + 1) + ", " + String.valueOf(picksLeft) + " picks left.");
@@ -75,7 +82,8 @@ public class AnnouncementHandler {
         }
     }
 
-    public void levelWon(float time, int wonLevel) {
+
+    public void puzzlelevelWon( int wonLevel) {
 
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
@@ -96,7 +104,7 @@ public class AnnouncementHandler {
         }
     }
 
-    public void levelLost(int level, int picksLeft) {
+    public void puzzlelevelLost(int level, int picksLeft) {
 
 
         if (userType == SharedPreferencesHandler.USER_BLIND) {
@@ -118,24 +126,31 @@ public class AnnouncementHandler {
         }
     }
 
-    public void gameOver(int maxLevel) {
+    public void gameOver(int score, boolean isHighScore) {
 
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
-            if (new SharedPreferencesHandler(context).getSurvivalHighScore() < maxLevel) {
-                tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". A new high score! Press volume for a new game.");
+            if (isHighScore) {
+                tts.speakPhrase("Game Over. Your scored " + String.valueOf((score)) + " points. A new high score! Press volume for a new game.");
             } else {
-                tts.speakPhrase("Game Over. Your reached level " + String.valueOf((maxLevel + 1)) + ". Press volume for a new game.");
+                tts.speakPhrase("Game Over. Your scored " + String.valueOf((score)) + " points. Press volume for a new game.");
             }
 
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playString("Game over lvl " + String.valueOf(maxLevel + 1));
+            if (isHighScore) {
+                vibrationHandler.playString("Game over high score " + String.valueOf(score) + " points");
+
+            } else {
+                vibrationHandler.playString("Game over score " + String.valueOf(score) + " points");
+            }
         } else {
             tts.speakPhrase("Game Over");
         }
 
     }
+
+
 
     public void userTakingTooLong() {
         if (userType != SharedPreferencesHandler.USER_DEAFBLIND) {
@@ -162,8 +177,8 @@ public class AnnouncementHandler {
             tts.speakPhrase(String.valueOf(secondsLeft));
         }
     }
-    
-    
+
+
     public void confirmBackButton() {
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             tts.speakPhrase("Press back again to exit");

@@ -11,7 +11,7 @@
                  android:layout_alignParentRight="true" android:src="@drawable/ic_audio_vol_mute"/>
     <TextView android:id="@+id/textModeDescription" android:layout_height="fill_parent" android:textSize="40sp"
               android:layout_margin="10dp"
-              android:text="\nTime Attack\n\nStart with 30 seconds and pick locks to get more time"
+              android:text="\nTime Attack\n\nStart with 30 seconds and pick locks to get more time."
               android:gravity="center_horizontal"
               android:layout_width="fill_parent"  />
 
@@ -23,12 +23,16 @@
             />
     <TextView android:layout_width="fill_parent" android:id="@+id/textGameOverLabel"
               android:text="GAME OVER\nScore: 1700\nRecord: 2500"
-              android:layout_above="@+id/betweenCenter" android:gravity="center"
-              android:contentDescription="Game Over" android:visibility="gone"
-              android:layout_height="fill_parent" android:textSize="55sp"
+              android:layout_below="@+id/imgbutGameVolume" android:gravity="center_horizontal"
+              android:contentDescription="Current Level" android:visibility="gone"
+              android:layout_height="fill_parent" android:textSize="45sp"
             />
     <ImageView android:layout_height="0px" android:layout_width="0px" android:id="@+id/betweenCenter"
                android:layout_centerInParent="true"/>
+    <TextView android:layout_width="wrap_content" android:id="@+id/textCurrentScore" android:layout_margin="5dp"
+              android:text="" android:contentDescription="Score" android:gravity="bottom"   android:layout_above="@+id/betweenCenter"
+              android:layout_centerHorizontal="true"
+              android:layout_height="fill_parent" android:textSize="30sp"/>
     <RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
                     android:layout_below="@+id/betweenCenter">
         <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/butGameButton"

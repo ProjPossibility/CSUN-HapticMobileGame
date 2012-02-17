@@ -26,7 +26,7 @@ import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameActivity;
 public class MainActivity extends Activity {
     private static final int REQ_FIRSTRUNACTIVITY = 1;
     private static final int REQ_SURVIVALGAMEACTIVITY = 2;
-    private static final int REQ_TIMETRIALGAMEACTIVITY = 2;
+    private static final int REQ_TIMETRIALGAMEACTIVITY = 4;
     private static final int REQ_INSTRUCTIONS = 3;
 
     int userType = 0;
@@ -89,13 +89,17 @@ public class MainActivity extends Activity {
             }
             break;
             case REQ_SURVIVALGAMEACTIVITY: {
-                if (SharedPreferencesHandler.isFirstRun(context)) {
-                    startFirstRunActivity();
-                } else {
+
                     if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
                         finish();
                     }
+
+            } break;
+            case REQ_TIMETRIALGAMEACTIVITY:{
+                if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
+                    finish();
                 }
+
             }
         }
 
@@ -106,13 +110,12 @@ public class MainActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (event.getRepeatCount() == 0 && !event.isLongPress()) {
-                if (userType == SharedPreferencesHandler.USER_BLIND) {
-                    startSurvivalGameActivity();
-                } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
-                    if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                if (userType == SharedPreferencesHandler.USER_BLIND||userType == SharedPreferencesHandler.USER_DEAFBLIND) {
+
+                    if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                         startSurvivalGameActivity();
-                    } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                        announcementHandler.playDeafBlindInstructions();
+                    } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                        startTimeTrialGameActivity();
                     }
                 }
 
@@ -138,6 +141,7 @@ public class MainActivity extends Activity {
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
             if (imgbutToggleVolume.equals(v)) {
                 volumeToggleHelper.toggleMute();
             } else if (butNewSurvivalGame.equals(v)) {

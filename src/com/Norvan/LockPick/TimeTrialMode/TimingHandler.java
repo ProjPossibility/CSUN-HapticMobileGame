@@ -13,8 +13,17 @@ import android.widget.Chronometer;
 public class TimingHandler {
     private static long startTime = 30000;
     private static long levelWinTime = 10000;
+    private static final int MODE_STOPPED = -1;
+    private static final int MODE_PLAYING = 0;
+    private static final int MODE_PAUSED = 1;
+    private int timingMode = -1;
+
+    private long gameTimeLeft;
+    private long levelStartTimeLeft;
+
 
     Chronometer chronoTimer;
+
 
     public void setTimingHandlerInterface(TimingHandlerInterface timingHandlerInterface) {
         this.timingHandlerInterface = timingHandlerInterface;
@@ -27,7 +36,7 @@ public class TimingHandler {
     }
 
     TimingHandlerInterface timingHandlerInterface;
-    private long pauseChronoElapsed = 0;
+    private long pauseChronoElapsed = -1;
 
     public TimingHandler(Chronometer chronoTimer) {
         this.chronoTimer = chronoTimer;
@@ -41,49 +50,44 @@ public class TimingHandler {
         chronoTimer.setBase(getCurrentTime());
         chronoTimer.start();
         pauseChronoElapsed = 0;
+        levelStartTimeLeft = startTime;
+
     }
 
-    public long pauseTimer() {
+    public void pauseTimer() {
         chronoTimer.stop();
         pauseChronoElapsed = getCurrentTime() - chronoTimer.getBase();
-        return startTime - pauseChronoElapsed;
     }
 
-    public long resumeTimer() {
+    public void resumeTimer() {
         chronoTimer.setBase(getCurrentTime() - pauseChronoElapsed);
         chronoTimer.start();
-        long timeLeft = startTime - pauseChronoElapsed;
         pauseChronoElapsed = 0;
-        return timeLeft;
+
     }
 
+    public void levelLost(){
+        long timeLeft = startTime - (getCurrentTime() - chronoTimer.getBase());
+        levelStartTimeLeft = timeLeft;
+        pauseTimer();
 
-    public long addLevelWinTime() {
-        if (pauseChronoElapsed == 0) {
-            chronoTimer.setBase(chronoTimer.getBase() + levelWinTime);
-            return startTime - getCurrentTime() - chronoTimer.getBase();
-        } else {
-            pauseChronoElapsed = pauseChronoElapsed - levelWinTime;
-            return startTime - pauseChronoElapsed;
-        }
     }
 
-    public long addLevelWinTime(int winLevel) {
-
+    public long levelWon(int winLevel) {
         long customWinTime = 1000 * (winLevel + 3);
         if (customWinTime > 10000) {
             customWinTime = 10000;
         }
-        if (pauseChronoElapsed == 0) {
-            chronoTimer.setBase(chronoTimer.getBase() + customWinTime);
-            return startTime - getCurrentTime() - chronoTimer.getBase();
-        } else {
-            pauseChronoElapsed = pauseChronoElapsed - customWinTime;
-            return startTime - pauseChronoElapsed;
-        }
+        long timeLeft = startTime - (getCurrentTime() - chronoTimer.getBase());
+        long levelTime = levelStartTimeLeft - timeLeft;
+        levelStartTimeLeft = timeLeft;
+        pauseTimer();
+        pauseChronoElapsed = pauseChronoElapsed - customWinTime;
+        return levelTime;
     }
 
     public long getTimeLeft() {
+
         if (pauseChronoElapsed == 0) {
             return startTime - getCurrentTime() - chronoTimer.getBase();
         } else {

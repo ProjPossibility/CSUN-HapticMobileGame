@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import com.Norvan.LockPick.Helpers.GameVariables;
 import com.Norvan.LockPick.LevelHandler;
+import com.Norvan.LockPick.ScoreHandler;
 import com.Norvan.LockPick.SensorHandler;
 import com.Norvan.LockPick.VibrationHandler;
 
@@ -34,7 +35,7 @@ public class TimeTrialGameHandler {
     public static final int STATE_PAUSED = 4;
     boolean gyroExists;
     TimingHandler timingHandler;
-    long levelStartTimeLeft;
+    ScoreHandler scoreHandler;
 
     public TimeTrialGameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler, TimingHandler timingHandler) {
         this.context = context;
@@ -75,19 +76,20 @@ public class TimeTrialGameHandler {
 
     public void playCurrentLevel() {
         if (gameState == STATE_BETWEENLEVELS) {
-            levelStartTimeLeft = timingHandler.getTimeLeft();
             levelHandler = new LevelHandler(currentLevel);
             keyPressed = false;
             gameStatusInterface.levelStart(currentLevel, timingHandler.getTimeLeft());
             gameState = STATE_INGAME;
 
         } else if (gameState == STATE_FRESHLOAD || gameState == STATE_GAMEOVER) {
-            levelStartTimeLeft = 0;
+            gameStatusInterface.newGameStart();
+            scoreHandler.newGame();
             levelHandler = new LevelHandler(currentLevel);
             keyPressed = false;
             timingHandler.startTimerNew();
             gameStatusInterface.levelStart(currentLevel, timingHandler.getTimeLeft());
             gameState = STATE_INGAME;
+
 
         }
     }
@@ -165,8 +167,9 @@ public class TimeTrialGameHandler {
         @Override
         public void vibrationCompleted() {
             if (gameState == STATE_BETWEENLEVELS) {
-                playCurrentLevel();
                 timingHandler.resumeTimer();
+
+                playCurrentLevel();
             }
         }
     };
@@ -186,13 +189,15 @@ public class TimeTrialGameHandler {
     private void gameOver() {
         gameState = STATE_GAMEOVER;
         timingHandler.pauseTimer();
-        gameStatusInterface.gameOver(currentLevel);
+        boolean isHighScore = scoreHandler.gameOver();
+        int currentScore = scoreHandler.getCurrentScore();
+        gameStatusInterface.gameOver(currentLevel, isHighScore, currentScore);
         currentLevel = 0;
     }
 
     private void levelLost() {
         vibrationHandler.stopVibrate();
-        timingHandler.pauseTimer();
+        timingHandler.levelLost();
         vibrationHandler.playSadNotified();
         gameState = STATE_BETWEENLEVELS;
         gameStatusInterface.levelLost(currentLevel);
@@ -202,12 +207,11 @@ public class TimeTrialGameHandler {
     private void levelWon() {
         gameState = STATE_BETWEENLEVELS;
         vibrationHandler.stopVibrate();
-        timingHandler.pauseTimer();
-        long levelTime = levelStartTimeLeft - timingHandler.getTimeLeft();
-        timingHandler.addLevelWinTime(currentLevel);
+        long levelTime = timingHandler.levelWon(currentLevel);
+        int bonus = scoreHandler.wonLevel(levelTime);
         vibrationHandler.playHappyNotified();
-        Log.i("AMP", "leveltim "+ String.valueOf(levelTime));
-        gameStatusInterface.levelWon(currentLevel, levelTime );
+        Log.i("AMP", "leveltim " + String.valueOf(levelTime));
+        gameStatusInterface.levelWon(currentLevel, levelTime, bonus);
         currentLevel++;
 
     }
@@ -217,11 +221,11 @@ public class TimeTrialGameHandler {
 
         public void levelStart(int level, long levelTime);
 
-        public void levelWon(int level, long time);
+        public void levelWon(int level, long time, int bonus);
 
         public void levelLost(int level);
 
-        public void gameOver(int maxLevel);
+        public void gameOver(int maxLevel, boolean isHighScore, int score);
 
         public void updateTimeLeft(long timeLeft);
     }
@@ -253,4 +257,16 @@ public class TimeTrialGameHandler {
         return (int) (timingHandler.getTimeLeft() / 1000);
     }
 
+
+    public void setScoreHandler(ScoreHandler scoreHandler) {
+        this.scoreHandler = scoreHandler;
+    }
+
+    public int getHighScore() {
+        return scoreHandler.getHighScore();
+    }
+
+    public int getCurrentScore() {
+        return scoreHandler.getCurrentScore();
+    }
 }

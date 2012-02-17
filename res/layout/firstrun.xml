@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:orientation="vertical"
-              android:layout_height="fill_parent">
-    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:textSize="30sp"
-              android:text="Welcome to LockPick!" android:gravity="center" android:layout_margin="15dp"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+    <TextView android:layout_width="fill_parent" android:layout_height="fill_parent" android:textSize="40sp"
+              android:text="Welcome to LockPick!" android:gravity="center" android:layout_above="@+id/butNormalMode" android:layout_margin="15dp"/>
 
-    <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/butNormalMode"  android:contentDescription="Click for seeing and hearing mode"
-            android:text="Click here for normal mode" android:textSize="30sp" android:gravity="center"  android:padding="20dp"
-            android:layout_margin="5dp"/>
-    <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/butBlindMode"        android:contentDescription="Click for blind mode"
-            android:text="Click here for blind mode" android:textSize="30sp" android:gravity="center"  android:padding="20dp"
-            android:layout_margin="5dp"/>
-    <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/butBlindDeafMode"        android:contentDescription="Click for blind deaf mode"
-            android:text="Click here for blind-deaf mode" android:textSize="30sp" android:gravity="center"  android:padding="20dp"
-           android:layout_margin="5dp"/>
-</LinearLayout>
+    <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/butNormalMode"
+            android:layout_above="@+id/butBlindMode" android:layout_alignParentBottom="ture"
+            android:contentDescription="Click for seeing and hearing mode"
+            android:text="Normal Mode" android:textSize="30sp" android:gravity="center"
+            android:padding="20dp"
+            android:layout_margin="7dp"/>
+    <Button android:layout_height="wrap_content" android:layout_width="fill_parent"
+            android:layout_above="@+id/butBlindDeafMode" android:id="@+id/butBlindMode"
+            android:contentDescription="Click for blind mode"
+            android:text="Blind Mode" android:textSize="30sp" android:gravity="center"
+            android:padding="20dp"
+            android:layout_margin="7dp"/>
+    <Button android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+            android:layout_width="fill_parent" android:id="@+id/butBlindDeafMode"
+            android:contentDescription="Click for blind deaf mode"
+            android:text="Deaf-Blind Mode" android:textSize="30sp" android:gravity="center"
+            android:padding="20dp"
+            android:layout_margin="7dp"/>
+</RelativeLayout>

@@ -3,8 +3,8 @@
     <string name="app_name">LockPick</string>
     <string name="firstrunBlind">If you are blind, hold down the volume up key</string>
     <string name="firstrunDeafBlind">If deafblind hold vol down</string>
-    <string name="mainactivityBlind">Press either volume key to begin</string>
-    <string name="mainactivityDeafBlind">vol down start vol up help</string>
+    <string name="mainactivityBlind">Press volume up for puzzle mode or volume down for time attack mode.</string>
+    <string name="mainactivityDeafBlind">vol down puzzle mode vol up time attack mode</string>
     <string name="instructionsDeafBlind">Turn the phone on its side. Feel around until you find the sweet
         spot. When you think you are on the right spot, hold down either volume button and slowly turn the phone to
         open the lock. Be careful, if you try to open the lock in the wrong spot, you will break the pick. If you
@@ -18,4 +18,10 @@
         open the lock.\n\n4. Be careful, if you try to open the lock in the wrong spot, you will break the pick. If you
         feel too much resistance when turning the pick, let go of the button and try again.
     </string>
+
+    <string name="timeattackBlind">Time Attack Mode. Start with 30 seconds and unlimited lock picks. Pick locks for more time. Press either volume key to begin.</string>
+    <string name="timeattackDeafBlind">Time Attack start with 30 seconds unlimited lock picks. Pick locks for more time. vol key to begin</string>
+    <string name="puzzleBlind">Puzzle mode. Unlimited time but only 5 extra lock picks. Press either volume key to begin.</string>
+    <string name="puzzleDeafBlind">Puzzle mode unlimited time but only 5 extra lock picks. vol key to begin </string>
+
 </resources>

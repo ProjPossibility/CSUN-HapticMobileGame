@@ -14,7 +14,7 @@ public class ScoreHandler {
     SharedPreferencesHandler sharedPreferencesHandler;
     public static final int MODE_SURVIVAL = 0;
     public static final int MODE_TIMETRIAL = 1;
-
+    float comboMultiplier;
     int score, gameMode;
 
     public ScoreHandler(SharedPreferencesHandler sharedPreferencesHandler, int gameMode) {
@@ -30,16 +30,14 @@ public class ScoreHandler {
     public int wonLevel(float time) {
         score = score + 100;
         if (time <= 10000) {
-            int bonus = (int) (50  * ((10000-time) / 10000));
+            int bonus = (int) (50 * ((10000 - time) / 10000));
             score = score + bonus;
+            return bonus;
         }
         return 0;
     }
 
-    public int wonLevel() {
-        score = score + 100;
-        return score;
-    }
+    
 
     public int getCurrentScore() {
         return score;
@@ -47,16 +45,17 @@ public class ScoreHandler {
 
 
     public boolean gameOver() {
-        int highScore;
+        int highScore = 0;
         if (gameMode == MODE_SURVIVAL) {
             highScore = sharedPreferencesHandler.getSurvivalHighScore();
-        } else {
+        } else if (gameMode == MODE_TIMETRIAL) {
+
             highScore = sharedPreferencesHandler.getTimeTrialHighScore();
         }
         if (score > highScore) {
             if (gameMode == MODE_SURVIVAL) {
                 sharedPreferencesHandler.setSurvivalHighScore(score);
-            } else {
+            } else if (gameMode == MODE_TIMETRIAL) {
                 sharedPreferencesHandler.setTimeTrialHighScore(score);
             }
             return true;
@@ -67,9 +66,10 @@ public class ScoreHandler {
     public int getHighScore() {
         if (gameMode == MODE_SURVIVAL) {
             return sharedPreferencesHandler.getSurvivalHighScore();
-        } else {
+        } else if (gameMode == MODE_TIMETRIAL) {
             return sharedPreferencesHandler.getTimeTrialHighScore();
         }
+        return -1;
     }
 
 }

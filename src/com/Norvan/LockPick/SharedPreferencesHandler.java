@@ -52,7 +52,7 @@ public class SharedPreferencesHandler {
     }
 
     public int getSurvivalHighScore() {
-        return prefs.getInt("puzzleHighScore", -1);
+        return prefs.getInt("puzzleHighScore", 0);
     }
 
     public void setTimeTrialHighScore(int score) {
@@ -62,6 +62,6 @@ public class SharedPreferencesHandler {
     }
 
     public int getTimeTrialHighScore() {
-        return prefs.getInt("timetrialHighScore", -1);
+        return prefs.getInt("timetrialHighScore", 0);
     }
 }
