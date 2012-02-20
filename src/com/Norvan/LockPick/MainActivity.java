@@ -174,7 +174,6 @@ public class MainActivity extends Activity {
     }
 
     private void startFirstRunActivity() {
-        announcementHandler.shutUp();
         startActivityForResult(new Intent(context, FirstRunActivity.class), REQ_FIRSTRUNACTIVITY);
     }
 
