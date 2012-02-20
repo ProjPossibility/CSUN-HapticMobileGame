@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+    <TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="LockPick"
+              android:layout_marginTop="50dp" android:layout_marginBottom="20dp"
+              android:gravity="center" android:textSize="50sp" android:id="@+id/textMainTitle"/>
+    <ImageButton android:background="@android:color/transparent" android:layout_width="50dp"
+                 android:layout_height="50dp" android:scaleType="fitCenter"
+                 android:layout_margin="10dp" android:id="@+id/imgbutMainVolume"
+                 android:layout_alignParentRight="true" android:src="@drawable/ic_audio_vol_mute"/>
+    <RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+                    android:layout_below="@+id/textMainTitle">
+
+        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:textSize="32sp"
+                android:text="Puzzle Mode" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"
+                android:layout_above="@+id/butMainNewTimeTrialGame" android:contentDescription="New Game"
+                android:id="@+id/butMainNewSurvivalGame"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:textSize="32sp"
+                android:text="Time Attack" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"
+                android:layout_above="@+id/mainCenter" android:contentDescription="New Game"
+                android:id="@+id/butMainNewTimeTrialGame"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+        <ImageView android:layout_height="0px" android:layout_width="0px" android:id="@+id/mainCenter"
+                   android:layout_centerInParent="true"/>
+        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:textSize="32sp"
+                android:id="@+id/butMainHelp" android:layout_below="@+id/mainCenter" android:contentDescription="Help"
+                android:text="Help" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:textSize="32sp"
+                android:id="@+id/butMainSettings" android:layout_below="@+id/butMainHelp"
+                android:contentDescription="Settings"
+                android:text="Settings" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+    </RelativeLayout>
+
+</RelativeLayout>

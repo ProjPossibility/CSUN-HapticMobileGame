@@ -13,7 +13,7 @@ import com.google.android.apps.analytics.GoogleAnalyticsTracker;
  */
 public class AnalyticsHelper {
     GoogleAnalyticsTracker tracker;
-    boolean DEV_MODE = false;
+    boolean DEV_MODE = true;
     boolean hasGyro;
 
     public AnalyticsHelper(Context context) {

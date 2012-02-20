@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+        >
+
+    <ImageButton android:background="@android:color/transparent" android:layout_width="50dp"
+                 android:layout_height="50dp" android:scaleType="fitCenter"
+                 android:layout_margin="10dp" android:id="@+id/imgbutGameVolume"
+                 android:layout_alignParentRight="true" android:src="@drawable/ic_audio_vol_mute"/>
+
+    <TextView android:id="@+id/textModeDescription" android:layout_height="fill_parent" android:textSize="30sp"
+              android:layout_margin="10dp"
+              android:text="\nPuzzle Mode\n\nUnlimited time but only 5 extra lock picks.\nBe careful!"
+              android:gravity="center_horizontal"
+              android:layout_width="fill_parent"/>
+    <TextView
+            android:layout_width="fill_parent" android:id="@+id/textLevelLabel" android:text=""
+            android:layout_above="@+id/betweenCenter" android:gravity="center" android:textStyle="bold"
+            android:contentDescription="Current Level"
+            android:layout_height="fill_parent" android:textSize="65sp"
+            />
+    <TextView android:layout_width="fill_parent" android:id="@+id/textGameOverLabel"
+              android:text="GAME OVER\nScore: 1700\nRecord: 2500"
+              android:layout_below="@+id/imgbutGameVolume" android:gravity="center_horizontal"
+              android:contentDescription="Current Level" android:visibility="gone"
+              android:layout_height="fill_parent" android:textSize="35sp"
+            />
+    <ImageView android:layout_height="0px" android:layout_width="0px" android:id="@+id/betweenCenter"
+               android:layout_centerInParent="true"/>
+    <TextView android:layout_width="wrap_content" android:id="@+id/textCurrentScore" android:layout_margin="5dp"
+              android:text="" android:contentDescription="Score" android:gravity="bottom"   android:layout_above="@+id/betweenCenter"
+              android:layout_centerHorizontal="true"
+              android:layout_height="fill_parent" android:textSize="30sp"/>
+    <RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+                    android:layout_below="@+id/betweenCenter">
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/butGameButton"
+                android:layout_centerInParent="true" android:textSize="50sp" android:text="START"/>
+
+        <TextView android:layout_width="wrap_content" android:id="@+id/textPicksLeft" android:layout_margin="5dp"
+                  android:text="Picks Left: 5" android:contentDescription="Picks Left"
+                  android:layout_centerHorizontal="true"
+                  android:layout_height="wrap_content" android:textSize="30sp"/>
+        <LinearLayout android:layout_height="wrap_content" android:layout_width="wrap_content"
+                      android:layout_margin="5dp" android:layout_centerHorizontal="true"
+                      android:layout_below="@+id/textPicksLeft" android:id="@+id/linearChrono"
+                      android:orientation="horizontal">
+            <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Time: "
+                      android:textSize="30sp"/>
+            <Chronometer android:layout_width="fill_parent" android:id="@+id/chronoTimer"
+                         android:contentDescription="Level Timer"
+                         android:layout_height="wrap_content" android:textSize="30sp"/>
+
+        </LinearLayout>
+        <TextView android:layout_width="wrap_content" android:id="@+id/textHighScore"
+                  android:layout_centerHorizontal="true" android:layout_below="@+id/linearChrono"
+                  android:text="Record: 0" android:contentDescription="High Score" android:layout_margin="5dp"
+                  android:layout_height="wrap_content" android:textSize="30sp"/>
+        <ImageButton android:layout_width="wrap_content" android:layout_height="fill_parent"
+                     android:layout_alignLeft="@+id/textHighScore" android:layout_margin="5dp"
+                     android:layout_alignRight="@+id/textHighScore" android:scaleType="fitCenter"
+                     android:id="@+id/imgbutTogglePause" android:src="@drawable/ic_media_pause"
+                     android:visibility="gone"
+                     android:background="@android:color/transparent" android:layout_below="@+id/textHighScore"
+                     android:layout_centerHorizontal="true"/>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
+

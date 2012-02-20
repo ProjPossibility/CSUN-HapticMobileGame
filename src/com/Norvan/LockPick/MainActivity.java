@@ -8,11 +8,14 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import com.Norvan.LockPick.Helpers.AnalyticsHelper;
+import com.Norvan.LockPick.Helpers.SwipeDetector;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.SurvivalMode.SurvivalGameActivity;
 import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameActivity;
@@ -38,6 +41,8 @@ public class MainActivity extends Activity {
     Context context;
     VibrationHandler vibrationHandler;
     AnnouncementHandler announcementHandler;
+//    SwipeDetector swipeDetector;
+//    GestureDetector gestureDetector;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +65,13 @@ public class MainActivity extends Activity {
         imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutMainVolume);
         imgbutToggleVolume.setOnClickListener(onClickListener);
         volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
+//        swipeDetector = new SwipeDetector(swipeDetectorInterface);
+//        gestureDetector = new GestureDetector(this, swipeDetector);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        userType = SharedPreferencesHandler.getUserType(context);
+        AnalyticsHelper analyticsHelper = new AnalyticsHelper(this);
+        analyticsHelper.startApp(userType);
+        analyticsHelper = null;
         if (SharedPreferencesHandler.isFirstRun(this)) {
             startFirstRunActivity();
             return;
@@ -67,12 +79,10 @@ public class MainActivity extends Activity {
             announcementHandler = new AnnouncementHandler(this, vibrationHandler);
 
         }
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        userType = SharedPreferencesHandler.getUserType(context);
         announcementHandler.mainActivityLaunch();
-        AnalyticsHelper analyticsHelper = new AnalyticsHelper(this);
-        analyticsHelper.startApp(userType);
-        analyticsHelper = null;
+
+
+
     }
 
 
@@ -83,7 +93,6 @@ public class MainActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     userType = SharedPreferencesHandler.getUserType(context);
                     announcementHandler = new AnnouncementHandler(context, vibrationHandler);
-                    Log.i("AMP", "goonnnaaadoittt");
                     announcementHandler.mainActivityLaunch();
                 } else {
                     startFirstRunActivity();
@@ -219,4 +228,36 @@ public class MainActivity extends Activity {
 
 
     }
+
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        if (gestureDetector.onTouchEvent(event))
+//            return true;
+//        else
+//            return false;
+//    }
+
+    SwipeDetector.SwipeDetectorInterface swipeDetectorInterface = new SwipeDetector.SwipeDetectorInterface() {
+        @Override
+        public void swipeUp() {
+            startInstructionsActivity();
+        }
+
+        @Override
+        public void swipeDown() {
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void swipeLeft() {
+            startSurvivalGameActivity();
+        }
+
+        @Override
+        public void swipeRight() {
+            startTimeTrialGameActivity();
+        }
+    };
+
+
 }
