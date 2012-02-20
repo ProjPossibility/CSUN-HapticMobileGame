@@ -296,9 +296,14 @@ public class AnnouncementHandler {
     }
 
     public void readScores(int score, int HighScore) {
+
         if (userType == UserType.USER_BLIND) {
             //tts
-            tts.speakPhrase("Your Score is " + String.valueOf(score) + ". The high score is " + String.valueOf(HighScore) + ".");
+            if (score > 0) {
+                tts.speakPhrase("Your Score is " + String.valueOf(score) + ". The high score is " + String.valueOf(HighScore) + ".");
+            } else {
+                tts.speakPhrase("The high score is " + String.valueOf(HighScore) + " points.");
+            }
         } else if (userType == UserType.USER_DEAFBLIND) {
             //morse
             vibrationHandler.stopVibrate();

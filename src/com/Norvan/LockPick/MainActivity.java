@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import com.Norvan.LockPick.Helpers.AnalyticsHelper;
-import com.Norvan.LockPick.Helpers.SwipeDetector;
 import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.SurvivalMode.SurvivalGameActivity;
@@ -294,27 +293,7 @@ public class MainActivity extends Activity {
 //            return false;
 //    }
 
-    SwipeDetector.SwipeDetectorInterface swipeDetectorInterface = new SwipeDetector.SwipeDetectorInterface() {
-        @Override
-        public void swipeUp() {
-            startInstructionsActivity();
-        }
 
-        @Override
-        public void swipeDown() {
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public void swipeLeft() {
-            startSurvivalGameActivity();
-        }
-
-        @Override
-        public void swipeRight() {
-            startTimeTrialGameActivity();
-        }
-    };
 
 
 }
