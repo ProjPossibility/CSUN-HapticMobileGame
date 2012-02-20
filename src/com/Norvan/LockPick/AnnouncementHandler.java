@@ -181,7 +181,7 @@ public class AnnouncementHandler {
             if (secondsLeft % 5 == 0) { //Every 5 seconds between 25 and 10 seconds 
                 tts.speakPhrase(String.valueOf(secondsLeft) + " seconds");
             }
-        } else if (secondsLeft <= 10 && secondsLeft > 1) {
+        } else if (secondsLeft <= 10 && secondsLeft >= 0) {
             tts.speakPhrase(String.valueOf(secondsLeft));
         }
     }
