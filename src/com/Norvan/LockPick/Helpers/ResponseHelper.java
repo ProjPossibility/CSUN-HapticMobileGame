@@ -43,4 +43,11 @@ public class ResponseHelper {
     }
 
 
+    public String getLevelLoseFast() {
+        String[] responses = context.getResources().getStringArray(R.array.levellosefast);
+        return responses[rand.nextInt(responses.length)];
+    }
+
+
+
 }

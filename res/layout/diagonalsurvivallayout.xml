@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+        >
+
+
+    <ImageView android:layout_width="5dp" android:layout_height="fill_parent" android:layout_centerHorizontal="true"
+               android:scaleType="centerInside" android:src="@android:color/darker_gray"
+               android:layout_below="@+id/textModeDescription"
+               android:id="@+id/separatorVertical"/>
+    <ImageView android:layout_width="fill_parent" android:layout_height="5dp" android:layout_centerVertical="true"
+               android:scaleType="centerInside" android:src="@android:color/darker_gray"
+               android:id="@+id/separatorHorizontal"/>
+
+    <RelativeLayout android:id="@+id/relquad1" android:layout_width="fill_parent"
+                    android:layout_above="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
+                    android:layout_height="fill_parent">
+
+        <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
+                  android:gravity="center" android:text="Picks Left\n5" android:textSize="27sp"
+                  android:layout_marginTop="40dp"
+                  android:layout_above="@+id/quad1Center"
+                  android:id="@+id/textPicksLeft"/>
+        <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
+                  android:gravity="center" android:text="Score Bonus\n50" android:textSize="27sp"
+                android:visibility="gone"
+                  android:layout_below="@+id/quad1Center"
+                  android:id="@+id/textScoreBonus"/>
+        <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
+                  android:gravity="center"
+                  android:text="Unlimited lives but only 5 extra lock picks.\nBe careful!"
+                  android:textSize="30sp" android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+                  android:layout_marginTop="40dp" android:visibility="visible"
+                  android:id="@+id/textGameMode"/>
+        <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
+                  android:gravity="center" android:text="Game Over" android:textSize="40sp"
+                  android:layout_marginTop="40dp" android:visibility="gone"
+                  android:id="@+id/textGameOver"/>
+        <ImageView android:layout_width="0px" android:layout_height="0px" android:layout_centerInParent="true"
+                   android:id="@+id/quad1Center"/>
+        <LinearLayout android:layout_height="fill_parent" android:gravity="center" android:layout_width="fill_parent"
+                      android:orientation="vertical"
+                      android:layout_below="@+id/quad1Center" android:id="@+id/linearTime">
+            <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
+                      android:gravity="center" android:text="Time" android:textSize="27sp"
+                      android:layout_below="@+id/quad1Center"
+                      android:id="@+id/textTime"/>
+            <Chronometer android:layout_height="wrap_content" android:layout_width="fill_parent"
+                         android:gravity="center" android:id="@+id/chronoTime" android:textSize="27sp"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/relquad2" android:layout_width="fill_parent"
+                    android:layout_above="@+id/separatorHorizontal" android:layout_toLeftOf="@+id/separatorVertical"
+                    android:layout_height="fill_parent">
+
+        <TextView android:id="@+id/textCurrentLevel" android:layout_height="fill_parent"
+                  android:layout_width="fill_parent" android:gravity="center" android:text="Level 1"
+                  android:textStyle="bold" android:textSize="27sp"/>
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/relquad3" android:layout_width="fill_parent"
+                    android:layout_below="@+id/separatorHorizontal" android:layout_toLeftOf="@+id/separatorVertical"
+                    android:layout_height="fill_parent">
+        <ImageButton android:id="@+id/imgbutTogglePause" android:layout_width="fill_parent"
+                     android:layout_height="fill_parent" android:src="@drawable/ic_media_play"
+                     android:background="@android:color/transparent" android:scaleType="fitCenter"/>
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/relquad4" android:layout_width="fill_parent"
+                    android:layout_below="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
+                    android:layout_height="fill_parent">
+        <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
+                  android:gravity="center" android:text="Score\n0" android:textSize="27sp"
+                  android:layout_above="@+id/quad4Center"
+                  android:id="@+id/textScore"/>
+        <ImageView android:layout_width="0px" android:layout_height="0px" android:layout_centerInParent="true"
+                   android:id="@+id/quad4Center"/>
+        <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
+                  android:gravity="center" android:text="High Score\n500" android:textSize="27sp"
+                  android:layout_below="@+id/quad4Center"
+                  android:id="@+id/textHighScore"/>
+
+    </RelativeLayout>
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:gravity="center"
+              android:textStyle="bold" android:id="@+id/textModeDescription"
+              android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:text="Puzzle Mode"
+              android:textSize="30sp"/>
+
+</RelativeLayout>
+

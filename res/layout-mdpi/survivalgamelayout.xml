@@ -25,7 +25,7 @@
               android:text="GAME OVER\nScore: 1700\nRecord: 2500"
               android:layout_below="@+id/imgbutGameVolume" android:gravity="center_horizontal"
               android:contentDescription="Current Level" android:visibility="gone"
-              android:layout_height="fill_parent" android:textSize="35sp"
+              android:layout_height="fill_parent" android:textSize="32sp"
             />
     <ImageView android:layout_height="0px" android:layout_width="0px" android:id="@+id/betweenCenter"
                android:layout_centerInParent="true"/>

@@ -8,6 +8,15 @@
         <item>Very nice.</item>
     </string-array>
 
+    <string-array name="levellosefast">
+        <item>Try harder</item>
+        <item>Step it up</item>
+        <item>You can do better than that</item>
+        <item>Try again</item>
+        <item>Your pick broke</item>
+    </string-array>
+
+
     <string-array name="levelwintenplus">
         <item>Fort Knox better watch out.</item>
         <item>The force is strong with this one.</item>

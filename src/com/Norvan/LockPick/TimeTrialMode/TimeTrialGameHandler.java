@@ -16,6 +16,10 @@ import com.Norvan.LockPick.VibrationHandler;
  * To change this template use File | Settings | File Templates.
  */
 public class TimeTrialGameHandler {
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
     int currentLevel = 0;
     VibrationHandler vibrationHandler;
     SensorHandler sensorHandler;
@@ -82,6 +86,9 @@ public class TimeTrialGameHandler {
             gameState = STATE_INGAME;
 
         } else if (gameState == STATE_FRESHLOAD || gameState == STATE_GAMEOVER) {
+            if (!sensorHandler.isPolling()) {
+                setSensorPollingState(true);
+            }
             gameStatusInterface.newGameStart();
             scoreHandler.newGame();
             levelHandler = new LevelHandler(currentLevel);

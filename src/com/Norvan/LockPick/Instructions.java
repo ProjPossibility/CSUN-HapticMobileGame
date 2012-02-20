@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 import com.Norvan.LockPick.Helpers.AnalyticsHelper;
+import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.R;
 
 /**
@@ -22,11 +23,11 @@ public class Instructions extends Activity {
         setContentView(R.layout.instructionslayout);
         TextView textInstructions = (TextView) findViewById(R.id.textInstructions);
         textInstructions.setText(getResources().getString(R.string.instructionsNormal));
-        if (SharedPreferencesHandler.getUserType(this) == SharedPreferencesHandler.USER_BLIND) {
+        if (SharedPreferencesHandler.getUserType(this) == UserType.USER_BLIND) {
          tts  = new TTSHandler(this);
             tts.speakPhrase(getResources().getString(R.string.instructionsBlind));
 
-        } else if (SharedPreferencesHandler.getUserType(this) == SharedPreferencesHandler.USER_DEAFBLIND) {
+        } else if (SharedPreferencesHandler.getUserType(this) == UserType.USER_DEAFBLIND) {
             vibrationHandler = new VibrationHandler(this);
             vibrationHandler.playString(getResources().getString(R.string.instructionsDeafBlind));
 

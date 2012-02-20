@@ -33,7 +33,7 @@ public class VolumeToggleHelper {
     public boolean toggleMute(){
         isMuted = isVolumeMuted();
         if (isMuted) {
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)/2, 0);
         } else {
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
         }

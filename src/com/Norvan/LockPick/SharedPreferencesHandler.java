@@ -12,9 +12,7 @@ import android.preference.PreferenceManager;
  * To change this template use File | Settings | File Templates.
  */
 public class SharedPreferencesHandler {
-    final public static int USER_NORMAL = 0;
-    final public static int USER_BLIND = 1;
-    final public static int USER_DEAFBLIND = 2;
+
     SharedPreferences prefs;
 
     public SharedPreferencesHandler(Context context) {
@@ -30,6 +28,10 @@ public class SharedPreferencesHandler {
 
     public static int getUserType(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getInt("userType", -1);
+    }
+
+    public int getUserType() {
         return prefs.getInt("userType", -1);
     }
 

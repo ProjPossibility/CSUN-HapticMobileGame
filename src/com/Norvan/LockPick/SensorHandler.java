@@ -33,7 +33,7 @@ public class SensorHandler {
     int initialSideFacingUp = 0;
     private static final int LEFT_FACING_UP = -1;
     private static final int RIGHT_FACING_UP = 1;
-
+       boolean isPolling = false;
     
     private static final int refreshDelay = 10000000;
     private static final int refreshDelayNoGyro = 10000000;
@@ -52,6 +52,10 @@ public class SensorHandler {
         }
 
     }
+    
+    public boolean isPolling(){
+        return isPolling;
+    }
 
     public void startPolling() {
         if (gyroExists) {
@@ -63,6 +67,7 @@ public class SensorHandler {
             Sensor sensorOrientation = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
             sensorManager.registerListener(sensorEventListenerNoGyro, sensorOrientation, SensorManager.SENSOR_DELAY_GAME);
         }
+        isPolling = true;
     }
 
     public void stopPolling() {
@@ -76,6 +81,7 @@ public class SensorHandler {
         } catch (Exception e) {
 
         }
+        isPolling = false;
     }
 
     SensorEventListener sensorEventListenerWithGyro = new SensorEventListener() {
@@ -95,12 +101,13 @@ public class SensorHandler {
                         lastTiltReading = (int) ((phoneRightSideHeading * 10000) / 360);
 
                         if (initialSideFacingUp == 0) {
-                            if (lastTiltReading > 3500 && lastTiltReading < 6500) {
+                            if (lastTiltReading > 4000 && lastTiltReading < 6000) {
                                 initialSideFacingUp = RIGHT_FACING_UP;
-                            } else if (lastTiltReading > 8500 || lastTiltReading < 1500) {
+                            } else if (lastTiltReading > 9000 || lastTiltReading < 1000) {
                                 initialSideFacingUp = LEFT_FACING_UP;
                             }
                         }
+                        
                         if (initialSideFacingUp == LEFT_FACING_UP) {
                             if (lastTiltReading > 5000) {
                                 lastTiltReading = lastTiltReading - 5000;

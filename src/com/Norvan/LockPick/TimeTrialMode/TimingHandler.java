@@ -1,6 +1,7 @@
 package com.Norvan.LockPick.TimeTrialMode;
 
 import android.os.SystemClock;
+import android.util.Log;
 import android.widget.Chronometer;
 
 /**
@@ -87,9 +88,11 @@ public class TimingHandler {
     }
 
     public long getTimeLeft() {
-
+        Log.i("AMP", "pausech " + String.valueOf(pauseChronoElapsed));
+        Log.i("AMP", "true "+ String.valueOf(startTime - (getCurrentTime() - chronoTimer.getBase())));
+        Log.i("AMP", "false "+ String.valueOf(startTime - pauseChronoElapsed));
         if (pauseChronoElapsed == 0) {
-            return startTime - getCurrentTime() - chronoTimer.getBase();
+            return startTime - (getCurrentTime() - chronoTimer.getBase());
         } else {
             return startTime - pauseChronoElapsed;
         }

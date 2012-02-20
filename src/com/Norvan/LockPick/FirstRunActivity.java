@@ -8,6 +8,7 @@ import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import com.Norvan.LockPick.Helpers.UserType;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,7 +33,7 @@ public class FirstRunActivity extends Activity {
         butNormalMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_NORMAL);
+                SharedPreferencesHandler.setUserType(context, UserType.USER_NORMAL);
                 setResult(RESULT_OK);
                 finish();
             }
@@ -42,7 +43,7 @@ public class FirstRunActivity extends Activity {
         butBlindMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_BLIND);
+                SharedPreferencesHandler.setUserType(context, UserType.USER_BLIND);
                 setResult(RESULT_OK);
                 finish();
             }
@@ -51,7 +52,7 @@ public class FirstRunActivity extends Activity {
         butBlindDeafMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_DEAFBLIND);
+                SharedPreferencesHandler.setUserType(context, UserType.USER_DEAFBLIND);
                 setResult(RESULT_OK);
                 finish();
             }
@@ -74,7 +75,7 @@ public class FirstRunActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (event.isLongPress()) {
 
-                SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_BLIND);
+                SharedPreferencesHandler.setUserType(context, UserType.USER_BLIND);
                 setResult(RESULT_OK);
                 finish();
 
@@ -82,7 +83,7 @@ public class FirstRunActivity extends Activity {
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             if (event.getRepeatCount() > 15) {
-                SharedPreferencesHandler.setUserType(context, SharedPreferencesHandler.USER_DEAFBLIND);
+                SharedPreferencesHandler.setUserType(context, UserType.USER_DEAFBLIND);
                 setResult(RESULT_OK);
                 finish();
 

@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import com.Norvan.LockPick.Helpers.AnalyticsHelper;
 import com.Norvan.LockPick.Helpers.SwipeDetector;
+import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.SurvivalMode.SurvivalGameActivity;
 import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameActivity;
@@ -65,7 +66,7 @@ public class MainActivity extends Activity {
             announcementHandler = new AnnouncementHandler(this, vibrationHandler);
 
         }
-        if (userType == SharedPreferencesHandler.USER_NORMAL) {
+        if (userType == UserType.USER_NORMAL) {
             setContentView(R.layout.mainlayout);
             butNewSurvivalGame = (Button) findViewById(R.id.butMainNewSurvivalGame);
             butNewTimeTrialGame = (Button) findViewById(R.id.butMainNewTimeTrialGame);
@@ -80,7 +81,7 @@ public class MainActivity extends Activity {
             imgbutToggleVolume.setOnClickListener(onClickListener);
             volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
 
-        } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND || userType == SharedPreferencesHandler.USER_BLIND) {
+        } else if (userType == UserType.USER_DEAFBLIND || userType == UserType.USER_BLIND) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             setContentView(R.layout.diagonalmainmenu);
             butNewSurvivalGame = (Button) findViewById(R.id.butSurvivalMode);
@@ -143,7 +144,7 @@ public class MainActivity extends Activity {
             case REQ_FIRSTRUNACTIVITY: {
                 if (resultCode == RESULT_OK) {
                     userType = SharedPreferencesHandler.getUserType(context);
-                    if (userType == SharedPreferencesHandler.USER_NORMAL) {
+                    if (userType == UserType.USER_NORMAL) {
                         setContentView(R.layout.mainlayout);
                         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
                         butNewSurvivalGame = (Button) findViewById(R.id.butMainNewSurvivalGame);
@@ -159,9 +160,10 @@ public class MainActivity extends Activity {
                         imgbutToggleVolume.setOnClickListener(onClickListener);
                         volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
 
-                    } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND || userType == SharedPreferencesHandler.USER_BLIND) {
+                    } else if (userType == UserType.USER_DEAFBLIND || userType == UserType.USER_BLIND) {
                         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                         setContentView(R.layout.diagonalmainmenu);
+                        announcementHandler = new AnnouncementHandler(context, vibrationHandler);
                         butNewSurvivalGame = (Button) findViewById(R.id.butSurvivalMode);
                         butNewTimeTrialGame = (Button) findViewById(R.id.butTimeAttack);
                         butHelp = (Button) findViewById(R.id.butInstructions);

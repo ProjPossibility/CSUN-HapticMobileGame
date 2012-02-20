@@ -18,6 +18,10 @@ import com.Norvan.LockPick.VibrationHandler;
  * To change this template use File | Settings | File Templates.
  */
 public class SurvivalGameHandler {
+    public int getNumberOfPicksLeft() {
+        return numberOfPicksLeft;
+    }
+
     private int numberOfPicksLeft = 5;
 
     public int getCurrentLevel() {
@@ -81,6 +85,9 @@ public class SurvivalGameHandler {
 
 
     public void playCurrentLevel() {
+        if (!sensorHandler.isPolling()) {
+            setSensorPollingState(true);
+        }
         levelHandler = new LevelHandler(currentLevel);
         keyPressed = false;
         gameStatusInterface.levelStart(currentLevel, numberOfPicksLeft);
