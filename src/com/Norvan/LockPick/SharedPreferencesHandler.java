@@ -30,7 +30,7 @@ public class SharedPreferencesHandler {
 
     public static int getUserType(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getInt("userType", 0);
+        return prefs.getInt("userType", -1);
     }
 
     public static void clearUserType(Context context) {

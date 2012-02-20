@@ -27,20 +27,25 @@ public class AnnouncementHandler {
         responseHelper = new ResponseHelper(context);
     }
 
+
     public void shutDown() {
+//        tts.shutDownTTS(false);
+    }
+
+
+    public void masterShutDown() {
         tts.shutDownTTS();
     }
 
-    
-    public void shutUp(){
+    public void shutUp() {
         tts.shutUp();
         vibrationHandler.stopVibrate();
     }
-   
+
 
     public void mainActivityLaunch() {
         userType = SharedPreferencesHandler.getUserType(context);
-         if (userType == SharedPreferencesHandler.USER_BLIND) {
+        if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
             tts.speakPhrase(context.getResources().getString(R.string.mainactivityBlind));
         } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
@@ -86,7 +91,7 @@ public class AnnouncementHandler {
     }
 
 
-    public void puzzlelevelWon( int wonLevel) {
+    public void puzzlelevelWon(int wonLevel) {
 
         if (userType == SharedPreferencesHandler.USER_BLIND) {
             //tts
@@ -154,7 +159,6 @@ public class AnnouncementHandler {
     }
 
 
-
     public void userTakingTooLong() {
         if (userType != SharedPreferencesHandler.USER_DEAFBLIND) {
             tts.speakPhrase(responseHelper.getTakingTooLong());
@@ -188,5 +192,43 @@ public class AnnouncementHandler {
         }
         Toast.makeText(context, "Press back again to quit", Toast.LENGTH_SHORT).show();
 
+    }
+
+    public void speakQuadrant(int quadrant) {
+        if (userType == SharedPreferencesHandler.USER_BLIND) {
+            //tts
+
+            switch (quadrant) {
+                case 3:
+                    tts.speakPhrase("Game Instructions. Long press to select.");
+                    break;
+                case 2:
+                    tts.speakPhrase("Puzzle Mode. Long press to select.");
+                    break;
+                case 4:
+                    tts.speakPhrase("Reset User Type. Long press to select.");
+                    break;
+                case 1:
+                    tts.speakPhrase("Time Attack Mode. Long press to select.");
+                    break;
+            }
+        } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
+            //morse
+            vibrationHandler.stopVibrate();
+            switch (quadrant) {
+                case 3:
+                    vibrationHandler.playString("Game Instructions. Long press to select.");
+                    break;
+                case 2:
+                    vibrationHandler.playString("Puzzle Mode. Long press to select.");
+                    break;
+                case 4:
+                    vibrationHandler.playString("Reset User Type. Long press to select.");
+                    break;
+                case 1:
+                    vibrationHandler.playString("Time Attack Mode. Long press to select.");
+                    break;
+            }
+        }
     }
 }

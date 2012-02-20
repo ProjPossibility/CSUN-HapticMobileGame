@@ -8,12 +8,10 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import com.Norvan.LockPick.Helpers.AnalyticsHelper;
 import com.Norvan.LockPick.Helpers.SwipeDetector;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
@@ -35,9 +33,11 @@ public class MainActivity extends Activity {
 
     int userType = 0;
 
+
     Button butNewSurvivalGame, butNewTimeTrialGame, butHelp, butSettings;
     VolumeToggleHelper volumeToggleHelper;
     ImageButton imgbutToggleVolume;
+
     Context context;
     VibrationHandler vibrationHandler;
     AnnouncementHandler announcementHandler;
@@ -46,29 +46,15 @@ public class MainActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mainlayout);
+        userType = SharedPreferencesHandler.getUserType(this);
+        boolean didGlobalLayout = false;
         context = this;
         vibrationHandler = new VibrationHandler(context);
         if (!vibrationHandler.hasVibrator()) {
             showUnsuportedDialog();
             return;
         }
-        butNewSurvivalGame = (Button) findViewById(R.id.butMainNewSurvivalGame);
-        butNewTimeTrialGame = (Button) findViewById(R.id.butMainNewTimeTrialGame);
-        butHelp = (Button) findViewById(R.id.butMainHelp);
-        butSettings = (Button) findViewById(R.id.butMainSettings);
-        butNewSurvivalGame.setOnClickListener(onClickListener);
-        butNewTimeTrialGame.setOnClickListener(onClickListener);
-        butHelp.setOnClickListener(onClickListener);
-        butSettings.setOnClickListener(onClickListener);
-        butSettings.setText("Reset User Type");
-        imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutMainVolume);
-        imgbutToggleVolume.setOnClickListener(onClickListener);
-        volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
-//        swipeDetector = new SwipeDetector(swipeDetectorInterface);
-//        gestureDetector = new GestureDetector(this, swipeDetector);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        userType = SharedPreferencesHandler.getUserType(context);
         AnalyticsHelper analyticsHelper = new AnalyticsHelper(this);
         analyticsHelper.startApp(userType);
         analyticsHelper = null;
@@ -79,11 +65,76 @@ public class MainActivity extends Activity {
             announcementHandler = new AnnouncementHandler(this, vibrationHandler);
 
         }
+        if (userType == SharedPreferencesHandler.USER_NORMAL) {
+            setContentView(R.layout.mainlayout);
+            butNewSurvivalGame = (Button) findViewById(R.id.butMainNewSurvivalGame);
+            butNewTimeTrialGame = (Button) findViewById(R.id.butMainNewTimeTrialGame);
+            butHelp = (Button) findViewById(R.id.butMainHelp);
+            butSettings = (Button) findViewById(R.id.butMainSettings);
+            butNewSurvivalGame.setOnClickListener(onClickListener);
+            butNewTimeTrialGame.setOnClickListener(onClickListener);
+            butHelp.setOnClickListener(onClickListener);
+            butSettings.setOnClickListener(onClickListener);
+            butSettings.setText("Reset User Type");
+            imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutMainVolume);
+            imgbutToggleVolume.setOnClickListener(onClickListener);
+            volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
+
+        } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND || userType == SharedPreferencesHandler.USER_BLIND) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            setContentView(R.layout.diagonalmainmenu);
+            butNewSurvivalGame = (Button) findViewById(R.id.butSurvivalMode);
+            butNewTimeTrialGame = (Button) findViewById(R.id.butTimeAttack);
+            butHelp = (Button) findViewById(R.id.butInstructions);
+            butSettings = (Button) findViewById(R.id.butResetUser);
+            butNewSurvivalGame.setOnClickListener(blindOnClickListener);
+            butNewTimeTrialGame.setOnClickListener(blindOnClickListener);
+            butHelp.setOnClickListener(blindOnClickListener);
+            butSettings.setOnClickListener(blindOnClickListener);
+            butNewSurvivalGame.setOnLongClickListener(blindOnLongClickListener);
+            butNewTimeTrialGame.setOnLongClickListener(blindOnLongClickListener);
+            butHelp.setOnLongClickListener(blindOnLongClickListener);
+            butSettings.setOnLongClickListener(blindOnLongClickListener);
+
+        }
+
+
         announcementHandler.mainActivityLaunch();
 
 
-
     }
+
+
+    View.OnClickListener blindOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (butNewTimeTrialGame.equals(v)) {
+                announcementHandler.speakQuadrant(1);
+            } else if (butNewSurvivalGame.equals(v)) {
+                announcementHandler.speakQuadrant(2);
+            } else if (butHelp.equals(v)) {
+                announcementHandler.speakQuadrant(3);
+            } else if (butSettings.equals(v)) {
+                announcementHandler.speakQuadrant(4);
+            }
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+    };
+    View.OnLongClickListener blindOnLongClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (butNewTimeTrialGame.equals(v)) {
+                startTimeTrialGameActivity();
+            } else if (butNewSurvivalGame.equals(v)) {
+                startSurvivalGameActivity();
+            } else if (butHelp.equals(v)) {
+                startInstructionsActivity();
+            } else if (butSettings.equals(v)) {
+                showResetUserTypeDialog();
+            }
+            return true;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+    };
 
 
     @Override
@@ -92,7 +143,39 @@ public class MainActivity extends Activity {
             case REQ_FIRSTRUNACTIVITY: {
                 if (resultCode == RESULT_OK) {
                     userType = SharedPreferencesHandler.getUserType(context);
-                    announcementHandler = new AnnouncementHandler(context, vibrationHandler);
+                    if (userType == SharedPreferencesHandler.USER_NORMAL) {
+                        setContentView(R.layout.mainlayout);
+                        announcementHandler = new AnnouncementHandler(context, vibrationHandler);
+                        butNewSurvivalGame = (Button) findViewById(R.id.butMainNewSurvivalGame);
+                        butNewTimeTrialGame = (Button) findViewById(R.id.butMainNewTimeTrialGame);
+                        butHelp = (Button) findViewById(R.id.butMainHelp);
+                        butSettings = (Button) findViewById(R.id.butMainSettings);
+                        butNewSurvivalGame.setOnClickListener(onClickListener);
+                        butNewTimeTrialGame.setOnClickListener(onClickListener);
+                        butHelp.setOnClickListener(onClickListener);
+                        butSettings.setOnClickListener(onClickListener);
+                        butSettings.setText("Reset User Type");
+                        imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutMainVolume);
+                        imgbutToggleVolume.setOnClickListener(onClickListener);
+                        volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
+
+                    } else if (userType == SharedPreferencesHandler.USER_DEAFBLIND || userType == SharedPreferencesHandler.USER_BLIND) {
+                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        setContentView(R.layout.diagonalmainmenu);
+                        butNewSurvivalGame = (Button) findViewById(R.id.butSurvivalMode);
+                        butNewTimeTrialGame = (Button) findViewById(R.id.butTimeAttack);
+                        butHelp = (Button) findViewById(R.id.butInstructions);
+                        butSettings = (Button) findViewById(R.id.butResetUser);
+                        butNewSurvivalGame.setOnClickListener(blindOnClickListener);
+                        butNewTimeTrialGame.setOnClickListener(blindOnClickListener);
+                        butHelp.setOnClickListener(blindOnClickListener);
+                        butSettings.setOnClickListener(blindOnClickListener);
+                        butNewSurvivalGame.setOnLongClickListener(blindOnLongClickListener);
+                        butNewTimeTrialGame.setOnLongClickListener(blindOnLongClickListener);
+                        butHelp.setOnLongClickListener(blindOnLongClickListener);
+                        butSettings.setOnLongClickListener(blindOnLongClickListener);
+                    }
+
                     announcementHandler.mainActivityLaunch();
                 } else {
                     startFirstRunActivity();
@@ -101,18 +184,17 @@ public class MainActivity extends Activity {
             break;
             case REQ_SURVIVALGAMEACTIVITY: {
 
-                if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
-                    finish();
-                }
+                announcementHandler.mainActivityLaunch();
 
             }
             break;
             case REQ_TIMETRIALGAMEACTIVITY: {
-                if (userType == SharedPreferencesHandler.USER_DEAFBLIND) {
-                    finish();
-                }
-
+                announcementHandler.mainActivityLaunch();
             }
+            case REQ_INSTRUCTIONS: {
+                announcementHandler.mainActivityLaunch();
+            }
+            break;
         }
 
         super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
@@ -120,37 +202,10 @@ public class MainActivity extends Activity {
 
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            if (event.getRepeatCount() == 0 && !event.isLongPress()) {
-                if (userType == SharedPreferencesHandler.USER_BLIND || userType == SharedPreferencesHandler.USER_DEAFBLIND) {
-
-                    if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                        startSurvivalGameActivity();
-                    } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                        startTimeTrialGameActivity();
-                    }
-                }
-
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            return true;
-        }
-        return super.onKeyUp(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
         vibrationHandler.stopVibrate();
-        announcementHandler.shutDown();
+        announcementHandler.masterShutDown();
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
