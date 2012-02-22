@@ -24,22 +24,21 @@ import com.Norvan.LockPick.SurvivalMode.SurvivalGameHandler;
  * To change this template use File | Settings | File Templates.
  */
 public class TimeTrialGameActivity extends Activity {
-    VolumeToggleHelper volumeToggleHelper;
-    VibrationHandler vibrationHandler;
-    TimeTrialGameHandler gameHandler;
-    TextView textLevelLabel, textGameOver, textHighScore, textTime, textLevelResult, textModeDescription, textCurrentScore, textScoreBonus;
-    ImageButton imgbutToggleVolume, imgbutTogglePause;
-    Button butGameButton;
-    Chronometer chronoTimer;
-    AnnouncementHandler announcementHandler;
-    SharedPreferencesHandler prefs;
-    Context context;
-    ResponseHelper responseHelper;
-    TimingHandler timingHandler;
-    AnalyticsHelper analyticsHelper;
-    int userType;
-    RelativeLayout quad1, quad2, quad4;
-    int lastLevelReached = 0;
+    private VolumeToggleHelper volumeToggleHelper;
+    private VibrationHandler vibrationHandler;
+    private TimeTrialGameHandler gameHandler;
+    private TextView textLevelLabel, textGameOver, textHighScore, textTime, textLevelResult, textModeDescription, textCurrentScore, textScoreBonus;
+    private ImageButton imgbutToggleVolume, imgbutTogglePause;
+    private Button butGameButton;
+    private Chronometer chronoTimer;
+    private AnnouncementHandler announcementHandler;
+    private SharedPreferencesHandler prefs;
+    private Context context;
+    private TimingHandler timingHandler;
+    private AnalyticsHelper analyticsHelper;
+    private int userType;
+    private RelativeLayout quad1, quad2, quad4;
+    private int lastLevelReached = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +59,6 @@ public class TimeTrialGameActivity extends Activity {
         setHighScore(prefs.getTimeTrialHighScore());
         setUiGameState(TimeTrialGameHandler.STATE_FRESHLOAD);
         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
-        responseHelper = new ResponseHelper(context);
-
         analyticsHelper = new AnalyticsHelper(this);
         analyticsHelper.startTimeTrialActivity();
         timingHandler.setUpdateTimeLeftInterface(updateTimeLeftInterface);

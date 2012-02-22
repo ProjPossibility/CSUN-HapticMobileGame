@@ -163,7 +163,7 @@ public class MainActivity extends Activity {
                         volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
 
                     } else if (userType == UserType.USER_DEAFBLIND || userType == UserType.USER_BLIND) {
-                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                         setContentView(R.layout.diagonalmainmenu);
                         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
                         butNewSurvivalGame = (Button) findViewById(R.id.butSurvivalMode);

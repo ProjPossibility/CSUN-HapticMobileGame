@@ -60,6 +60,7 @@ public class TutorialActivity extends Activity {
     void setUpNormalUI() {
         setContentView(R.layout.tutoriallayout);
         textStepInstructions = (TextView) findViewById(R.id.textTutorialInstructions);
+        textStepInstructions.setKeepScreenOn(true);
         butStartExit = (Button) findViewById(R.id.butGameButton);
         butStartExit.setOnClickListener(onClickNormal);
         ImageButton imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutGameVolume);
@@ -71,6 +72,7 @@ public class TutorialActivity extends Activity {
     void setUpAccessibleUI() {
         setContentView(R.layout.diagonaltutuoriallayout);
         textStepInstructions = (TextView) findViewById(R.id.textTutorialInstructions);
+        textStepInstructions.setKeepScreenOn(true);
         textStepInstructions.setOnClickListener(onClickAccessible);
         textStepInstructions.setOnLongClickListener(onLongClickAccessible);
     }
