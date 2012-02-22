@@ -436,4 +436,83 @@ public class AnnouncementHandler {
 
         }
     }
+    
+    
+    public void tutorialTurnPhoneOnSide(){
+        if (userType == UserType.USER_BLIND) {
+            //tts
+
+              tts.speakPhrase("turn phone on side");
+        } else if (userType == UserType.USER_DEAFBLIND) {
+            //morse
+            vibrationHandler.playStringNotified("turn phone on side");
+        } else {
+            tts.speakPhrase("turn phone on side");
+
+        }
+    }
+
+    public void tutorialFindSweetSpot(){
+        if (userType == UserType.USER_BLIND) {
+            //tts
+
+            tts.speakPhrase("find sweet spot");
+
+        } else if (userType == UserType.USER_DEAFBLIND) {
+            //morse
+               vibrationHandler.playStringNotified("find spot");
+        } else {
+            tts.speakPhrase("find sweet spot");
+
+        }
+    }
+
+    public void tutorialPreformUnlock(){
+        if (userType == UserType.USER_BLIND) {
+            //tts
+
+            tts.speakPhrase("unlock");
+
+        } else if (userType == UserType.USER_DEAFBLIND) {
+            //morse
+                 vibrationHandler.playStringNotified("unlock");
+        } else {
+            tts.speakPhrase("unlock");
+
+        }
+    }
+
+    public void tutorialWin(){
+        if (userType == UserType.USER_BLIND) {
+            //tts
+            tts.speakPhrase("win");
+
+
+        } else if (userType == UserType.USER_DEAFBLIND) {
+            //morse
+             vibrationHandler.playStringNotified("win");
+        } else {
+            tts.speakPhrase("win");
+
+        }
+    }
+    public void tutorialLose(){
+        if (userType == UserType.USER_BLIND) {
+            //tts
+
+            tts.speakPhrase("lost, try again");
+        } else if (userType == UserType.USER_DEAFBLIND) {
+            //morse
+            vibrationHandler.playStringNotified("lost");
+        } else {
+            tts.speakPhrase("lost, try again");
+
+        }
+    }
+    
+    public void speakPhrase(String text) {
+        tts.speakPhrase(text);
+    }
+
+
 }

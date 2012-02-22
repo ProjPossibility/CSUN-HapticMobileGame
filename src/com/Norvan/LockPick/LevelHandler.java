@@ -109,6 +109,14 @@ public class LevelHandler {
 
     }
 
+    
+    public boolean tiltIsInSweetSpot(int tilt){
+        if ((float) (Math.abs(tilt - targetLocation)) / difficulty < sweetSpot) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     public int getIntensityForPositionWhileUnlocking(int tilt) {
 
         float diff = Math.abs(keyPressPosition - tilt);

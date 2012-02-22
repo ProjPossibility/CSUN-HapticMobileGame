@@ -79,6 +79,16 @@ public class VibrationHandler {
         vibrator.vibrate(MorseCodeConverter.pattern(text), -1);
     }
 
+    public void playStringNotified(String text) {
+        long[] pattern = MorseCodeConverter.pattern(text);
+        long duration = 0;
+        for (long l : pattern) {
+            duration = duration + l;
+        }
+        mHandler.postDelayed(vibrationComplete, duration);
+        vibrator.vibrate(pattern, -1);
+    }
+
     public boolean hasVibrator() {
         if (Build.VERSION.SDK_INT > 10) {
             return vibrator.hasVibrator();
@@ -111,7 +121,6 @@ public class VibrationHandler {
     private Runnable vibrationComplete = new Runnable() {
         @Override
         public void run() {
-            //To change body of implemented methods use File | Settings | File Templates.
             if (vibrationCompletedInterface != null) {
                 vibrationCompletedInterface.vibrationCompleted();
             }

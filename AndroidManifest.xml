@@ -26,6 +26,8 @@
                   android:theme="@android:style/Theme.NoTitleBar"/>
         <activity android:name=".TimeTrialMode.TimeTrialGameActivity" android:screenOrientation="portrait"
                   android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name=".TutorialMode.TutorialActivity" android:screenOrientation="portrait"
+                  android:theme="@android:style/Theme.NoTitleBar"/>
 
     </application>
 </manifest>

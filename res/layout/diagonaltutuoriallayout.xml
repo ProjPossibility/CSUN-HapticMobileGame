@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+        >
+
+
+    <ImageView android:layout_width="5dp" android:layout_height="fill_parent" android:layout_centerHorizontal="true"
+               android:scaleType="centerInside" android:src="@android:color/darker_gray"
+               android:layout_below="@+id/separatorHorizontal"
+               android:id="@+id/separatorVertical"/>
+    <ImageView android:layout_width="fill_parent" android:layout_height="5dp" android:layout_centerVertical="true"
+               android:scaleType="centerInside" android:src="@android:color/darker_gray"
+               android:id="@+id/separatorHorizontal"/>
+
+
+    <RelativeLayout android:id="@+id/relquad12" android:layout_width="fill_parent"
+                    android:layout_above="@+id/separatorHorizontal"
+                    android:layout_height="fill_parent">
+
+        <TextView android:id="@+id/textTutorialInstructions" android:layout_height="fill_parent"
+                  android:layout_width="fill_parent" android:gravity="center" android:text="Press play to begin"
+                   android:textSize="27sp"/>
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/relquad3" android:layout_width="fill_parent"
+                    android:layout_below="@+id/separatorHorizontal" android:layout_toLeftOf="@+id/separatorVertical"
+                    android:layout_height="fill_parent">
+        <ImageButton android:id="@+id/imgbutNextStep" android:layout_width="fill_parent"
+                     android:layout_height="fill_parent" android:src="@drawable/ic_media_play"
+                     android:background="@android:color/transparent" android:scaleType="fitCenter"/>
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/relquad4" android:layout_width="fill_parent"
+                    android:layout_below="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
+                    android:layout_height="fill_parent">
+
+        <TextView android:id="@+id/textTutorialStep" android:layout_height="fill_parent"
+                  android:layout_width="fill_parent" android:gravity="center" android:text="Step 1 of 6"
+                  android:textStyle="bold" android:textSize="27sp"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
+

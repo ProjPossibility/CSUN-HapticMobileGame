@@ -17,6 +17,7 @@ import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.SurvivalMode.SurvivalGameActivity;
 import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameActivity;
+import com.Norvan.LockPick.TutorialMode.TutorialActivity;
 
 /**
  * Created by IntelliJ IDEA.
@@ -244,7 +245,7 @@ public class MainActivity extends Activity {
 
     private void startInstructionsActivity() {
         announcementHandler.shutUp();
-        startActivityForResult(new Intent(context, Instructions.class), REQ_INSTRUCTIONS);
+        startActivityForResult(new Intent(context, TutorialActivity.class), REQ_INSTRUCTIONS);
     }
 
     private void showUnsuportedDialog() {
