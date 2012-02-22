@@ -13,9 +13,9 @@ import com.google.android.apps.analytics.GoogleAnalyticsTracker;
  * To change this template use File | Settings | File Templates.
  */
 public class AnalyticsHelper {
-    GoogleAnalyticsTracker tracker;
-    boolean DEV_MODE = true;
-    boolean hasGyro, didTutorial;
+    private  GoogleAnalyticsTracker tracker;
+    private  boolean DEV_MODE = true;
+    private  boolean hasGyro, didTutorial;
 
     public AnalyticsHelper(Context context) {
         tracker = GoogleAnalyticsTracker.getInstance();

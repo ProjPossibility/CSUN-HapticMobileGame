@@ -14,8 +14,8 @@ import java.util.Random;
  * To change this template use File | Settings | File Templates.
  */
 public class ResponseHelper {
-    Context context;
-    Random rand;
+    private   Context context;
+    private   Random rand;
 
     public ResponseHelper(Context context) {
         this.context = context;

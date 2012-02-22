@@ -27,13 +27,13 @@ import com.Norvan.LockPick.VibrationHandler;
  * To change this template use File | Settings | File Templates.
  */
 public class TutorialActivity extends Activity {
-    TutorialHandler tutorialHandler;
-    Context context;
-    VibrationHandler vibrationHandler;
-    AnnouncementHandler announcementHandler;
-    int userType;
-    Button butStartExit;
-    TextView textStepInstructions;
+    private TutorialHandler tutorialHandler;
+    private Context context;
+    private VibrationHandler vibrationHandler;
+    private AnnouncementHandler announcementHandler;
+    private int userType;
+    private Button butStartExit;
+    private TextView textStepInstructions;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +57,7 @@ public class TutorialActivity extends Activity {
 
     }
 
-    void setUpNormalUI() {
+    private void setUpNormalUI() {
         setContentView(R.layout.tutoriallayout);
         textStepInstructions = (TextView) findViewById(R.id.textTutorialInstructions);
         textStepInstructions.setKeepScreenOn(true);
@@ -69,7 +69,7 @@ public class TutorialActivity extends Activity {
 
     }
 
-    void setUpAccessibleUI() {
+    private void setUpAccessibleUI() {
         setContentView(R.layout.diagonaltutuoriallayout);
         textStepInstructions = (TextView) findViewById(R.id.textTutorialInstructions);
         textStepInstructions.setKeepScreenOn(true);
@@ -83,7 +83,7 @@ public class TutorialActivity extends Activity {
 
     }
 
-    View.OnClickListener onClickAccessible = new View.OnClickListener() {
+    private View.OnClickListener onClickAccessible = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_START) {
@@ -112,7 +112,7 @@ public class TutorialActivity extends Activity {
             }
         }
     };
-    View.OnLongClickListener onLongClickAccessible = new View.OnLongClickListener() {
+    private View.OnLongClickListener onLongClickAccessible = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
             if (textStepInstructions.equals(view)) {
@@ -127,7 +127,7 @@ public class TutorialActivity extends Activity {
             return false;
         }
     };
-    View.OnClickListener onClickNormal = new View.OnClickListener() {
+    private View.OnClickListener onClickNormal = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_START) {
@@ -141,11 +141,11 @@ public class TutorialActivity extends Activity {
     };
 
 
-    void setTextStepInstruction(String text) {
+    private void setTextStepInstruction(String text) {
         textStepInstructions.setText(text);
     }
 
-    void goToStep(int step) {
+    private void goToStep(int step) {
         switch (step) {
             case TutorialHandler.STEP_START:
 
@@ -185,7 +185,7 @@ public class TutorialActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
-        if (tutorialHandler.isPolling) {
+        if (tutorialHandler.isPolling()) {
             tutorialHandler.setSensorPollingState(false);
         }
         vibrationHandler.stopVibrate();
@@ -203,7 +203,7 @@ public class TutorialActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
-        if (tutorialHandler.isPolling) {
+        if (tutorialHandler.isPolling()) {
             tutorialHandler.setSensorPollingState(false);
         }
         vibrationHandler.stopVibrate();
@@ -234,7 +234,7 @@ public class TutorialActivity extends Activity {
         return super.onKeyUp(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
-    TutorialHandler.TutorialStatusInterface tutorialStatusInterface = new TutorialHandler.TutorialStatusInterface() {
+    private TutorialHandler.TutorialStatusInterface tutorialStatusInterface = new TutorialHandler.TutorialStatusInterface() {
         @Override
         public void isOnSide() {
             goToStep(TutorialHandler.STEP_postTURNPHONEONSIDE);
@@ -273,7 +273,7 @@ public class TutorialActivity extends Activity {
             //To change body of implemented methods use File | Settings | File Templates.
         }
     };
-    VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
+    private VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
         @Override
         public void vibrationCompleted() {
             switch (tutorialHandler.getCurrentStep()) {

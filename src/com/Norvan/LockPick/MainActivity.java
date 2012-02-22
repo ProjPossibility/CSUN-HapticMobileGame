@@ -32,16 +32,16 @@ public class MainActivity extends Activity {
     private static final int REQ_TIMETRIALGAMEACTIVITY = 4;
     private static final int REQ_INSTRUCTIONS = 3;
 
-    int userType = 0;
+    private  int userType = 0;
 
 
-    Button butNewSurvivalGame, butNewTimeTrialGame, butHelp, butSettings;
-    VolumeToggleHelper volumeToggleHelper;
-    ImageButton imgbutToggleVolume;
-    boolean hasDoneTutorial = false;
-    Context context;
-    VibrationHandler vibrationHandler;
-    AnnouncementHandler announcementHandler;
+    private  Button butNewSurvivalGame, butNewTimeTrialGame, butHelp, butSettings;
+    private  VolumeToggleHelper volumeToggleHelper;
+    private  ImageButton imgbutToggleVolume;
+    private  boolean hasDoneTutorial = false;
+    private  Context context;
+    private  VibrationHandler vibrationHandler;
+    private  AnnouncementHandler announcementHandler;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
     }
 
 
-    View.OnClickListener blindOnClickListener = new View.OnClickListener() {
+    private   View.OnClickListener blindOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (butNewTimeTrialGame.equals(v)) {
@@ -118,7 +118,7 @@ public class MainActivity extends Activity {
             //To change body of implemented methods use File | Settings | File Templates.
         }
     };
-    View.OnLongClickListener blindOnLongClickListener = new View.OnLongClickListener() {
+    private   View.OnLongClickListener blindOnLongClickListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             if (butNewTimeTrialGame.equals(v)) {
@@ -212,7 +212,7 @@ public class MainActivity extends Activity {
         announcementHandler.masterShutDown();
     }
 
-    View.OnClickListener onClickListener = new View.OnClickListener() {
+    private   View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 

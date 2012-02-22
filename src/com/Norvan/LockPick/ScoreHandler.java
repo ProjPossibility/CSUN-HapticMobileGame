@@ -11,11 +11,10 @@ import android.util.Log;
  * To change this template use File | Settings | File Templates.
  */
 public class ScoreHandler {
-    SharedPreferencesHandler sharedPreferencesHandler;
+    private  SharedPreferencesHandler sharedPreferencesHandler;
     public static final int MODE_SURVIVAL = 0;
     public static final int MODE_TIMETRIAL = 1;
-    float comboMultiplier;
-    int score, gameMode;
+    private   int score, gameMode;
 
     public ScoreHandler(SharedPreferencesHandler sharedPreferencesHandler, int gameMode) {
         this.sharedPreferencesHandler = sharedPreferencesHandler;

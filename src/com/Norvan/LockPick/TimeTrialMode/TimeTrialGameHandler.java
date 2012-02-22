@@ -20,26 +20,26 @@ public class TimeTrialGameHandler {
         return currentLevel;
     }
 
-    int currentLevel = 0;
-    VibrationHandler vibrationHandler;
-    SensorHandler sensorHandler;
-    LevelHandler levelHandler;
-    int lastPressedPosition = -1;
-    boolean keyPressed = false;
-    boolean isPolling = false;
-    int keyPressedPosition = -1;
-    GameStatusInterface gameStatusInterface;
-    Context context;
-    int angularVelocityMinimumThreshold = 10;
-    int gameState = 0;
+    private int currentLevel = 0;
+    private VibrationHandler vibrationHandler;
+    private SensorHandler sensorHandler;
+    private LevelHandler levelHandler;
+    private int lastPressedPosition = -1;
+    private boolean keyPressed = false;
+    private boolean isPolling = false;
+    private int keyPressedPosition = -1;
+    private GameStatusInterface gameStatusInterface;
+    private Context context;
+    private int angularVelocityMinimumThreshold = 10;
+    private int gameState = 0;
     public static final int STATE_FRESHLOAD = 0;
     public static final int STATE_INGAME = 1;
     public static final int STATE_BETWEENLEVELS = 2;
     public static final int STATE_GAMEOVER = 3;
     public static final int STATE_PAUSED = 4;
-    boolean gyroExists;
-    TimingHandler timingHandler;
-    ScoreHandler scoreHandler;
+    private boolean gyroExists;
+    private TimingHandler timingHandler;
+    private ScoreHandler scoreHandler;
 
     public TimeTrialGameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler, TimingHandler timingHandler) {
         this.context = context;
@@ -114,7 +114,7 @@ public class TimeTrialGameHandler {
 
     }
 
-    SensorHandler.SensorHandlerInterface sensorHandlerInterface = new SensorHandler.SensorHandlerInterface() {
+    private SensorHandler.SensorHandlerInterface sensorHandlerInterface = new SensorHandler.SensorHandlerInterface() {
         @Override
         public void newValues(float angularVelocity, int tilt) {
             if (gameState == STATE_INGAME) {
@@ -170,7 +170,7 @@ public class TimeTrialGameHandler {
         }
     };
 
-    VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
+    private  VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
         @Override
         public void vibrationCompleted() {
             if (gameState == STATE_BETWEENLEVELS) {
@@ -181,7 +181,7 @@ public class TimeTrialGameHandler {
         }
     };
 
-    TimingHandler.TimingHandlerInterface timingHandlerInterface = new TimingHandler.TimingHandlerInterface() {
+    private  TimingHandler.TimingHandlerInterface timingHandlerInterface = new TimingHandler.TimingHandlerInterface() {
         @Override
         public void gotSecondsTick(long timeLeft) {
             gameStatusInterface.updateTimeLeft(timeLeft);

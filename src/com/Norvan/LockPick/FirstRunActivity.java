@@ -18,11 +18,11 @@ import com.Norvan.LockPick.Helpers.UserType;
  * To change this template use File | Settings | File Templates.
  */
 public class FirstRunActivity extends Activity {
-    Button butNormalMode, butBlindMode, butBlindDeafMode;
-    TTSHandler tts;
-    Context context;
-    Vibrator vibrator;
-    Handler mHandler;
+    private  Button butNormalMode, butBlindMode, butBlindDeafMode;
+    private   TTSHandler tts;
+    private   Context context;
+    private  Vibrator vibrator;
+    private    Handler mHandler;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.firstrun);
@@ -62,7 +62,7 @@ public class FirstRunActivity extends Activity {
         mHandler.postDelayed(playAccessibleInfo, 5000);
     }
 
-    Runnable playAccessibleInfo = new Runnable() {
+    private   Runnable playAccessibleInfo = new Runnable() {
         @Override
         public void run() {
             tts.speakPhrase(context.getResources().getString(R.string.firstrunBlind));

@@ -22,7 +22,7 @@ public class LevelHandler {
     private int keyPressPosition;
     private float buttonPressProximity;
     private boolean currentTryWinnable = false;
-    int[] levelData;
+    private int[] levelData;
 
 
     public LevelHandler(int levelNumber) {

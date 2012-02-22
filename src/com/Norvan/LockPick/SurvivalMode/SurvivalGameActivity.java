@@ -35,8 +35,7 @@ public class SurvivalGameActivity extends Activity
     Context context;
     ResponseHelper responseHelper;
     long gamePausedChronoProgress;
-    GraphView graphView;
-    AnalyticsHelper analyticsHelper;
+     AnalyticsHelper analyticsHelper;
     ScoreHandler scoreHandler;
     int userType;
     RelativeLayout quad1, quad2, quad4;

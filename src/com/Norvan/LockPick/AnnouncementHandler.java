@@ -14,11 +14,11 @@ import com.Norvan.LockPick.Helpers.UserType;
  * To change this template use File | Settings | File Templates.
  */
 public class AnnouncementHandler {
-    int userType;
-    VibrationHandler vibrationHandler;
-    TTSHandler tts;
-    Context context;
-    ResponseHelper responseHelper;
+    private  int userType;
+    private VibrationHandler vibrationHandler;
+    private  TTSHandler tts;
+    private  Context context;
+    private   ResponseHelper responseHelper;
 
     public AnnouncementHandler(Context context, VibrationHandler vibrationHandler) {
         userType = SharedPreferencesHandler.getUserType(context);
@@ -537,10 +537,6 @@ public class AnnouncementHandler {
         } else if (userType == UserType.USER_BLIND) {
             tts.speakPhrase("Alert! Press volume down to reset the user type from blind or volume up to cancel. You will have to restart the app if you do.");
         }
-    }
-
-    public void speakPhrase(String text) {
-        tts.speakPhrase(text);
     }
 
 

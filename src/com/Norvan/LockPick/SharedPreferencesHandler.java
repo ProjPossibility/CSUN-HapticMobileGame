@@ -13,7 +13,7 @@ import android.preference.PreferenceManager;
  */
 public class SharedPreferencesHandler {
 
-    SharedPreferences prefs;
+    private  SharedPreferences prefs;
 
     public SharedPreferencesHandler(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -75,11 +75,7 @@ public class SharedPreferencesHandler {
     }
 
 
-    public   boolean hasDoneTutorial()
-    {
 
-        return prefs.contains("prefDoneTutorial");
-    }
     public static void didTutorial(Context context){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor edit = prefs.edit();

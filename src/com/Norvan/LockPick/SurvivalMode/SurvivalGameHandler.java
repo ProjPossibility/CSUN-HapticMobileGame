@@ -29,23 +29,23 @@ public class SurvivalGameHandler {
     }
 
     private int currentLevel = 0;
-    VibrationHandler vibrationHandler;
-    SensorHandler sensorHandler;
-    LevelHandler levelHandler;
-    int lastPressedPosition = -1;
-    boolean keyPressed = false;
-    boolean isPolling = false;
-    int keyPressedPosition = -1;
-    GameStatusInterface gameStatusInterface;
-    Context context;
-    int angularVelocityMinimumThreshold = 10;
-    int gameState = 0;
+    private VibrationHandler vibrationHandler;
+    private SensorHandler sensorHandler;
+    private LevelHandler levelHandler;
+    private int lastPressedPosition = -1;
+    private boolean keyPressed = false;
+    private boolean isPolling = false;
+    private int keyPressedPosition = -1;
+    private GameStatusInterface gameStatusInterface;
+    private Context context;
+    private int angularVelocityMinimumThreshold = 10;
+    private int gameState = 0;
     public static final int STATE_FRESHLOAD = 0;
     public static final int STATE_INGAME = 1;
     public static final int STATE_BETWEENLEVELS = 2;
     public static final int STATE_GAMEOVER = 3;
     public static final int STATE_PAUSED = 4;
-    boolean gyroExists;
+    private boolean gyroExists;
 
     public SurvivalGameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler) {
         this.context = context;
@@ -110,7 +110,7 @@ public class SurvivalGameHandler {
 
     }
 
-    SensorHandler.SensorHandlerInterface sensorHandlerInterface = new SensorHandler.SensorHandlerInterface() {
+    private SensorHandler.SensorHandlerInterface sensorHandlerInterface = new SensorHandler.SensorHandlerInterface() {
         @Override
         public void newValues(float angularVelocity, int tilt) {
             if (gameState == STATE_INGAME) {
@@ -144,10 +144,10 @@ public class SurvivalGameHandler {
 
                     if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
                         int intensity = levelHandler.getIntensityForPosition(tilt);
-                         if (!gyroExists) {
+                        if (!gyroExists) {
                             intensity = (int) (intensity * 0.7);
                         }
-                         if (intensity < 0) {
+                        if (intensity < 0) {
                             vibrationHandler.stopVibrate();
                         } else {
                             vibrationHandler.pulsePWM(intensity);
@@ -212,7 +212,7 @@ public class SurvivalGameHandler {
         return levelHandler.getTargetLocation();
     }
 
-    VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
+    private VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
         @Override
         public void vibrationCompleted() {
         }

@@ -16,12 +16,12 @@ import android.util.Log;
  */
 public class VibrationHandler {
 
-    Vibrator vibrator;
+    private Vibrator vibrator;
     private int PWMsegmentLength = 50;
     private static final int PWMsegmentLengthNoGyro = 15;
-    VibrationCompletedInterface vibrationCompletedInterface;
-    Handler mHandler;
-    boolean gyroExists;
+    private VibrationCompletedInterface vibrationCompletedInterface;
+    private Handler mHandler;
+    private boolean gyroExists;
 
     public void setVibrationCompletedInterface(VibrationCompletedInterface vibrationCompletedInterface) {
         this.vibrationCompletedInterface = vibrationCompletedInterface;
@@ -47,13 +47,8 @@ public class VibrationHandler {
         vibrator.vibrate(happyPattern, -1);
     }
 
-    public void playNewLevel() {
-        long[] pattern = {0, 150, 100, 150, 100, 150};
-        vibrator.vibrate(pattern, -1);
-    }
 
     public void playSad() {
-        long[] asadPattern = {0, 100, 200, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 3, 7, 403, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6};
         long[] sadPattern = {0, 500, 200, 500, 200, 450};
         vibrator.vibrate(sadPattern, -1);
     }

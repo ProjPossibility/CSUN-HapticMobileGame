@@ -23,7 +23,7 @@ public class TimingHandler {
     private long levelStartTimeLeft;
 
 
-    Chronometer chronoTimer;
+    private   Chronometer chronoTimer;
 
 
     public void setTimingHandlerInterface(TimingHandlerInterface timingHandlerInterface) {
@@ -88,9 +88,7 @@ public class TimingHandler {
     }
 
     public long getTimeLeft() {
-        Log.i("AMP", "pausech " + String.valueOf(pauseChronoElapsed));
-        Log.i("AMP", "true "+ String.valueOf(startTime - (getCurrentTime() - chronoTimer.getBase())));
-        Log.i("AMP", "false "+ String.valueOf(startTime - pauseChronoElapsed));
+
         if (pauseChronoElapsed == 0) {
             return startTime - (getCurrentTime() - chronoTimer.getBase());
         } else {

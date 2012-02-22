@@ -14,9 +14,9 @@ import android.widget.Toast;
 
 public class TTSHandler {
     private TextToSpeech mTts;
-    Context context;
-    boolean goodToGo = false;
-    String notReadyBuffer = null;
+    private Context context;
+    private  boolean goodToGo = false;
+    private String notReadyBuffer = null;
 
     public TTSHandler(Context context) {
         this.context = context;

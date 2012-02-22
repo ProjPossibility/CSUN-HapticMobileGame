@@ -21,20 +21,20 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class SensorHandler {
-    Context context;
-    int lastTiltReading = -1;
-    float lastAngularVelocity = -1;
-    SensorHandlerInterface sensorHandlerInterface;
-    long lastTimestampGyro = 0;
-    long lastTimestampAccel = 0;
-    SensorManager sensorManager;
-    boolean gyroExists;
-    ArrayList<Float> angularVelocityBuffer;
-    int initialSideFacingUp = 0;
+    private Context context;
+    private int lastTiltReading = -1;
+    private float lastAngularVelocity = -1;
+    private SensorHandlerInterface sensorHandlerInterface;
+    private long lastTimestampGyro = 0;
+    private long lastTimestampAccel = 0;
+    private SensorManager sensorManager;
+    private boolean gyroExists;
+    private ArrayList<Float> angularVelocityBuffer;
+    private int initialSideFacingUp = 0;
     private static final int LEFT_FACING_UP = -1;
     private static final int RIGHT_FACING_UP = 1;
-       boolean isPolling = false;
-    
+    private boolean isPolling = false;
+
     private static final int refreshDelay = 10000000;
     private static final int refreshDelayNoGyro = 10000000;
 
@@ -46,14 +46,14 @@ public class SensorHandler {
         angularVelocityBuffer = new ArrayList<Float>();
         angularVelocityBuffer.add(0f);
         angularVelocityBuffer.add(0f);
-        if(!gyroExists) {
+        if (!gyroExists) {
             angularVelocityBuffer.add(0f);
 
         }
 
     }
-    
-    public boolean isPolling(){
+
+    public boolean isPolling() {
         return isPolling;
     }
 
@@ -88,7 +88,7 @@ public class SensorHandler {
         isPolling = false;
     }
 
-    SensorEventListener sensorEventListenerWithGyro = new SensorEventListener() {
+    private SensorEventListener sensorEventListenerWithGyro = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             synchronized (this) {
@@ -111,11 +111,11 @@ public class SensorHandler {
                                 initialSideFacingUp = LEFT_FACING_UP;
                             }
                         }
-                        
+
                         if (initialSideFacingUp == LEFT_FACING_UP) {
                             if (lastTiltReading > 5000) {
                                 lastTiltReading = lastTiltReading - 5000;
-                            }   else {
+                            } else {
                                 lastTiltReading = lastTiltReading + 5000;
                             }
                         }
@@ -131,9 +131,9 @@ public class SensorHandler {
                             for (float val : angularVelocityBuffer) {
                                 lastAngularVelocity = lastAngularVelocity + val;
                             }
-                            lastAngularVelocity = lastAngularVelocity/angularVelocityBuffer.size();
+                            lastAngularVelocity = lastAngularVelocity / angularVelocityBuffer.size();
                             sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
-                        }   else{
+                        } else {
                             sensorHandlerInterface.notOnSide();
                         }
                         lastTimestampGyro = timestamp;
@@ -150,7 +150,7 @@ public class SensorHandler {
         }
     };
 
-    SensorEventListener sensorEventListenerNoGyro = new SensorEventListener() {
+    private SensorEventListener sensorEventListenerNoGyro = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             synchronized (this) {
@@ -175,7 +175,7 @@ public class SensorHandler {
                         if (initialSideFacingUp == LEFT_FACING_UP) {
                             if (currentTiltReading > 5000) {
                                 currentTiltReading = currentTiltReading - 5000;
-                            }   else {
+                            } else {
                                 currentTiltReading = currentTiltReading + 5000;
                             }
                         }
@@ -187,17 +187,17 @@ public class SensorHandler {
                         for (float val : angularVelocityBuffer) {
                             delta = (int) (delta + val);
                         }
-                        delta = delta/angularVelocityBuffer.size();
+                        delta = delta / angularVelocityBuffer.size();
                         lastTiltReading = currentTiltReading;
                         lastTimestampAccel = timestamp;
                         if (initialSideFacingUp != 0) {
-                        sensorHandlerInterface.newValues(delta, currentTiltReading);
-                        }else{
+                            sensorHandlerInterface.newValues(delta, currentTiltReading);
+                        } else {
                             sensorHandlerInterface.notOnSide();
                         }
-                        
+
                     }
-                } 
+                }
             }
         }
 
@@ -209,11 +209,12 @@ public class SensorHandler {
 
     public interface SensorHandlerInterface {
         public void newValues(float angularVelocity, int tilt);
+
         public void notOnSide();
 
     }
 
-    public static boolean hasGyro(Context context){
+    public static boolean hasGyro(Context context) {
         PackageManager paM = context.getPackageManager();
         boolean hasGyro = paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
 

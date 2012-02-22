@@ -152,23 +152,23 @@ public class TimeTrialGameActivity extends Activity {
         return super.onKeyUp(keyCode, event);
     }
 
-    boolean backButtonPressed = false;
+    private boolean backButtonPressed = false;
 
-    public void showBackButtonConfirmation() {
+    private void showBackButtonConfirmation() {
         Handler mHandler = new Handler();
         mHandler.postDelayed(backButtonConfirm, 5000);
         announcementHandler.confirmBackButton();
         backButtonPressed = true;
     }
 
-    Runnable backButtonConfirm = new Runnable() {
+    private Runnable backButtonConfirm = new Runnable() {
         @Override
         public void run() {
             backButtonPressed = false;
         }
     };
 
-    View.OnClickListener onClickAccessible = new View.OnClickListener() {
+    private View.OnClickListener onClickAccessible = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (imgbutTogglePause.equals(view)) {
@@ -231,7 +231,7 @@ public class TimeTrialGameActivity extends Activity {
         }
     };
 
-    View.OnLongClickListener onLongClickAccessible = new View.OnLongClickListener() {
+    private View.OnLongClickListener onLongClickAccessible = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
             if (imgbutTogglePause.equals(view)) {
@@ -267,7 +267,7 @@ public class TimeTrialGameActivity extends Activity {
         }
     };
 
-    View.OnClickListener onClickNormal = new View.OnClickListener() {
+    private View.OnClickListener onClickNormal = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (butGameButton.equals(view)) {
@@ -283,7 +283,7 @@ public class TimeTrialGameActivity extends Activity {
     };
 
 
-    public TimeTrialGameHandler.GameStatusInterface gameStatusInterface = new TimeTrialGameHandler.GameStatusInterface() {
+    private TimeTrialGameHandler.GameStatusInterface gameStatusInterface = new TimeTrialGameHandler.GameStatusInterface() {
         @Override
         public void newGameStart() {
             setUiGameState(TimeTrialGameHandler.STATE_FRESHLOAD);
@@ -375,7 +375,7 @@ public class TimeTrialGameActivity extends Activity {
         }
     };
 
-    void setScoreBonus(int bonus) {
+    private void setScoreBonus(int bonus) {
         if (userType == UserType.USER_NORMAL) {
             textCurrentScore.setText("Score Bonus: " + String.valueOf(bonus));
         } else {
@@ -383,7 +383,7 @@ public class TimeTrialGameActivity extends Activity {
         }
     }
 
-    void setCurrentScore(int score) {
+    private void setCurrentScore(int score) {
         if (userType == UserType.USER_NORMAL) {
             textCurrentScore.setText("Score: " + String.valueOf(score));
         } else {
@@ -391,7 +391,7 @@ public class TimeTrialGameActivity extends Activity {
         }
     }
 
-    void setTimeLeft(long time) {
+    private void setTimeLeft(long time) {
         if (userType == UserType.USER_NORMAL) {
             textTime.setText("Time: " + String.valueOf(time / 1000));
         } else {
@@ -401,11 +401,11 @@ public class TimeTrialGameActivity extends Activity {
 
     }
 
-    void setLevelLabel(int level) {
+    private void setLevelLabel(int level) {
         textLevelLabel.setText("Level " + String.valueOf(level + 1));
     }
 
-    void setHighScore(int highScore) {
+    private void setHighScore(int highScore) {
         if (userType == UserType.USER_NORMAL) {
             textHighScore.setText("High Score: " + String.valueOf(highScore));
         } else {
@@ -549,7 +549,7 @@ public class TimeTrialGameActivity extends Activity {
 
     }
 
-    TimingHandler.UpdateTimeLeftInterface updateTimeLeftInterface = new TimingHandler.UpdateTimeLeftInterface() {
+    private TimingHandler.UpdateTimeLeftInterface updateTimeLeftInterface = new TimingHandler.UpdateTimeLeftInterface() {
         @Override
         public void updateTimeLeft(long timeLeft) {
             int secondsLeft = (int) (timeLeft / 1000);

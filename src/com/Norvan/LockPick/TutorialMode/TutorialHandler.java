@@ -31,29 +31,30 @@ public class TutorialHandler {
         return currentStep;
     }
 
-    int currentStep = 0;
-    int userType = 0;
-    int angularVelocityMinimumThreshold = 10;
-    boolean gyroExists;
-    int lastPressedPosition = -1;
-    boolean keyPressed = false;
+    private int currentStep = 0;
+    private int userType = 0;
+    private int angularVelocityMinimumThreshold = 10;
+    private boolean gyroExists;
+    private int lastPressedPosition = -1;
+    private boolean keyPressed = false;
+
 
     public boolean isPolling() {
         return isPolling;
     }
 
-    boolean isPolling = false;
-    int keyPressedPosition = -1;
-    SensorHandler sensorHandler;
-    boolean scheduledPhoneOnSide = false;
-    boolean scheduledPhoneAtSweetSpot = false;
-    Handler handler;
-    LevelHandler levelHandler;
-    TutorialStatusInterface tutorialStatusInterface;
-    VibrationHandler vibrationHandler;
+    private boolean isPolling = false;
+    private int keyPressedPosition = -1;
+    private SensorHandler sensorHandler;
+    private boolean scheduledPhoneOnSide = false;
+    private boolean scheduledPhoneAtSweetSpot = false;
+    private Handler handler;
+    private LevelHandler levelHandler;
+    private TutorialStatusInterface tutorialStatusInterface;
+    private VibrationHandler vibrationHandler;
 
     public TutorialHandler(Context context, TutorialStatusInterface tutorialStatusInterface, VibrationHandler vibrationHandler) {
-        levelHandler = new LevelHandler(0,true);
+        levelHandler = new LevelHandler(0, true);
         this.vibrationHandler = vibrationHandler;
         sensorHandler = new SensorHandler(context, sensorHandlerInterface);
         this.tutorialStatusInterface = tutorialStatusInterface;
@@ -89,7 +90,7 @@ public class TutorialHandler {
 
     }
 
-    SensorHandler.SensorHandlerInterface sensorHandlerInterface = new SensorHandler.SensorHandlerInterface() {
+    private SensorHandler.SensorHandlerInterface sensorHandlerInterface = new SensorHandler.SensorHandlerInterface() {
         @Override
         public void newValues(float angularVelocity, int tilt) {
 
@@ -108,7 +109,7 @@ public class TutorialHandler {
     };
 
 
-    void processSensorValuesNormal(float angularVelocity, int tilt) {
+    private void processSensorValuesNormal(float angularVelocity, int tilt) {
         lastPressedPosition = tilt;
         if (currentStep == STEP_preFINDSWEETSPOT || currentStep == STEP_PREFORMUNLOCK) {
             if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
@@ -160,7 +161,7 @@ public class TutorialHandler {
     }
 
 
-    void processSensorValuesUnlocking(float angularVelocity, int tilt) {
+    private void processSensorValuesUnlocking(float angularVelocity, int tilt) {
         switch (levelHandler.getUnlockedState(tilt)) {
             case -1://Pick Broken
                 levelLost();
@@ -243,13 +244,13 @@ public class TutorialHandler {
         }
     }
 
-    Runnable phoneOnSide = new Runnable() {
+    private Runnable phoneOnSide = new Runnable() {
         @Override
         public void run() {
             tutorialStatusInterface.isOnSide();
         }
     };
-    Runnable phoneAtSweetSpot = new Runnable() {
+    private Runnable phoneAtSweetSpot = new Runnable() {
         @Override
         public void run() {
             tutorialStatusInterface.sweetSpotFound();
