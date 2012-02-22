@@ -8,20 +8,40 @@
     <string name="instructionsDeafBlind">Turn the phone on its side. Feel around until you find the sweet
         spot. When you think you are on the right spot, hold down either volume button and slowly turn the phone to
         open the lock. Be careful, if you try to open the lock in the wrong spot, you will break the pick. If you
-        feel too much resistance when turning the pick, let go of the button and try again.</string>
+        feel too much resistance when turning the pick, let go of the button and try again.
+    </string>
     <string name="instructionsBlind">Turn the phone on its side. Feel around until you find the sweet
         spot. When you think you are on the right spot, hold down either volume button and slowly turn the phone to
         open the lock. Be careful, if you try to open the lock in the wrong spot, you will break the pick. If you
-        feel too much resistance when turning the pick, let go of the button and try again.</string>
+        feel too much resistance when turning the pick, let go of the button and try again.
+    </string>
     <string name="instructionsNormal">1. Turn the pick (phone) on its side.\n\n2. Feel around until you find the sweet
         spot.\n\n3. When you think you are on the right spot, hold down either volume button and slowly turn the pick to
         open the lock.\n\n4. Be careful, if you try to open the lock in the wrong spot, you will break the pick. If you
         feel too much resistance when turning the pick, let go of the button and try again.
     </string>
 
-    <string name="timeattackBlind">Time Attack Mode. Start with 30 seconds and unlimited lock picks. Pick locks for more time. Press either volume key to begin.</string>
-    <string name="timeattackDeafBlind">Time Attack start with 30 seconds unlimited lock picks. Pick locks for more time. vol key to begin</string>
-    <string name="puzzleBlind">Puzzle mode. Unlimited time but only 5 extra lock picks. Press either volume key to begin.</string>
-    <string name="puzzleDeafBlind">Puzzle mode unlimited time but only 5 extra lock picks. vol key to begin </string>
-
+    <string name="timeattackBlind">Time Attack Mode. Start with 30 seconds and unlimited lock picks. Pick locks for more
+        time. Press either volume key to begin.
+    </string>
+    <string name="timeattackDeafBlind">Time Attack start with 30 seconds unlimited lock picks. Pick locks for more time.
+        vol key to begin
+    </string>
+    <string name="puzzleBlind">Puzzle mode. Unlimited time but only 5 extra lock picks. Press either volume key to
+        begin.
+    </string>
+    <string name="puzzleDeafBlind">Puzzle mode unlimited time but only 5 extra lock picks. vol key to begin</string>
+    <string name="tutorialHoldPhoneOnSide">Hold the phone on its side with the top facing forward like a key.
+    </string>
+    <string name="tutorialFindSweetSpot">Turn the phone back and forth like a key until you feel it vibrate. Try to find
+        the spot with the strongest vibration and hold it there.
+    </string>
+    <string name="tutorialBeginUnlock">When you are at the point with the strongest vibration, hold down either volume
+        button and turn the phone to open the lock.
+    </string>
+    <string name="tutorialUnlockFailed">Your pick broke! When you start openning the lock in the right spot it will go smoothly, but when you
+        start in the wrong spot then youll feel a lot of resistance. If you do, let go of the button and try again or else
+        you will break your pick.
+    </string>
+    <string name="tutorialUnlockSuccess">Congratulations, you just picked your first lock! Now go play the game!</string>
 </resources>

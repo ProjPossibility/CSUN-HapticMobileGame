@@ -36,7 +36,7 @@ public class LevelHandler {
         for (int i = 0; i < difficulty; i++) {
             double percentage = 1.0f - (((double) i) / difficulty);
             if (exponential) {
-                levelData[i] = (int) (10 * (Math.pow(percentage+2, curvePower)));
+                levelData[i] = (int) (10 * (Math.pow(percentage + 2, curvePower)));
             } else {
                 levelData[i] = (int) (100 * percentage);
             }
@@ -46,15 +46,43 @@ public class LevelHandler {
             sb.append(i);
             sb.append(" ");
         }
-        Log.i("AMP", "level "+ String.valueOf(sb.toString()));
+        Log.i("AMP", "level " + String.valueOf(sb.toString()));
     }
 
+    public LevelHandler(int levelNumber, boolean notInCenter) {
+        difficulty = startingDifficulty - (levelNumber / 3) * 100;
+        if (difficulty < 150) {
+            difficulty = 150;
+        }
+        Random rand = new Random();
+        targetLocation = rand.nextInt(4000) + 3000;
+        if (notInCenter) {
+            while (targetLocation > 4000 && targetLocation < 6000) {
+                targetLocation = rand.nextInt(4000) + 3000;
+            }
+        }
+        levelData = new int[difficulty];
+        for (int i = 0; i < difficulty; i++) {
+            double percentage = 1.0f - (((double) i) / difficulty);
+            if (exponential) {
+                levelData[i] = (int) (10 * (Math.pow(percentage + 2, curvePower)));
+            } else {
+                levelData[i] = (int) (100 * percentage);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i : levelData) {
+            sb.append(i);
+            sb.append(" ");
+        }
+        Log.i("AMP", "level " + String.valueOf(sb.toString()));
+    }
 
     public void keyDown(int position) {
         keyPressPosition = position;
         buttonPressProximity = ((float) Math.abs(keyPressPosition - targetLocation)) / difficulty;
         currentTryWinnable = isCurrentTryWinnable();
-        Log.i("AMP", "location "+ String.valueOf(((float) Math.abs(keyPressPosition - targetLocation)) / difficulty));
+        Log.i("AMP", "location " + String.valueOf(((float) Math.abs(keyPressPosition - targetLocation)) / difficulty));
     }
 
     public int getUnlockedState(int currentPosition) {
@@ -109,14 +137,15 @@ public class LevelHandler {
 
     }
 
-    
-    public boolean tiltIsInSweetSpot(int tilt){
+
+    public boolean tiltIsInSweetSpot(int tilt) {
         if ((float) (Math.abs(tilt - targetLocation)) / difficulty < sweetSpot) {
             return true;
         } else {
             return false;
         }
     }
+
     public int getIntensityForPositionWhileUnlocking(int tilt) {
 
         float diff = Math.abs(keyPressPosition - tilt);

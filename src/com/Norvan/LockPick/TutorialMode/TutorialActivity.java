@@ -2,15 +2,18 @@ package com.Norvan.LockPick.TutorialMode;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.Norvan.LockPick.AnnouncementHandler;
 import com.Norvan.LockPick.Helpers.UserType;
+import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.R;
 import com.Norvan.LockPick.SharedPreferencesHandler;
 import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameHandler;
@@ -29,10 +32,8 @@ public class TutorialActivity extends Activity {
     VibrationHandler vibrationHandler;
     AnnouncementHandler announcementHandler;
     int userType;
-
-    ImageButton imgbutContinue;
-    RelativeLayout quad12, quad4;
-    TextView textStepInstructions, textCurrentStep;
+    Button butStartExit;
+    TextView textStepInstructions;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,68 +48,96 @@ public class TutorialActivity extends Activity {
         vibrationHandler.setVibrationCompletedInterface(vibrationCompletedInterface);
         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
         tutorialHandler = new TutorialHandler(context, tutorialStatusInterface, vibrationHandler);
+        if (userType != UserType.USER_DEAFBLIND) {
+            announcementHandler.tutorialLaunch();
+        } else {
+            startTutorial();
+        }
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
     }
 
     void setUpNormalUI() {
         setContentView(R.layout.tutoriallayout);
+        textStepInstructions = (TextView) findViewById(R.id.textTutorialInstructions);
+        butStartExit = (Button) findViewById(R.id.butGameButton);
+        butStartExit.setOnClickListener(onClickNormal);
+        ImageButton imgbutToggleVolume = (ImageButton) findViewById(R.id.imgbutGameVolume);
+        VolumeToggleHelper volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
+
+
     }
 
     void setUpAccessibleUI() {
         setContentView(R.layout.diagonaltutuoriallayout);
-        imgbutContinue = (ImageButton) findViewById(R.id.imgbutNextStep);
-        quad12 = (RelativeLayout) findViewById(R.id.relquad12);
-        quad4 = (RelativeLayout) findViewById(R.id.relquad4);
-        textCurrentStep = (TextView) findViewById(R.id.textTutorialStep);
         textStepInstructions = (TextView) findViewById(R.id.textTutorialInstructions);
-        quad12.setOnClickListener(onClickAccessible);
-        quad4.setOnClickListener(onClickAccessible);
-        imgbutContinue.setOnClickListener(onClickAccessible);
-        imgbutContinue.setOnLongClickListener(onLongClickAccessible);
-        setStepNumberText(1);
+        textStepInstructions.setOnClickListener(onClickAccessible);
+        textStepInstructions.setOnLongClickListener(onLongClickAccessible);
+    }
+
+    private void startTutorial() {
+        announcementHandler.tutorialTurnPhoneOnSide();
+        goToStep(TutorialHandler.STEP_preTURNPHONEONSIDE);
+
     }
 
     View.OnClickListener onClickAccessible = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (quad12.equals(view)) {
-                announcementHandler.speakPhrase(String.valueOf(textStepInstructions.getText()));
-            }   else if (quad4.equals(view)) {
-                announcementHandler.speakPhrase(String.valueOf(textCurrentStep.getText()));
-            }   else if (imgbutContinue.equals(view)) {
-                announcementHandler.speakPhrase("Start tutorial. Hold to select");
-            }
+            if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_START) {
+                announcementHandler.tutorialHoldToBegin();
+                return;
+            } else if (userType != UserType.USER_DEAFBLIND) {
 
+                switch (tutorialHandler.getCurrentStep()) {
+
+                    case TutorialHandler.STEP_preTURNPHONEONSIDE:
+                        announcementHandler.tutorialTurnPhoneOnSide();
+                        break;
+
+                    case TutorialHandler.STEP_preFINDSWEETSPOT:
+                        announcementHandler.tutorialFindSweetSpot(true);
+                        break;
+
+                    case TutorialHandler.STEP_PREFORMUNLOCK:
+                        announcementHandler.tutorialPreformUnlock(true);
+                        break;
+
+                    case TutorialHandler.STEP_FINISHED:
+                        announcementHandler.tutorialWin();
+                        break;
+                }
+            }
         }
     };
     View.OnLongClickListener onLongClickAccessible = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
-            if (imgbutContinue.equals(view)) {
-                announcementHandler.tutorialTurnPhoneOnSide();
-                if (userType != UserType.USER_DEAFBLIND) {
-                    goToStep(TutorialHandler.STEP_preTURNPHONEONSIDE);
+            if (textStepInstructions.equals(view)) {
+                if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_START) {
+                    startTutorial();
+                    return true;
+                } else if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_FINISHED) {
+                    finish();
+                    return true;
                 }
-                imgbutContinue.setVisibility(View.GONE);
-                return true;
             }
             return false;
         }
     };
     View.OnClickListener onClickNormal = new View.OnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onClick(View v) {
+            if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_START) {
+                startTutorial();
+                v.setVisibility(View.GONE);
+            } else {
+                finish();
+            }
 
         }
     };
 
-    void setStepNumberText(int step) {
-        if (step > 0) {
-            textCurrentStep.setText("Step " + String.valueOf(step) + " of 3");
-        } else {
-            textCurrentStep.setText("Done!");
-        }
-    }
 
     void setTextStepInstruction(String text) {
         textStepInstructions.setText(text);
@@ -120,62 +149,36 @@ public class TutorialActivity extends Activity {
 
                 break;
             case TutorialHandler.STEP_preTURNPHONEONSIDE:
-                setStepNumberText(1);
-                setTextStepInstruction("Hold the phone on its side with the top facing forward, like it is a key.");
+                setTextStepInstruction(getResources().getString(R.string.tutorialHoldPhoneOnSide));
                 break;
             case TutorialHandler.STEP_postTURNPHONEONSIDE:
-                setStepNumberText(2);
-                setTextStepInstruction("Turn the phone back and forth like a key until you feel it vibrate. Try to find the spot with the strongest vibration and hold it there. ");
+                setTextStepInstruction(getResources().getString(R.string.tutorialFindSweetSpot));
                 break;
             case TutorialHandler.STEP_preFINDSWEETSPOT:
                 break;
             case TutorialHandler.STEP_postFINDSWEETSPOT:
-                setStepNumberText(3);
-                setTextStepInstruction("When you are at the point with the strongest vibration, hold down either volume button and turn the phone to open the lock.");
+                setTextStepInstruction(getResources().getString(R.string.tutorialBeginUnlock));
                 break;
             case TutorialHandler.STEP_PREFORMUNLOCK:
                 break;
             case TutorialHandler.STEP_postPREFORMUNLOCKwin:
+                SharedPreferencesHandler.didTutorial(this);
+                if (butStartExit != null) {
+                    butStartExit.setText("EXIT");
+                    butStartExit.setVisibility(View.VISIBLE);
+                }
                 break;
             case TutorialHandler.STEP_postPREFORMUNLOCKlose:
-                setTextStepInstruction("Be careful, you can break your pick if you try to open the lock in the wrong place! If you feel the phone vibrate a lot AFTER pressing the volume button, that means you are going to break the pick. Let go of the button and try again.");
+                setTextStepInstruction(context.getResources().getString(R.string.tutorialUnlockFailed));
                 break;
             case TutorialHandler.STEP_FINISHED:
-                setTextStepInstruction("Congratulations! Now go play the game!");
-                goToStep(-1);
+                setTextStepInstruction(context.getResources().getString(R.string.tutorialUnlockSuccess));
                 break;
         }
         tutorialHandler.goToStep(step);
 
     }
 
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (tutorialHandler.getCurrentStep()) {
-                case TutorialHandler.STEP_START:
-                    announcementHandler.tutorialTurnPhoneOnSide();
-                    if (userType != UserType.USER_DEAFBLIND) {
-                        goToStep(TutorialHandler.STEP_preTURNPHONEONSIDE);
-                    }
-                    break;
-                case TutorialHandler.STEP_preTURNPHONEONSIDE:
-                    break;
-                case TutorialHandler.STEP_postTURNPHONEONSIDE:
-                    break;
-                case TutorialHandler.STEP_preFINDSWEETSPOT:
-                    break;
-                case TutorialHandler.STEP_postFINDSWEETSPOT:
-                    break;
-                case TutorialHandler.STEP_PREFORMUNLOCK:
-                    break;
-                case TutorialHandler.STEP_FINISHED:
-                    break;
-
-
-            }
-        }
-    };
 
     @Override
     protected void onPause() {
@@ -210,7 +213,7 @@ public class TutorialActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) && (tutorialHandler.getCurrentStep() != TutorialHandler.STEP_START)) {
             if (!event.isLongPress() && event.getRepeatCount() == 0) {
                 tutorialHandler.gotKeyDown();
             }
@@ -221,7 +224,8 @@ public class TutorialActivity extends Activity {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) && (tutorialHandler.getCurrentStep() != TutorialHandler.STEP_START)) {
+
             tutorialHandler.gotKeyUp();
             return true;
         }
@@ -232,7 +236,7 @@ public class TutorialActivity extends Activity {
         @Override
         public void isOnSide() {
             goToStep(TutorialHandler.STEP_postTURNPHONEONSIDE);
-            announcementHandler.tutorialFindSweetSpot();
+            announcementHandler.tutorialFindSweetSpot(false);
             if (userType != UserType.USER_DEAFBLIND) {
                 goToStep(TutorialHandler.STEP_preFINDSWEETSPOT);
             }
@@ -241,7 +245,7 @@ public class TutorialActivity extends Activity {
         @Override
         public void sweetSpotFound() {
             goToStep(TutorialHandler.STEP_postFINDSWEETSPOT);
-            announcementHandler.tutorialPreformUnlock();
+            announcementHandler.tutorialPreformUnlock(false);
             if (userType != UserType.USER_DEAFBLIND) {
                 goToStep(TutorialHandler.STEP_PREFORMUNLOCK);
             }
@@ -251,7 +255,6 @@ public class TutorialActivity extends Activity {
         public void preformedUnlock(boolean success) {
             if (success) {
                 goToStep(TutorialHandler.STEP_postPREFORMUNLOCKwin);
-                vibrationHandler.playHappyNotified();
                 vibrationHandler.playHappyNotified();
                 if (userType != UserType.USER_DEAFBLIND) {
                     goToStep(TutorialHandler.STEP_FINISHED);
@@ -263,7 +266,6 @@ public class TutorialActivity extends Activity {
                 vibrationHandler.playSadNotified();
                 if (userType != UserType.USER_DEAFBLIND) {
                     announcementHandler.tutorialLose();
-                    goToStep(TutorialHandler.STEP_PREFORMUNLOCK);
                 }
             }
             //To change body of implemented methods use File | Settings | File Templates.
@@ -305,6 +307,8 @@ public class TutorialActivity extends Activity {
                 case TutorialHandler.STEP_postPREFORMUNLOCKlose:
                     if (userType == UserType.USER_DEAFBLIND) {
                         announcementHandler.tutorialLose();
+                        goToStep(TutorialHandler.STEP_PREFORMUNLOCK);
+                    } else {
                         goToStep(TutorialHandler.STEP_PREFORMUNLOCK);
                     }
                     break;

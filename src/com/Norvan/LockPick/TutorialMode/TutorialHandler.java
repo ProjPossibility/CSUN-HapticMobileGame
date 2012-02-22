@@ -53,7 +53,7 @@ public class TutorialHandler {
     VibrationHandler vibrationHandler;
 
     public TutorialHandler(Context context, TutorialStatusInterface tutorialStatusInterface, VibrationHandler vibrationHandler) {
-        levelHandler = new LevelHandler(0);
+        levelHandler = new LevelHandler(0,true);
         this.vibrationHandler = vibrationHandler;
         sensorHandler = new SensorHandler(context, sensorHandlerInterface);
         this.tutorialStatusInterface = tutorialStatusInterface;
@@ -139,7 +139,7 @@ public class TutorialHandler {
                 phoneNotOnSide();
             }
             return;
-        } else if (currentStep == STEP_postFINDSWEETSPOT || currentStep == STEP_postTURNPHONEONSIDE || currentStep == STEP_FINISHED) {
+        } else {
             return;
         }
 
@@ -201,8 +201,8 @@ public class TutorialHandler {
         currentStep = step;
         if (step == STEP_preTURNPHONEONSIDE) {
             setSensorPollingState(true);
-        } else if (step == STEP_postFINDSWEETSPOT || step == STEP_FINISHED) {
-            vibrationHandler.stopVibrate();
+        } else if (step == STEP_FINISHED) {
+            setSensorPollingState(false);
         }
 
     }
@@ -217,7 +217,7 @@ public class TutorialHandler {
 
     private void phoneAtSweetSpot() {
         if (!scheduledPhoneAtSweetSpot) {
-            handler.postDelayed(phoneAtSweetSpot, 2000);
+            handler.postDelayed(phoneAtSweetSpot, 1000);
             scheduledPhoneAtSweetSpot = true;
         }
     }
@@ -238,7 +238,7 @@ public class TutorialHandler {
 
     private void phoneOnSide() {
         if (!scheduledPhoneOnSide) {
-            handler.postDelayed(phoneOnSide, 2000);
+            handler.postDelayed(phoneOnSide, 1000);
             scheduledPhoneOnSide = true;
         }
     }

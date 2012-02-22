@@ -80,7 +80,6 @@ public class SurvivalGameActivity extends Activity
     }
 
     private void setUpAccessibleUI() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.diagonalsurvivallayout);
         textPicksLeft = (TextView) findViewById(R.id.textPicksLeft);
         textLevelLabel = (TextView) findViewById(R.id.textCurrentLevel);
@@ -133,7 +132,7 @@ public class SurvivalGameActivity extends Activity
         public void onChronometerTick(Chronometer chronometer) {
             long timeElapsed = getCurrentTime() - chronometer.getBase();
             if (timeElapsed > 10000) {
-                if (timeElapsed % 10000 < 1000 && gameHandler.getCurrentLevel() > 3) {
+                if (timeElapsed % 10000 < 1000 && gameHandler.getCurrentLevel() > 6) {
                     announcementHandler.userTakingTooLong();
                 }
             }
@@ -272,7 +271,7 @@ public class SurvivalGameActivity extends Activity
                         announcementHandler.pressBottomLeft();
                         break;
                     case SurvivalGameHandler.STATE_GAMEOVER:
-                        announcementHandler.readLevelLabel(lastLevelReached+1, true);
+                        announcementHandler.readLevelLabel(lastLevelReached + 1, true);
                         break;
 
                 }

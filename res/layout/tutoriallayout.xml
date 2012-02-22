@@ -1,8 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
-    <Button android:id="@+id/butTutorial" android:layout_height="wrap_content" android:layout_width="wrap_content"
-            android:text="wasdf"/>
-</LinearLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+    <ImageButton android:background="@android:color/transparent" android:layout_width="50dp"
+                 android:layout_height="50dp" android:scaleType="fitCenter"
+                 android:layout_margin="10dp" android:id="@+id/imgbutGameVolume"
+                 android:layout_alignParentRight="true" android:src="@drawable/ic_audio_vol_mute"/>
+    <TextView android:layout_height="wrap_content" android:textSize="40sp"
+              android:layout_margin="10dp"
+              android:text="\nTutorial" android:id="@+id/textTutorialModeLabel"
+              android:gravity="center_horizontal"
+              android:layout_width="fill_parent"/>
+
+
+    <ImageView android:layout_height="0px" android:layout_width="0px" android:id="@+id/betweenCenter"
+               android:layout_centerInParent="true"/>
+
+
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="90dp"
+            android:layout_below="@+id/betweenCenter" android:id="@+id/butGameButton"
+            android:layout_centerInParent="true" android:textSize="50sp" android:text="START"/>
+
+
+    <TextView android:layout_width="fill_parent" android:id="@+id/textTutorialInstructions"
+              android:text="It is strongly suggested that you turn up the volume so that you can hear the instructions instead of reading them."
+              android:layout_margin="10dp"
+              android:layout_below="@+id/textTutorialModeLabel" android:gravity="center_horizontal"
+              android:layout_height="fill_parent" android:textSize="27sp"
+            />
+
+</RelativeLayout>

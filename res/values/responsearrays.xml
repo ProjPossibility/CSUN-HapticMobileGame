@@ -24,6 +24,11 @@
         <item>Are you a locksmith?</item>
         <item>Locks are scared of you.</item>
         <item>Who needs keys anyway?</item>
+        <item>Nice job.</item>
+        <item>Not bad.</item>
+        <item>Way to go!</item>
+        <item>You\'re getting there.</item>
+        <item>Very nice.</item>
     </string-array>
 
     <string-array name="levellose5plus">
@@ -33,14 +38,17 @@
         <item>Try harder.</item>
         <item>You fail.</item>
         <item>Did you take an arrow to the hand?</item>
-        <item>Cut down on the coffee.</item>
-        <item>Do you think this is a game?</item>
         <item>Don\'t quit your day job yet.</item>
-        <item>Take a deep breath before continuing.</item>
+        <item>I think you need to try the tutorial again</item>
+        <item>Try harder</item>
+        <item>Step it up</item>
+        <item>You can do better than that</item>
+        <item>Try again</item>
+        <item>Your pick broke</item>
     </string-array>
 
     <string-array name="takingtoolong">
-        <item>Hey, are you there.</item>
+        <item>Hey, are you there?</item>
         <item>Put some hustle in it.</item>
         <item>I don\'t have all day.</item>
         <item>That lock won\'t pick itself.</item>

@@ -91,7 +91,6 @@ public class TimeTrialGameActivity extends Activity {
     }
 
     private void setUpAccessibleUI() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.diagonaltimetriallayout);
         textLevelLabel = (TextView) findViewById(R.id.textCurrentLevel);
         textCurrentScore = (TextView) findViewById(R.id.textScore);

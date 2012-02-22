@@ -38,12 +38,10 @@ public class MainActivity extends Activity {
     Button butNewSurvivalGame, butNewTimeTrialGame, butHelp, butSettings;
     VolumeToggleHelper volumeToggleHelper;
     ImageButton imgbutToggleVolume;
-
+    boolean hasDoneTutorial = false;
     Context context;
     VibrationHandler vibrationHandler;
     AnnouncementHandler announcementHandler;
-//    SwipeDetector swipeDetector;
-//    GestureDetector gestureDetector;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +80,6 @@ public class MainActivity extends Activity {
             volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
 
         } else if (userType == UserType.USER_DEAFBLIND || userType == UserType.USER_BLIND) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             setContentView(R.layout.diagonalmainmenu);
             butNewSurvivalGame = (Button) findViewById(R.id.butSurvivalMode);
             butNewTimeTrialGame = (Button) findViewById(R.id.butTimeAttack);
@@ -137,6 +134,11 @@ public class MainActivity extends Activity {
         }
     };
 
+    @Override
+    protected void onResume() {
+        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+        hasDoneTutorial = SharedPreferencesHandler.hasDoneTutorial(this);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -230,13 +232,21 @@ public class MainActivity extends Activity {
 
 
     private void startSurvivalGameActivity() {
-        announcementHandler.shutUp();
-        startActivityForResult(new Intent(context, SurvivalGameActivity.class), REQ_SURVIVALGAMEACTIVITY);
+        if (hasDoneTutorial) {
+            announcementHandler.shutUp();
+            startActivityForResult(new Intent(context, SurvivalGameActivity.class), REQ_SURVIVALGAMEACTIVITY);
+        } else {
+            showTutorialSuggestionDialog(true);
+        }
     }
 
     private void startTimeTrialGameActivity() {
-        announcementHandler.shutUp();
-        startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
+        if (hasDoneTutorial) {
+            announcementHandler.shutUp();
+            startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
+        } else {
+            showTutorialSuggestionDialog(false);
+        }
     }
 
     private void startFirstRunActivity() {
@@ -266,8 +276,8 @@ public class MainActivity extends Activity {
 
         AlertDialog.Builder adb = new AlertDialog.Builder(context);
         adb.setTitle("Alert");
-        adb.setMessage("Please restart the app to continue with user type reset.");
-        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        adb.setMessage("Reset the user type? You will have to restart the app if you do.");
+        adb.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 SharedPreferencesHandler.clearUserType(context);
@@ -281,20 +291,96 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        if (userType != UserType.USER_NORMAL) {
+            announcementHandler.announceResetUserType();
+            adb.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+
+                        if (event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.ACTION_MULTIPLE) {
+
+                        } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                                dialog.dismiss();
+                                SharedPreferencesHandler.clearUserType(context);
+                                finish();
+                            } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                                dialog.dismiss();
+
+                            }
+
+                        }
+                        return true;
+                    }
+                    return false;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+            });
+
+        }
         adb.create().show();
 
 
     }
 
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        if (gestureDetector.onTouchEvent(event))
-//            return true;
-//        else
-//            return false;
-//    }
+    private void showTutorialSuggestionDialog(boolean isSurvival) {
+        final boolean survivalMode = isSurvival;
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        adb.setTitle("Warning");
+        adb.setMessage("This game is based entirely on haptic feedback. Would you like to go through the brief (recommended) tutorial?");
+        adb.setCancelable(true);
+        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startInstructionsActivity();
+            }
+        });
 
+        adb.setNegativeButton("Skip", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                announcementHandler.shutUp();
+                if (survivalMode) {
+                    startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
+                } else {
+                    startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
+                }
+            }
+        });
+        if (userType != UserType.USER_NORMAL) {
+            announcementHandler.announceTutorialSuggestion();
+            adb.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
 
+                        if (event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.ACTION_MULTIPLE) {
+
+                        } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                                dialog.dismiss();
+                                startInstructionsActivity();
+                            } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                                dialog.dismiss();
+                                announcementHandler.shutUp();
+                                if (survivalMode) {
+                                    startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
+                                } else {
+                                    startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
+                                }
+                            }
+
+                        }
+                        return true;
+                    }
+                    return false;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+            });
+
+        }
+        adb.create().show();
+    }
 
 
 }

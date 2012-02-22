@@ -104,7 +104,7 @@ public class VibrationHandler {
         for (long l : sadPattern) {
             duration = duration + l;
         }
-        mHandler.postDelayed(vibrationComplete, duration);
+        mHandler.postDelayed(vibrationComplete, duration+200);
         vibrator.vibrate(sadPattern, -1);
     }
 

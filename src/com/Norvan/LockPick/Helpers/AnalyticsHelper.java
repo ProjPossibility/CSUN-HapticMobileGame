@@ -2,6 +2,7 @@ package com.Norvan.LockPick.Helpers;
 
 import android.content.Context;
 import com.Norvan.LockPick.SensorHandler;
+import com.Norvan.LockPick.SharedPreferencesHandler;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 /**
@@ -14,7 +15,7 @@ import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 public class AnalyticsHelper {
     GoogleAnalyticsTracker tracker;
     boolean DEV_MODE = true;
-    boolean hasGyro;
+    boolean hasGyro, didTutorial;
 
     public AnalyticsHelper(Context context) {
         tracker = GoogleAnalyticsTracker.getInstance();
@@ -22,9 +23,10 @@ public class AnalyticsHelper {
             tracker.startNewSession("UA-29206443-1", context);
 
         } else {
-            tracker.startNewSession("UA-29193154-2", context);
+            tracker.startNewSession("UA-29193154-3", context);
         }
         hasGyro = SensorHandler.hasGyro(context);
+        didTutorial = SharedPreferencesHandler.hasDoneTutorial(context);
     }
 
     public void startApp(int userType) {
@@ -43,46 +45,46 @@ public class AnalyticsHelper {
 
     public void winSurvivalLevel(int level, int time, int picksLeft) {
         tracker.trackEvent(
-                "SurvivalWin",  // Category
-                "Level: " + String.valueOf(level),  // Action
+                "GameplaySurvival",  // Category
+                "win level " + String.valueOf(level),  // Action
                 "Picks: " + String.valueOf(picksLeft),
                 time);       // Value
     }
 
     public void loseSurvivalLevel(int level, int time, int picksLeftAfter) {
         tracker.trackEvent(
-                "SurvivalWin",  // Category
-                "Level: " + String.valueOf(level),  // Action
+                "GameplaySurvival",  // Category
+                "lose level " + String.valueOf(level),  // Action
                 "Picks: " + String.valueOf(picksLeftAfter),
                 time);       // Value
     }
 
     public void gameOverSurvival(int score, int maxlevel) {
         tracker.trackEvent(
-                "Survival",  // Category
-                "GAME OVER", String.valueOf(maxlevel) + " " + String.valueOf(hasGyro), score);       // Value
+                "GameOverSurvival",  // Category
+                "maxLevel " + String.valueOf(maxlevel) + " hasGyro " + String.valueOf(hasGyro) + " tutorial " + String.valueOf(didTutorial), String.valueOf(maxlevel) + " " + String.valueOf(hasGyro), score);       // Value
     }
 
     public void winTimeTrialLevel(int level, int timeLeft) {
         tracker.trackEvent(
-                "TimeTrial",  // Category
-                "WIN",  // Action
+                "GameplayTimeTrial",  // Category
+                "win level " + String.valueOf(level),  // Action
                 String.valueOf(level), // Label
                 timeLeft);       // Value
     }
 
     public void loseTimeTrialLevel(int level, int timeLeft) {
         tracker.trackEvent(
-                "TimeTrial",  // Category
-                "LOSE",  // Action
+                "GameplayTimeTrial",  // Category
+                "lose level " + String.valueOf(level),  // Action
                 String.valueOf(level), // Label
                 timeLeft);       // Value
     }
 
     public void gameOverTimeTrial(int score, int maxlevel) {
         tracker.trackEvent(
-                "TimeTrial",  // Category
-                "GAME OVER", String.valueOf(maxlevel) + " " + String.valueOf(hasGyro), score);       // Value
+                "GameOverTimeTrial",  // Category
+                "maxLevel " + String.valueOf(maxlevel) + " hasGyro " + String.valueOf(hasGyro) + " tutorial " + String.valueOf(didTutorial), String.valueOf(maxlevel) + " " + String.valueOf(hasGyro), score);       // Value
     }
 
     public void exitTimeTrial() {

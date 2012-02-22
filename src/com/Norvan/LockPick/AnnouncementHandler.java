@@ -121,7 +121,7 @@ public class AnnouncementHandler {
             if (level > 3) {
                 tts.speakPhrase(responseHelper.getLevelLose5plus() + " Press either volume key to try again.");
             } else {
-                tts.speakPhrase("You lost. Press volume to try again");
+                tts.speakPhrase("Your pick broke. Press either volume key to try again");
             }
         } else if (userType == UserType.USER_DEAFBLIND) {
             //morse
@@ -436,80 +436,109 @@ public class AnnouncementHandler {
 
         }
     }
-    
-    
-    public void tutorialTurnPhoneOnSide(){
-        if (userType == UserType.USER_BLIND) {
-            //tts
 
-              tts.speakPhrase("turn phone on side");
-        } else if (userType == UserType.USER_DEAFBLIND) {
+
+    public void tutorialTurnPhoneOnSide() {
+        if (userType == UserType.USER_DEAFBLIND) {
             //morse
             vibrationHandler.playStringNotified("turn phone on side");
         } else {
-            tts.speakPhrase("turn phone on side");
+            tts.speakPhrase(context.getResources().getString(R.string.tutorialHoldPhoneOnSide));
 
         }
     }
 
-    public void tutorialFindSweetSpot(){
-        if (userType == UserType.USER_BLIND) {
-            //tts
-
-            tts.speakPhrase("find sweet spot");
-
-        } else if (userType == UserType.USER_DEAFBLIND) {
+    public void tutorialFindSweetSpot(boolean repeat) {
+        if (userType == UserType.USER_DEAFBLIND) {
             //morse
-               vibrationHandler.playStringNotified("find spot");
+            vibrationHandler.playStringNotified("find spot");
         } else {
-            tts.speakPhrase("find sweet spot");
+
+            if (repeat) {
+                tts.speakPhrase(context.getResources().getString(R.string.tutorialFindSweetSpot));
+            } else {
+                tts.speakPhrase("Very good, now " + context.getResources().getString(R.string.tutorialFindSweetSpot));
+            }
 
         }
     }
 
-    public void tutorialPreformUnlock(){
-        if (userType == UserType.USER_BLIND) {
-            //tts
-
-            tts.speakPhrase("unlock");
-
-        } else if (userType == UserType.USER_DEAFBLIND) {
+    public void tutorialPreformUnlock(boolean repeat) {
+        if (userType == UserType.USER_DEAFBLIND) {
             //morse
-                 vibrationHandler.playStringNotified("unlock");
+            vibrationHandler.playStringNotified("unlock");
         } else {
-            tts.speakPhrase("unlock");
-
+            if (repeat) {
+                tts.speakPhrase(context.getResources().getString(R.string.tutorialBeginUnlock));
+            } else {
+                tts.speakPhrase("Excellent. " + context.getResources().getString(R.string.tutorialBeginUnlock));
+            }
         }
     }
 
-    public void tutorialWin(){
-        if (userType == UserType.USER_BLIND) {
-            //tts
-            tts.speakPhrase("win");
-
-
-        } else if (userType == UserType.USER_DEAFBLIND) {
+    public void tutorialWin() {
+        if (userType == UserType.USER_DEAFBLIND) {
             //morse
-             vibrationHandler.playStringNotified("win");
+            vibrationHandler.playStringNotified("win");
+        } else if (userType == UserType.USER_BLIND) {
+            tts.speakPhrase(context.getResources().getString(R.string.tutorialUnlockSuccess) + " Long press to exit tutorial.");
+
         } else {
-            tts.speakPhrase("win");
+            tts.speakPhrase(context.getResources().getString(R.string.tutorialUnlockSuccess));
 
         }
     }
-    public void tutorialLose(){
-        if (userType == UserType.USER_BLIND) {
-            //tts
 
-            tts.speakPhrase("lost, try again");
-        } else if (userType == UserType.USER_DEAFBLIND) {
+    public void tutorialLose() {
+        if (userType == UserType.USER_DEAFBLIND) {
             //morse
             vibrationHandler.playStringNotified("lost");
         } else {
-            tts.speakPhrase("lost, try again");
+            tts.speakPhrase(context.getResources().getString(R.string.tutorialUnlockFailed));
 
         }
     }
-    
+
+    public void tutorialHoldToBegin() {
+        if (userType == UserType.USER_DEAFBLIND) {
+            //morse
+            vibrationHandler.playStringNotified("Hold to begin.");
+        } else if (userType == UserType.USER_BLIND) {
+            tts.speakPhrase("Long press to begin");
+
+        }
+    }
+
+
+    public void tutorialLaunch() {
+        if (userType == UserType.USER_DEAFBLIND) {
+            //morse
+            vibrationHandler.playStringNotified("Tutorial. Hold to begin.");
+        } else if (userType == UserType.USER_BLIND) {
+            tts.speakPhrase("Tutorial. Long press to begin");
+
+        }
+    }
+
+    public void announceTutorialSuggestion() {
+        if (userType == UserType.USER_DEAFBLIND) {
+            //morse
+            vibrationHandler.playStringNotified("This game is based entirely on haptic feedback. Would you like to go through the brief recommended tutorial?");
+        } else if (userType == UserType.USER_BLIND) {
+            tts.speakPhrase("Warning! This game is based entirely on haptic feedback. Would you like to go through the brief recommended tutorial? Press volume down to confirm or volume up to skip");
+
+        }
+    }
+
+    public void announceResetUserType() {
+        if (userType == UserType.USER_DEAFBLIND) {
+            //morse
+            vibrationHandler.playStringNotified("T");
+        } else if (userType == UserType.USER_BLIND) {
+            tts.speakPhrase("Alert! Press volume down to reset the user type from blind or volume up to cancel. You will have to restart the app if you do.");
+        }
+    }
+
     public void speakPhrase(String text) {
         tts.speakPhrase(text);
     }

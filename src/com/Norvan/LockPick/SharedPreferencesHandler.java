@@ -66,4 +66,24 @@ public class SharedPreferencesHandler {
     public int getTimeTrialHighScore() {
         return prefs.getInt("timetrialHighScore", 0);
     }
+    
+    
+    public static boolean hasDoneTutorial(Context context)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.contains("prefDoneTutorial");
+    }
+
+
+    public   boolean hasDoneTutorial()
+    {
+
+        return prefs.contains("prefDoneTutorial");
+    }
+    public static void didTutorial(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putBoolean("prefDoneTutorial", true);
+        edit.commit();
+    }
 }
