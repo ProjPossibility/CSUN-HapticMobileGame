@@ -5,13 +5,6 @@ import com.Norvan.LockPick.SensorHandler;
 import com.Norvan.LockPick.SharedPreferencesHandler;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi-dev
- * Date: 2/14/12
- * Time: 6:09 PM
- * To change this template use File | Settings | File Templates.
- */
 public class AnalyticsHelper {
     private  GoogleAnalyticsTracker tracker;
     private  boolean DEV_MODE = true;

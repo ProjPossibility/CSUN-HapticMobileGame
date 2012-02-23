@@ -33,15 +33,34 @@
     <string name="puzzleDeafBlind">Puzzle mode unlimited time but only 5 extra lock picks. vol key to begin</string>
     <string name="tutorialHoldPhoneOnSide">Hold the phone on its side with the top facing forward like a key.
     </string>
+    <string name="tutorialHoldPhoneOnSideMorse">Hold phone its side with the top facing forward like a key.
+    </string>
     <string name="tutorialFindSweetSpot">Turn the phone back and forth like a key until you feel it vibrate. Try to find
         the spot with the strongest vibration and hold it there.
+    </string>
+    <string name="tutorialFindSweetSpotMorse">Turn phone back and forth like a key until you feel vibrate. Try to find
+        spot with strongest vibration and hold there.
     </string>
     <string name="tutorialBeginUnlock">When you are at the point with the strongest vibration, hold down either volume
         button and turn the phone to open the lock.
     </string>
-    <string name="tutorialUnlockFailed">Your pick broke! When you start openning the lock in the right spot it will go smoothly, but when you
-        start in the wrong spot then youll feel a lot of resistance. If you do, let go of the button and try again or else
+    <string name="tutorialBeginUnlockMorse">When at point with strongest vibration, hold either volume
+        button and turn phone to open lock.
+    </string>
+    <string name="tutorialUnlockFailed">Your pick broke! When you start openning the lock in the right spot it will go
+        smoothly, but when you
+        start in the wrong spot then youll feel a lot of resistance. If you do, let go of the button and try again or
+        else
         you will break your pick.
     </string>
-    <string name="tutorialUnlockSuccess">Congratulations, you just picked your first lock! Now go play the game!</string>
+
+    <string name="tutorialUnlockFailedMorse">Your pick broke. if start openning lock in right spot it will go smooth but
+        if start in wrong spot then you feel a lot resistance. If you do, let go of button and try again or else
+        you will break your pick.
+    </string>
+    <string name="tutorialUnlockSuccess">Congratulations, you just picked your first lock! Now go play the game!
+    </string>
+    <string name="tutorialUnlockSuccessMorse">Congratulations, you openned lock! Now go play game!
+    </string>
+
 </resources>

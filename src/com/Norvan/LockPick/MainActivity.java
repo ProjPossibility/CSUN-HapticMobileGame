@@ -95,7 +95,7 @@ public class MainActivity extends Activity {
             butSettings.setOnLongClickListener(blindOnLongClickListener);
 
         }
-
+        Log.i("AMP", "hasGyro " + String.valueOf(SensorHandler.hasGyro(this)));
 
         announcementHandler.mainActivityLaunch();
 
@@ -324,6 +324,7 @@ public class MainActivity extends Activity {
 
     }
 
+
     private void showTutorialSuggestionDialog(boolean isSurvival) {
         final boolean survivalMode = isSurvival;
         AlertDialog.Builder adb = new AlertDialog.Builder(context);
@@ -342,7 +343,7 @@ public class MainActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 announcementHandler.shutUp();
                 if (survivalMode) {
-                    startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
+                    startActivityForResult(new Intent(context, SurvivalGameActivity.class), REQ_SURVIVALGAMEACTIVITY);
                 } else {
                     startActivityForResult(new Intent(context, TimeTrialGameActivity.class), REQ_TIMETRIALGAMEACTIVITY);
                 }

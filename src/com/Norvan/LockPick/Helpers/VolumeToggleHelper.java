@@ -7,13 +7,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import com.Norvan.LockPick.R;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi
- * Date: 2/8/12
- * Time: 9:49 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class VolumeToggleHelper {
     private AudioManager audioManager;
     private boolean isMuted;

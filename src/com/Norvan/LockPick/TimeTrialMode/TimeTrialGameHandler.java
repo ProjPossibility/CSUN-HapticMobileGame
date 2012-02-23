@@ -146,9 +146,7 @@ public class TimeTrialGameHandler {
 
                     if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
                         int intensity = levelHandler.getIntensityForPosition(tilt);
-                        if (!gyroExists) {
-                            intensity = (int) (intensity * 0.7);
-                        }
+
 
                         if (intensity < 0) {
                             vibrationHandler.stopVibrate();
@@ -194,6 +192,7 @@ public class TimeTrialGameHandler {
     };
 
     private void gameOver() {
+        vibrationHandler.stopVibrate();
         gameState = STATE_GAMEOVER;
         timingHandler.pauseTimer();
         boolean isHighScore = scoreHandler.gameOver();

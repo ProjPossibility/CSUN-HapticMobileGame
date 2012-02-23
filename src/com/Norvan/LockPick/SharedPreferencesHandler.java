@@ -4,13 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi
- * Date: 2/5/12
- * Time: 1:15 AM
- * To change this template use File | Settings | File Templates.
- */
+
+
 public class SharedPreferencesHandler {
 
     private  SharedPreferences prefs;

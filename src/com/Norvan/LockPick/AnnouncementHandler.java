@@ -1,24 +1,16 @@
 package com.Norvan.LockPick;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.UserType;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi
- * Date: 2/5/12
- * Time: 2:10 AM
- * To change this template use File | Settings | File Templates.
- */
 public class AnnouncementHandler {
-    private  int userType;
+    private int userType;
     private VibrationHandler vibrationHandler;
-    private  TTSHandler tts;
-    private  Context context;
-    private   ResponseHelper responseHelper;
+    private TTSHandler tts;
+    private Context context;
+    private ResponseHelper responseHelper;
 
     public AnnouncementHandler(Context context, VibrationHandler vibrationHandler) {
         userType = SharedPreferencesHandler.getUserType(context);
@@ -166,11 +158,7 @@ public class AnnouncementHandler {
         }
     }
 
-    private String getTimeString(float time) {
-        int seconds = (int) time / 1000;
-        return String.valueOf(seconds) + " seconds";
 
-    }
 
     public void announceTimeLeft(int secondsLeft) {
         if (secondsLeft <= 60 && secondsLeft > 25) {
@@ -256,7 +244,7 @@ public class AnnouncementHandler {
     }
 
     public void gameNextLevel(boolean wonLevel) {
-        String speakPhrase = "";
+        String speakPhrase;
         if (wonLevel) {
             speakPhrase = "Next level. Hold to select.";
         } else {
@@ -441,7 +429,7 @@ public class AnnouncementHandler {
     public void tutorialTurnPhoneOnSide() {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified("turn phone on side");
+            vibrationHandler.playStringNotified(context.getResources().getString(R.string.tutorialHoldPhoneOnSideMorse));
         } else {
             tts.speakPhrase(context.getResources().getString(R.string.tutorialHoldPhoneOnSide));
 
@@ -451,7 +439,7 @@ public class AnnouncementHandler {
     public void tutorialFindSweetSpot(boolean repeat) {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified("find spot");
+            vibrationHandler.playStringNotified(context.getResources().getString(R.string.tutorialFindSweetSpotMorse));
         } else {
 
             if (repeat) {
@@ -466,7 +454,7 @@ public class AnnouncementHandler {
     public void tutorialPreformUnlock(boolean repeat) {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified("unlock");
+            vibrationHandler.playStringNotified(context.getResources().getString(R.string.tutorialBeginUnlockMorse));
         } else {
             if (repeat) {
                 tts.speakPhrase(context.getResources().getString(R.string.tutorialBeginUnlock));
@@ -479,7 +467,7 @@ public class AnnouncementHandler {
     public void tutorialWin() {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified("win");
+            vibrationHandler.playStringNotified(context.getResources().getString(R.string.tutorialUnlockSuccessMorse)+" hold to exit");
         } else if (userType == UserType.USER_BLIND) {
             tts.speakPhrase(context.getResources().getString(R.string.tutorialUnlockSuccess) + " Long press to exit tutorial.");
 
@@ -492,7 +480,7 @@ public class AnnouncementHandler {
     public void tutorialLose() {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified("lost");
+            vibrationHandler.playStringNotified(context.getResources().getString(R.string.tutorialUnlockFailedMorse));
         } else {
             tts.speakPhrase(context.getResources().getString(R.string.tutorialUnlockFailed));
 
@@ -523,7 +511,7 @@ public class AnnouncementHandler {
     public void announceTutorialSuggestion() {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified("This game is based entirely on haptic feedback. Would you like to go through the brief recommended tutorial?");
+            vibrationHandler.playStringNotified("Warning. Would you like to go through tutorial? vol down confirm vol up skip");
         } else if (userType == UserType.USER_BLIND) {
             tts.speakPhrase("Warning! This game is based entirely on haptic feedback. Would you like to go through the brief recommended tutorial? Press volume down to confirm or volume up to skip");
 

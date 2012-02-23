@@ -16,13 +16,7 @@ import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.SurvivalMode.SurvivalGameHandler;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi-dev
- * Date: 2/14/12
- * Time: 3:34 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class TimeTrialGameActivity extends Activity {
     private VolumeToggleHelper volumeToggleHelper;
     private VibrationHandler vibrationHandler;

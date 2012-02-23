@@ -3,13 +3,7 @@ package com.Norvan.LockPick;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi-dev
- * Date: 2/15/12
- * Time: 6:21 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class ScoreHandler {
     private  SharedPreferencesHandler sharedPreferencesHandler;
     public static final int MODE_SURVIVAL = 0;

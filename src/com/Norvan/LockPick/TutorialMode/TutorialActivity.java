@@ -19,13 +19,7 @@ import com.Norvan.LockPick.SharedPreferencesHandler;
 import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameHandler;
 import com.Norvan.LockPick.VibrationHandler;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi
- * Date: 2/20/12
- * Time: 11:03 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class TutorialActivity extends Activity {
     private TutorialHandler tutorialHandler;
     private Context context;
@@ -88,7 +82,7 @@ public class TutorialActivity extends Activity {
         public void onClick(View view) {
             if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_START) {
                 announcementHandler.tutorialHoldToBegin();
-                return;
+
             } else if (userType != UserType.USER_DEAFBLIND) {
 
                 switch (tutorialHandler.getCurrentStep()) {

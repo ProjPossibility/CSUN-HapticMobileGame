@@ -35,7 +35,6 @@ public class SurvivalGameHandler {
     private int lastPressedPosition = -1;
     private boolean keyPressed = false;
     private boolean isPolling = false;
-    private int keyPressedPosition = -1;
     private GameStatusInterface gameStatusInterface;
     private Context context;
     private int angularVelocityMinimumThreshold = 10;
@@ -100,8 +99,7 @@ public class SurvivalGameHandler {
 
     public void gotKeyDown() {
         keyPressed = true;
-        keyPressedPosition = lastPressedPosition;
-        levelHandler.keyDown(keyPressedPosition);
+        levelHandler.keyDown(lastPressedPosition);
         vibrationHandler.stopVibrate();
     }
 
@@ -144,9 +142,7 @@ public class SurvivalGameHandler {
 
                     if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
                         int intensity = levelHandler.getIntensityForPosition(tilt);
-                        if (!gyroExists) {
-                            intensity = (int) (intensity * 0.7);
-                        }
+
                         if (intensity < 0) {
                             vibrationHandler.stopVibrate();
                         } else {

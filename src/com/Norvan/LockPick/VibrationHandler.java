@@ -7,13 +7,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi-dev
- * Date: 2/4/12
- * Time: 6:07 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class VibrationHandler {
 
     private Vibrator vibrator;

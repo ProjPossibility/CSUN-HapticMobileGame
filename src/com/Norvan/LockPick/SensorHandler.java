@@ -21,7 +21,6 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class SensorHandler {
-    private Context context;
     private int lastTiltReading = -1;
     private float lastAngularVelocity = -1;
     private SensorHandlerInterface sensorHandlerInterface;
@@ -39,7 +38,6 @@ public class SensorHandler {
     private static final int refreshDelayNoGyro = 10000000;
 
     public SensorHandler(Context context, SensorHandlerInterface sensorHandlerInterface) {
-        this.context = context;
         this.sensorHandlerInterface = sensorHandlerInterface;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         gyroExists = hasGyro(context);
@@ -153,6 +151,7 @@ public class SensorHandler {
     private SensorEventListener sensorEventListenerNoGyro = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
+
             synchronized (this) {
                 long timestamp = sensorEvent.timestamp;
 
@@ -167,8 +166,10 @@ public class SensorHandler {
                         currentTiltReading = (int) ((phoneRightSideHeading * 10000) / 360);
                         if (initialSideFacingUp == 0) {
                             if (currentTiltReading > 3500 && currentTiltReading < 6500) {
+                                Log.i("AMP", "RIGHT UP");
                                 initialSideFacingUp = RIGHT_FACING_UP;
                             } else if (currentTiltReading > 8500 || currentTiltReading < 1500) {
+                                Log.i("AMP", "LEFT UP");
                                 initialSideFacingUp = LEFT_FACING_UP;
                             }
                         }
@@ -217,7 +218,6 @@ public class SensorHandler {
     public static boolean hasGyro(Context context) {
         PackageManager paM = context.getPackageManager();
         boolean hasGyro = paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
-
         return hasGyro;
     }
 

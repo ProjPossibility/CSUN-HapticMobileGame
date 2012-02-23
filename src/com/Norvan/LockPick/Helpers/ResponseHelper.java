@@ -6,13 +6,7 @@ import com.Norvan.LockPick.R;
 
 import java.util.Random;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi-dev
- * Date: 2/9/12
- * Time: 4:32 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class ResponseHelper {
     private   Context context;
     private   Random rand;

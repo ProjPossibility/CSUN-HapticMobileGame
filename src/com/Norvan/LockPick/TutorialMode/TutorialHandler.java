@@ -2,19 +2,12 @@ package com.Norvan.LockPick.TutorialMode;
 
 import android.content.Context;
 import android.os.Handler;
-import com.Norvan.LockPick.AnnouncementHandler;
 import com.Norvan.LockPick.Helpers.GameVariables;
 import com.Norvan.LockPick.LevelHandler;
 import com.Norvan.LockPick.SensorHandler;
 import com.Norvan.LockPick.VibrationHandler;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi
- * Date: 2/20/12
- * Time: 11:03 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class TutorialHandler {
     public static final int STEP_START = 0;
     public static final int STEP_preTURNPHONEONSIDE = 1;
@@ -32,7 +25,6 @@ public class TutorialHandler {
     }
 
     private int currentStep = 0;
-    private int userType = 0;
     private int angularVelocityMinimumThreshold = 10;
     private boolean gyroExists;
     private int lastPressedPosition = -1;
@@ -44,7 +36,6 @@ public class TutorialHandler {
     }
 
     private boolean isPolling = false;
-    private int keyPressedPosition = -1;
     private SensorHandler sensorHandler;
     private boolean scheduledPhoneOnSide = false;
     private boolean scheduledPhoneAtSweetSpot = false;
@@ -56,7 +47,23 @@ public class TutorialHandler {
     public TutorialHandler(Context context, TutorialStatusInterface tutorialStatusInterface, VibrationHandler vibrationHandler) {
         levelHandler = new LevelHandler(0, true);
         this.vibrationHandler = vibrationHandler;
-        sensorHandler = new SensorHandler(context, sensorHandlerInterface);
+
+        sensorHandler = new SensorHandler(context, new SensorHandler.SensorHandlerInterface() {
+            @Override
+            public void newValues(float angularVelocity, int tilt) {
+
+                if (keyPressed) {
+                    processSensorValuesUnlocking(angularVelocity, tilt);
+                } else {
+                    processSensorValuesNormal(angularVelocity, tilt);
+                }
+            }
+
+
+            @Override
+            public void notOnSide() {
+            }
+        });
         this.tutorialStatusInterface = tutorialStatusInterface;
         gyroExists = SensorHandler.hasGyro(context);
         if (!gyroExists) {
@@ -79,8 +86,7 @@ public class TutorialHandler {
     public void gotKeyDown() {
         if (currentStep == STEP_PREFORMUNLOCK) {
             keyPressed = true;
-            keyPressedPosition = lastPressedPosition;
-            levelHandler.keyDown(keyPressedPosition);
+            levelHandler.keyDown(lastPressedPosition);
             vibrationHandler.stopVibrate();
         }
     }
@@ -89,24 +95,6 @@ public class TutorialHandler {
         keyPressed = false;
 
     }
-
-    private SensorHandler.SensorHandlerInterface sensorHandlerInterface = new SensorHandler.SensorHandlerInterface() {
-        @Override
-        public void newValues(float angularVelocity, int tilt) {
-
-            if (keyPressed) {
-                processSensorValuesUnlocking(angularVelocity, tilt);
-            } else {
-                processSensorValuesNormal(angularVelocity, tilt);
-            }
-        }
-
-
-        @Override
-        public void notOnSide() {
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
-    };
 
 
     private void processSensorValuesNormal(float angularVelocity, int tilt) {

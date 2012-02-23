@@ -46,8 +46,7 @@ public class LevelHandler {
             sb.append(i);
             sb.append(" ");
         }
-        Log.i("AMP", "level " + String.valueOf(sb.toString()));
-    }
+     }
 
     public LevelHandler(int levelNumber, boolean notInCenter) {
         difficulty = startingDifficulty - (levelNumber / 3) * 100;
