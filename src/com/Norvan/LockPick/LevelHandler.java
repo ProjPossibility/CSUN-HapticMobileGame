@@ -69,13 +69,8 @@ public class LevelHandler {
                 levelData[i] = (int) (100 * percentage);
             }
         }
-        StringBuilder sb = new StringBuilder();
-        for (int i : levelData) {
-            sb.append(i);
-            sb.append(" ");
-        }
-        Log.i("AMP", "level " + String.valueOf(sb.toString()));
-    }
+
+     }
 
     public void keyDown(int position) {
         keyPressPosition = position;

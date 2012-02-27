@@ -35,7 +35,7 @@ public class SurvivalGameActivity extends Activity
     Context context;
     ResponseHelper responseHelper;
     long gamePausedChronoProgress;
-     AnalyticsHelper analyticsHelper;
+    AnalyticsHelper analyticsHelper;
     ScoreHandler scoreHandler;
     int userType;
     RelativeLayout quad1, quad2, quad4;
@@ -101,7 +101,7 @@ public class SurvivalGameActivity extends Activity
         quad1.setOnLongClickListener(onLongClickAccessible);
         quad2.setOnLongClickListener(onLongClickAccessible);
         quad4.setOnLongClickListener(onLongClickAccessible);
-
+        imgbutTogglePause.setContentDescription("Start game");
 //        volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
     }
 
@@ -163,11 +163,11 @@ public class SurvivalGameActivity extends Activity
             if (backButtonPressed) {
                 finish();
             } else if (gameHandler.getGameState() != TimeTrialGameHandler.STATE_FRESHLOAD && gameHandler.getGameState() != TimeTrialGameHandler.STATE_GAMEOVER) {
-                if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
-                    gameHandler.pauseGame();
-                    setTogglePauseImage(true);
-                }
                 showBackButtonConfirmation();
+                if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
+                    pauseGame();
+                }
+
             } else {
                 finish();
             }
@@ -216,26 +216,48 @@ public class SurvivalGameActivity extends Activity
         @Override
         public void onClick(View view) {
             if (imgbutTogglePause.equals(view)) {
-                switch (gameHandler.getGameState()) {
-                    case SurvivalGameHandler.STATE_PAUSED:
-                        announcementHandler.gameResumeGame();
-                        break;
-                    case SurvivalGameHandler.STATE_INGAME:
-                        gameHandler.pauseGame();
-                        setTogglePauseImage(true);
-                        announcementHandler.confirmGamePause();
-                        break;
-                    case SurvivalGameHandler.STATE_BETWEENLEVELS:
-                        announcementHandler.gameNextLevel(wonLastLevel);
-                        break;
-                    case SurvivalGameHandler.STATE_FRESHLOAD:
-                        announcementHandler.gameStartFreshGame();
-                        break;
-                    case SurvivalGameHandler.STATE_GAMEOVER:
-                        announcementHandler.gameStartNewGame();
-                        break;
+                if (userType == UserType.USER_BLIND) {
+                    switch (gameHandler.getGameState()) {
 
+                        case SurvivalGameHandler.STATE_PAUSED:
+                            resumeGame();
+                            break;
+                        case SurvivalGameHandler.STATE_INGAME:
+                           pauseGame();
+                            break;
+                        case SurvivalGameHandler.STATE_BETWEENLEVELS:
+                            gameHandler.playCurrentLevel();
+                            break;
+                        case SurvivalGameHandler.STATE_FRESHLOAD:
+                            gameHandler.playCurrentLevel();
+                            break;
+                        case SurvivalGameHandler.STATE_GAMEOVER:
+                            gameHandler.playCurrentLevel();
+                            break;
+
+                    }
+                } else if (userType == UserType.USER_DEAFBLIND) {
+                    switch (gameHandler.getGameState()) {
+
+                        case SurvivalGameHandler.STATE_PAUSED:
+                            announcementHandler.gameResumeGame();
+                            break;
+                        case SurvivalGameHandler.STATE_INGAME:
+                            pauseGame();
+                            break;
+                        case SurvivalGameHandler.STATE_BETWEENLEVELS:
+                            announcementHandler.gameNextLevel(wonLastLevel);
+                            break;
+                        case SurvivalGameHandler.STATE_FRESHLOAD:
+                            announcementHandler.gameStartFreshGame();
+                            break;
+                        case SurvivalGameHandler.STATE_GAMEOVER:
+                            announcementHandler.gameStartNewGame();
+                            break;
+
+                    }
                 }
+
             } else if (quad1.equals(view)) {
                 switch (gameHandler.getGameState()) {
                     case SurvivalGameHandler.STATE_PAUSED:
@@ -346,6 +368,7 @@ public class SurvivalGameActivity extends Activity
                 butGameButton.setText("Next Level");
             } else {
                 textLevelLabel.setText("Level Complete!");
+                imgbutTogglePause.setContentDescription("Start next level");
             }
             wonLastLevel = true;
             chronoTimer.stop();
@@ -366,6 +389,7 @@ public class SurvivalGameActivity extends Activity
                 butGameButton.setText("Try Again");
             } else {
                 textScoreBonus.setVisibility(View.GONE);
+                imgbutTogglePause.setContentDescription("Try level again");
                 textLevelLabel.setText("Broke Pick\nTry Again");
             }
             chronoTimer.stop();
@@ -448,12 +472,18 @@ public class SurvivalGameActivity extends Activity
         gamePausedChronoProgress = getCurrentTime() - chronoTimer.getBase();
         chronoTimer.stop();
         setTogglePauseImage(true);
+        announcementHandler.confirmGamePause();
+        imgbutTogglePause.setContentDescription("Resume game");
+
     }
 
-    private void resumeGame() {
+    private void resumeGame() {    
+        gameHandler.resumeGame();
         chronoTimer.setBase(getCurrentTime() - gamePausedChronoProgress);
         chronoTimer.start();
         setTogglePauseImage(false);
+        announcementHandler.confirmGameResume();
+        imgbutTogglePause.setContentDescription("Pause Game");
     }
 
     @Override
@@ -533,6 +563,7 @@ public class SurvivalGameActivity extends Activity
                     butGameButton.setVisibility(View.GONE);
                 } else {
                     textScoreBonus.setVisibility(View.GONE);
+                    imgbutTogglePause.setContentDescription("Pause game");
                     imgbutTogglePause.setImageResource(R.drawable.ic_media_pause);
                 }
             }
@@ -574,6 +605,7 @@ public class SurvivalGameActivity extends Activity
                     textHighScore.setVisibility(View.VISIBLE);
                     textLevelLabel.setVisibility(View.VISIBLE);
                     textCurrentScore.setVisibility(View.VISIBLE);
+                    imgbutTogglePause.setContentDescription("Start new game");
                     imgbutTogglePause.setVisibility(View.VISIBLE);
                     imgbutTogglePause.setImageResource(R.drawable.ic_media_play);
                 }

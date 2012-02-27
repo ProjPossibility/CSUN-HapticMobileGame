@@ -15,22 +15,22 @@
 
     <Button android:id="@+id/butTimeAttack" android:layout_width="fill_parent" android:text="Time Attack\nMode"
             android:gravity="center" android:background="@android:color/transparent" android:textSize="25sp"
-            android:textColor="#ffcccccc"
+            android:textColor="#ffcccccc"                                                               android:contentDescription="Time Attack Mode"
             android:layout_above="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
             android:layout_height="fill_parent"/>
     <Button android:id="@+id/butSurvivalMode" android:layout_width="fill_parent" android:text="Puzzle\nMode"
             android:gravity="center" android:background="@android:color/transparent" android:textSize="25sp"
-            android:textColor="#ffcccccc"
+            android:textColor="#ffcccccc"                        android:contentDescription="Puzzle Mode"
             android:layout_above="@+id/separatorHorizontal" android:layout_toLeftOf="@+id/separatorVertical"
             android:layout_height="fill_parent"/>
-    <Button android:id="@+id/butInstructions" android:layout_width="fill_parent" android:text="Instructions"
+    <Button android:id="@+id/butInstructions" android:layout_width="fill_parent" android:text="Tutorial"
             android:gravity="center" android:background="@android:color/transparent" android:textSize="25sp"
-            android:textColor="#ffcccccc"
+            android:textColor="#ffcccccc"                                                              android:contentDescription="Tutorial"
             android:layout_below="@+id/separatorHorizontal" android:layout_toLeftOf="@+id/separatorVertical"
             android:layout_height="fill_parent"/>
     <Button android:id="@+id/butResetUser" android:layout_width="fill_parent" android:text="Reset\nUser Type"
             android:gravity="center" android:background="@android:color/transparent" android:textSize="25sp"
-            android:textColor="#ffcccccc"
+            android:textColor="#ffcccccc"            android:contentDescription="Reset User Type"
             android:layout_below="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
             android:layout_height="fill_parent"/>
     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:gravity="center"

@@ -104,6 +104,7 @@ public class TimeTrialGameActivity extends Activity {
         quad2.setOnLongClickListener(onLongClickAccessible);
         quad4.setOnLongClickListener(onLongClickAccessible);
         imgbutTogglePause.setKeepScreenOn(true);
+        imgbutTogglePause.setContentDescription("Start game");
 
     }
 
@@ -134,8 +135,7 @@ public class TimeTrialGameActivity extends Activity {
                 finish();
             } else if (gameHandler.getGameState() != TimeTrialGameHandler.STATE_FRESHLOAD && gameHandler.getGameState() != TimeTrialGameHandler.STATE_GAMEOVER) {
                 if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
-                    gameHandler.pauseGame();
-                    setTogglePauseImage(true);
+                    pauseGame();
                 }
                 showBackButtonConfirmation();
             } else {
@@ -166,22 +166,36 @@ public class TimeTrialGameActivity extends Activity {
         @Override
         public void onClick(View view) {
             if (imgbutTogglePause.equals(view)) {
-                switch (gameHandler.getGameState()) {
-                    case SurvivalGameHandler.STATE_PAUSED:
-                        announcementHandler.gameResumeGame();
-                        break;
-                    case SurvivalGameHandler.STATE_INGAME:
-                        gameHandler.pauseGame();
-                        setTogglePauseImage(true);
-                        announcementHandler.confirmGamePause();
-                        break;
-                    case SurvivalGameHandler.STATE_FRESHLOAD:
-                        announcementHandler.gameStartFreshGame();
-                        break;
-                    case SurvivalGameHandler.STATE_GAMEOVER:
-                        announcementHandler.gameStartNewGame();
-                        break;
-
+                if (userType == UserType.USER_BLIND) {
+                    switch (gameHandler.getGameState()) {
+                        case SurvivalGameHandler.STATE_PAUSED:
+                            resumeGame();
+                            break;
+                        case SurvivalGameHandler.STATE_INGAME:
+                            pauseGame();
+                            break;
+                        case SurvivalGameHandler.STATE_FRESHLOAD:
+                            gameHandler.playCurrentLevel();
+                            break;
+                        case SurvivalGameHandler.STATE_GAMEOVER:
+                            gameHandler.playCurrentLevel();
+                            break;
+                    }
+                } else if (userType == UserType.USER_DEAFBLIND) {
+                    switch (gameHandler.getGameState()) {
+                        case SurvivalGameHandler.STATE_PAUSED:
+                            announcementHandler.gameResumeGame();
+                            break;
+                        case SurvivalGameHandler.STATE_INGAME:
+                            pauseGame();
+                            break;
+                        case SurvivalGameHandler.STATE_FRESHLOAD:
+                            announcementHandler.gameStartFreshGame();
+                            break;
+                        case SurvivalGameHandler.STATE_GAMEOVER:
+                            announcementHandler.gameStartNewGame();
+                            break;
+                    }
                 }
             } else if (quad1.equals(view)) {
                 switch (gameHandler.getGameState()) {
@@ -231,14 +245,10 @@ public class TimeTrialGameActivity extends Activity {
             if (imgbutTogglePause.equals(view)) {
                 switch (gameHandler.getGameState()) {
                     case SurvivalGameHandler.STATE_PAUSED:
-                        gameHandler.resumeGame();
-                        setTogglePauseImage(false);
-                        announcementHandler.confirmGameResume();
+                        resumeGame();
                         break;
                     case SurvivalGameHandler.STATE_INGAME:
-                        gameHandler.pauseGame();
-                        setTogglePauseImage(true);
-                        announcementHandler.confirmGamePause();
+                        pauseGame();
                         break;
 
                     case SurvivalGameHandler.STATE_FRESHLOAD:
@@ -302,6 +312,7 @@ public class TimeTrialGameActivity extends Activity {
             } else {
                 textLevelLabel.setText("Lock Picked!");
                 textScoreBonus.setVisibility(View.VISIBLE);
+                imgbutTogglePause.setContentDescription("Start next level");
             }
             setUiGameState(TimeTrialGameHandler.STATE_BETWEENLEVELS);
             setScoreBonus(bonus);
@@ -321,6 +332,7 @@ public class TimeTrialGameActivity extends Activity {
                 textLevelResult.setText("Pick Broke");
                 textCurrentScore.setVisibility(View.GONE);
             } else {
+                imgbutTogglePause.setContentDescription("Try level again");
                 textLevelLabel.setText("Pick Broke");
             }
             announcementHandler.timeTrialLose();
@@ -419,13 +431,27 @@ public class TimeTrialGameActivity extends Activity {
         }
     }
 
+    private void pauseGame() {
+        gameHandler.pauseGame();
+        imgbutTogglePause.setContentDescription("Resume game");
+        setTogglePauseImage(true);
+        announcementHandler.confirmGamePause();
+    }
+
+    private void resumeGame() {
+        gameHandler.resumeGame();
+        imgbutTogglePause.setContentDescription("Pause game");
+        setTogglePauseImage(false);
+        announcementHandler.confirmGameResume();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
         Log.i("AMP", "onpause timetrial");
         gameHandler.setSensorPollingState(false);
         if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
-            gameHandler.pauseGame();
+            pauseGame();
         }
         vibrationHandler.stopVibrate();
     }
@@ -483,6 +509,7 @@ public class TimeTrialGameActivity extends Activity {
                     textLevelResult.setVisibility(View.GONE);
                 } else {
                     setTogglePauseImage(false);
+                    imgbutTogglePause.setContentDescription("Pause Game");
                     textScoreBonus.setVisibility(View.GONE);
 
                 }
@@ -529,6 +556,7 @@ public class TimeTrialGameActivity extends Activity {
                     imgbutTogglePause.setVisibility(View.VISIBLE);
                     textHighScore.setVisibility(View.VISIBLE);
                     setTogglePauseImage(true);
+                    imgbutTogglePause.setContentDescription("Start New Game");
                     textScoreBonus.setVisibility(View.GONE);
                 }
             }

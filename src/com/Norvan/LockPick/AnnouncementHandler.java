@@ -132,9 +132,9 @@ public class AnnouncementHandler {
         if (userType == UserType.USER_BLIND) {
             //tts
             if (isHighScore) {
-                tts.speakPhrase("Game Over. Your scored " + String.valueOf((score)) + " points. A new high score! Press volume for a new game.");
+                tts.speakPhrase("Game Over. You scored " + String.valueOf((score)) + " points. A new high score! Press either volume button to start a new game.");
             } else {
-                tts.speakPhrase("Game Over. Your scored " + String.valueOf((score)) + " points. Press volume for a new game.");
+                tts.speakPhrase("Game Over. You scored " + String.valueOf((score)) + " points. Press either volume button to start a new game.");
             }
 
         } else if (userType == UserType.USER_DEAFBLIND) {
@@ -159,7 +159,6 @@ public class AnnouncementHandler {
     }
 
 
-
     public void announceTimeLeft(int secondsLeft) {
         if (secondsLeft <= 60 && secondsLeft > 25) {
             if (secondsLeft % 10 == 0) { //Every 10 seconds between 60 and 25 seconds
@@ -176,9 +175,7 @@ public class AnnouncementHandler {
 
 
     public void confirmBackButton() {
-        if (userType == UserType.USER_BLIND) {
-            tts.speakPhrase("Press back again to exit");
-        }
+
         Toast.makeText(context, "Press back again to quit", Toast.LENGTH_SHORT).show();
 
     }
@@ -345,7 +342,7 @@ public class AnnouncementHandler {
     public void confirmGamePause() {
         if (userType == UserType.USER_BLIND) {
             //tts
-            tts.speakPhrase("Game Paused. Hold to resume.");
+            tts.speakPhrase("Game Paused");
         } else if (userType == UserType.USER_DEAFBLIND) {
             //morse
             vibrationHandler.stopVibrate();
@@ -467,9 +464,9 @@ public class AnnouncementHandler {
     public void tutorialWin() {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified(context.getResources().getString(R.string.tutorialUnlockSuccessMorse)+" hold to exit");
+            vibrationHandler.playStringNotified(context.getResources().getString(R.string.tutorialUnlockSuccessMorse) + " hold to exit");
         } else if (userType == UserType.USER_BLIND) {
-            tts.speakPhrase(context.getResources().getString(R.string.tutorialUnlockSuccess) + " Long press to exit tutorial.");
+            tts.speakPhrase(context.getResources().getString(R.string.tutorialUnlockSuccessBlind));
 
         } else {
             tts.speakPhrase(context.getResources().getString(R.string.tutorialUnlockSuccess));
@@ -490,9 +487,9 @@ public class AnnouncementHandler {
     public void tutorialHoldToBegin() {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified("Hold to begin.");
+            vibrationHandler.playStringNotified("Long click to begin.");
         } else if (userType == UserType.USER_BLIND) {
-            tts.speakPhrase("Long press to begin");
+            tts.speakPhrase("Press either volume button to begin.");
 
         }
     }
@@ -501,9 +498,9 @@ public class AnnouncementHandler {
     public void tutorialLaunch() {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified("Tutorial. Hold to begin.");
+            vibrationHandler.playStringNotified("Tutorial. Long click to begin.");
         } else if (userType == UserType.USER_BLIND) {
-            tts.speakPhrase("Tutorial. Long press to begin");
+            tts.speakPhrase("Tutorial. Press either volume button to begin.");
 
         }
     }

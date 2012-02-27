@@ -69,6 +69,10 @@ public class TutorialActivity extends Activity {
         textStepInstructions.setKeepScreenOn(true);
         textStepInstructions.setOnClickListener(onClickAccessible);
         textStepInstructions.setOnLongClickListener(onLongClickAccessible);
+        if (userType == UserType.USER_BLIND) {
+            textStepInstructions.setText("Press either volume button to begin");
+            textStepInstructions.setContentDescription("");
+        }
     }
 
     private void startTutorial() {
@@ -209,20 +213,37 @@ public class TutorialActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) && (tutorialHandler.getCurrentStep() != TutorialHandler.STEP_START)) {
-            if (!event.isLongPress() && event.getRepeatCount() == 0) {
-                tutorialHandler.gotKeyDown();
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+            if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_START) {
+                if (userType == UserType.USER_BLIND) {
+                    if (!event.isLongPress() && event.getRepeatCount() == 0) {
+                        startTutorial();
+                    }
+                    return true;
+                }
+            }else if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_FINISHED) {
+                if (userType == UserType.USER_BLIND) {
+                    if (!event.isLongPress() && event.getRepeatCount() == 0) {
+                        finish();
+                    }
+                    return true;
+                }
+            } else {
+                if (!event.isLongPress() && event.getRepeatCount() == 0) {
+                    tutorialHandler.gotKeyDown();
+                }
+                return true;
             }
-            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) && (tutorialHandler.getCurrentStep() != TutorialHandler.STEP_START)) {
-
-            tutorialHandler.gotKeyUp();
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+            if (tutorialHandler.getCurrentStep() != TutorialHandler.STEP_START && tutorialHandler.getCurrentStep() != TutorialHandler.STEP_FINISHED) {
+                tutorialHandler.gotKeyUp();
+            } 
             return true;
         }
         return super.onKeyUp(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.

@@ -4,12 +4,13 @@
                 android:layout_height="fill_parent"
         >
 
-    <TextView android:id="@+id/textTutorialInstructions" android:layout_margin="50dp" android:layout_height="fill_parent"
-              android:layout_width="fill_parent" android:gravity="center" android:text="Long-press to begin"
-              android:textSize="27sp"/>
+
     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:gravity="center"
               android:textStyle="bold"
               android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:text="Tutorial"
               android:textSize="30sp"/>
+    <TextView android:id="@+id/textTutorialInstructions" android:layout_margin="50dp" android:layout_height="fill_parent"
+              android:layout_width="fill_parent" android:gravity="center" android:text="Click to begin"     android:contentDescription="Start tutorial"
+              android:textSize="27sp"/>
 </RelativeLayout>
 

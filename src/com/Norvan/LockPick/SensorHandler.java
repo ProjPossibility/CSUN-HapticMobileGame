@@ -103,10 +103,12 @@ public class SensorHandler {
                         lastTiltReading = (int) ((phoneRightSideHeading * 10000) / 360);
 
                         if (initialSideFacingUp == 0) {
-                            if (lastTiltReading > 4000 && lastTiltReading < 6000) {
+                            if ((lastTiltReading > 4000 && lastTiltReading < 4950) || (lastTiltReading > 5050 && lastTiltReading < 6000)) {
                                 initialSideFacingUp = RIGHT_FACING_UP;
-                            } else if (lastTiltReading > 9000 || lastTiltReading < 1000) {
+                                logInitialSideUp(initialSideFacingUp);
+                            } else if ((lastTiltReading > 9000 && lastTiltReading < 9050) || (lastTiltReading < 1000 && lastTiltReading > 50)) {
                                 initialSideFacingUp = LEFT_FACING_UP;
+                                logInitialSideUp(initialSideFacingUp);
                             }
                         }
 
@@ -165,12 +167,12 @@ public class SensorHandler {
                         }
                         currentTiltReading = (int) ((phoneRightSideHeading * 10000) / 360);
                         if (initialSideFacingUp == 0) {
-                            if (currentTiltReading > 3500 && currentTiltReading < 6500) {
-                                Log.i("AMP", "RIGHT UP");
+                            if ((lastTiltReading > 4000 && lastTiltReading < 4950) || (lastTiltReading > 5050 && lastTiltReading < 6000)) {
                                 initialSideFacingUp = RIGHT_FACING_UP;
-                            } else if (currentTiltReading > 8500 || currentTiltReading < 1500) {
-                                Log.i("AMP", "LEFT UP");
+                                logInitialSideUp(initialSideFacingUp);
+                            } else if ((lastTiltReading > 9000 && lastTiltReading < 9050) || (lastTiltReading < 1000 && lastTiltReading > 50)) {
                                 initialSideFacingUp = LEFT_FACING_UP;
+                                logInitialSideUp(initialSideFacingUp);
                             }
                         }
                         if (initialSideFacingUp == LEFT_FACING_UP) {
@@ -207,11 +209,20 @@ public class SensorHandler {
             //To change body of implemented methods use File | Settings | File Templates.
         }
     };
+    
+    private void logInitialSideUp(int side) {
+        if (side == LEFT_FACING_UP) {
+            Log.i("AMP", "LEFT FACING UP");
+        }   else if (side == RIGHT_FACING_UP) {
+            Log.i("AMP", "RIGHT FACING UP");
+        }
+    }
 
     public interface SensorHandlerInterface {
         public void newValues(float angularVelocity, int tilt);
 
         public void notOnSide();
+        
 
     }
 

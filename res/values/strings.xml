@@ -22,13 +22,13 @@
     </string>
 
     <string name="timeattackBlind">Time Attack Mode. Start with 30 seconds and unlimited lock picks. Pick locks for more
-        time. Press either volume key to begin.
+        time. Press either volume key to begin or tap the corners of the screen for more information.
     </string>
     <string name="timeattackDeafBlind">Time Attack start with 30 seconds unlimited lock picks. Pick locks for more time.
         vol key to begin
     </string>
     <string name="puzzleBlind">Puzzle mode. Unlimited time but only 5 extra lock picks. Press either volume key to
-        begin.
+        begin or tap the corners of the screen for more information.
     </string>
     <string name="puzzleDeafBlind">Puzzle mode unlimited time but only 5 extra lock picks. vol key to begin</string>
     <string name="tutorialHoldPhoneOnSide">Hold the phone on its side with the top facing forward like a key.
@@ -58,9 +58,11 @@
         if start in wrong spot then you feel a lot resistance. If you do, let go of button and try again or else
         you will break your pick.
     </string>
-    <string name="tutorialUnlockSuccess">Congratulations, you just picked your first lock! Now go play the game!
+    <string name="tutorialUnlockSuccess">Congratulations, you just picked your first lock. Now go play the game!
     </string>
-    <string name="tutorialUnlockSuccessMorse">Congratulations, you openned lock! Now go play game!
+    <string name="tutorialUnlockSuccessBlind">Congratulations, you just picked your first lock. Now go play the game! Press either volume button to exit.
+    </string>
+    <string name="tutorialUnlockSuccessMorse">Congratulations, you openned lock. Now go play game!
     </string>
 
 </resources>

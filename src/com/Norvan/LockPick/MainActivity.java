@@ -9,6 +9,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -32,21 +33,26 @@ public class MainActivity extends Activity {
     private static final int REQ_TIMETRIALGAMEACTIVITY = 4;
     private static final int REQ_INSTRUCTIONS = 3;
 
-    private  int userType = 0;
+    private int userType = 0;
 
 
-    private  Button butNewSurvivalGame, butNewTimeTrialGame, butHelp, butSettings;
-    private  VolumeToggleHelper volumeToggleHelper;
-    private  ImageButton imgbutToggleVolume;
-    private  boolean hasDoneTutorial = false;
-    private  Context context;
-    private  VibrationHandler vibrationHandler;
-    private  AnnouncementHandler announcementHandler;
+    private Button butNewSurvivalGame, butNewTimeTrialGame, butHelp, butSettings;
+    private VolumeToggleHelper volumeToggleHelper;
+    private ImageButton imgbutToggleVolume;
+    private boolean hasDoneTutorial = false;
+    private Context context;
+    private VibrationHandler vibrationHandler;
+    private AnnouncementHandler announcementHandler;
+
+    @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+        Log.i("AMP", "dispatched Event");
+        return super.dispatchPopulateAccessibilityEvent(event);    //To change body of overridden methods use File | Settings | File Templates.
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userType = SharedPreferencesHandler.getUserType(this);
-        boolean didGlobalLayout = false;
         context = this;
         vibrationHandler = new VibrationHandler(context);
         if (!vibrationHandler.hasVibrator()) {
@@ -85,14 +91,23 @@ public class MainActivity extends Activity {
             butNewTimeTrialGame = (Button) findViewById(R.id.butTimeAttack);
             butHelp = (Button) findViewById(R.id.butInstructions);
             butSettings = (Button) findViewById(R.id.butResetUser);
-            butNewSurvivalGame.setOnClickListener(blindOnClickListener);
-            butNewTimeTrialGame.setOnClickListener(blindOnClickListener);
-            butHelp.setOnClickListener(blindOnClickListener);
-            butSettings.setOnClickListener(blindOnClickListener);
-            butNewSurvivalGame.setOnLongClickListener(blindOnLongClickListener);
-            butNewTimeTrialGame.setOnLongClickListener(blindOnLongClickListener);
-            butHelp.setOnLongClickListener(blindOnLongClickListener);
-            butSettings.setOnLongClickListener(blindOnLongClickListener);
+
+            if (userType == UserType.USER_BLIND) {
+                butNewSurvivalGame.setOnClickListener(blindOnClickListener);
+                butNewTimeTrialGame.setOnClickListener(blindOnClickListener);
+                butHelp.setOnClickListener(blindOnClickListener);
+                butSettings.setOnClickListener(blindOnClickListener);
+            } else if (userType == UserType.USER_DEAFBLIND) {
+                butNewSurvivalGame.setOnClickListener(deafblindOnClickListener);
+                butNewTimeTrialGame.setOnClickListener(deafblindOnClickListener);
+                butHelp.setOnClickListener(deafblindOnClickListener);
+                butSettings.setOnClickListener(deafblindOnClickListener);
+                butNewSurvivalGame.setOnLongClickListener(deafblindOnLongClickListener);
+                butNewTimeTrialGame.setOnLongClickListener(deafblindOnLongClickListener);
+                butHelp.setOnLongClickListener(deafblindOnLongClickListener);
+                butSettings.setOnLongClickListener(deafblindOnLongClickListener);
+            }
+
 
         }
         Log.i("AMP", "hasGyro " + String.valueOf(SensorHandler.hasGyro(this)));
@@ -103,7 +118,23 @@ public class MainActivity extends Activity {
     }
 
 
-    private   View.OnClickListener blindOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener blindOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (butNewTimeTrialGame.equals(v)) {
+                startTimeTrialGameActivity();
+            } else if (butNewSurvivalGame.equals(v)) {
+                startSurvivalGameActivity();
+            } else if (butHelp.equals(v)) {
+                startInstructionsActivity();
+            } else if (butSettings.equals(v)) {
+                showResetUserTypeDialog();
+            }
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+    };
+
+    private View.OnClickListener deafblindOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (butNewTimeTrialGame.equals(v)) {
@@ -118,7 +149,7 @@ public class MainActivity extends Activity {
             //To change body of implemented methods use File | Settings | File Templates.
         }
     };
-    private   View.OnLongClickListener blindOnLongClickListener = new View.OnLongClickListener() {
+    private View.OnLongClickListener deafblindOnLongClickListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             if (butNewTimeTrialGame.equals(v)) {
@@ -170,14 +201,21 @@ public class MainActivity extends Activity {
                         butNewTimeTrialGame = (Button) findViewById(R.id.butTimeAttack);
                         butHelp = (Button) findViewById(R.id.butInstructions);
                         butSettings = (Button) findViewById(R.id.butResetUser);
-                        butNewSurvivalGame.setOnClickListener(blindOnClickListener);
-                        butNewTimeTrialGame.setOnClickListener(blindOnClickListener);
-                        butHelp.setOnClickListener(blindOnClickListener);
-                        butSettings.setOnClickListener(blindOnClickListener);
-                        butNewSurvivalGame.setOnLongClickListener(blindOnLongClickListener);
-                        butNewTimeTrialGame.setOnLongClickListener(blindOnLongClickListener);
-                        butHelp.setOnLongClickListener(blindOnLongClickListener);
-                        butSettings.setOnLongClickListener(blindOnLongClickListener);
+                        if (userType == UserType.USER_BLIND) {
+                            butNewSurvivalGame.setOnClickListener(blindOnClickListener);
+                            butNewTimeTrialGame.setOnClickListener(blindOnClickListener);
+                            butHelp.setOnClickListener(blindOnClickListener);
+                            butSettings.setOnClickListener(blindOnClickListener);
+                        } else if (userType == UserType.USER_DEAFBLIND) {
+                            butNewSurvivalGame.setOnClickListener(deafblindOnClickListener);
+                            butNewTimeTrialGame.setOnClickListener(deafblindOnClickListener);
+                            butHelp.setOnClickListener(deafblindOnClickListener);
+                            butSettings.setOnClickListener(deafblindOnClickListener);
+                            butNewSurvivalGame.setOnLongClickListener(deafblindOnLongClickListener);
+                            butNewTimeTrialGame.setOnLongClickListener(deafblindOnLongClickListener);
+                            butHelp.setOnLongClickListener(deafblindOnLongClickListener);
+                            butSettings.setOnLongClickListener(deafblindOnLongClickListener);
+                        }
                     }
 
                     announcementHandler.mainActivityLaunch();
@@ -212,7 +250,7 @@ public class MainActivity extends Activity {
         announcementHandler.masterShutDown();
     }
 
-    private   View.OnClickListener onClickListener = new View.OnClickListener() {
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
@@ -329,8 +367,9 @@ public class MainActivity extends Activity {
         final boolean survivalMode = isSurvival;
         AlertDialog.Builder adb = new AlertDialog.Builder(context);
         adb.setTitle("Warning");
-        adb.setMessage("This game is based entirely on haptic feedback. Would you like to go through the brief (recommended) tutorial?");
+        adb.setMessage("This game is based entirely on haptic feedback. Would you like to go through the brief (recommended) tutorial? Press volume down to confirm or volume up to skip.");
         adb.setCancelable(true);
+
         adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -350,7 +389,9 @@ public class MainActivity extends Activity {
             }
         });
         if (userType != UserType.USER_NORMAL) {
-            announcementHandler.announceTutorialSuggestion();
+            if (userType == UserType.USER_DEAFBLIND) {
+                announcementHandler.announceTutorialSuggestion();
+            }
             adb.setOnKeyListener(new DialogInterface.OnKeyListener() {
                 @Override
                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
