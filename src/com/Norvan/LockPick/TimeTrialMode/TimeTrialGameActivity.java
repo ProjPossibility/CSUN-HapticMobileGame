@@ -449,8 +449,6 @@ public class TimeTrialGameActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
-        Log.i("AMP", "ondestroy timetrial");
-        announcementHandler.shutDown();
         vibrationHandler.stopVibrate();
         announcementHandler = null;
         vibrationHandler = null;

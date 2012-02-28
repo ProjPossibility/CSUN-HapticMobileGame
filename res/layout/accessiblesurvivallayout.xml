@@ -8,12 +8,14 @@
     <ImageView android:layout_width="5dp" android:layout_height="fill_parent" android:layout_centerHorizontal="true"
                android:scaleType="centerInside" android:src="@android:color/darker_gray"
                android:layout_below="@+id/textModeDescription"
+               android:contentDescription="" android:focusable="true" android:focusableInTouchMode="true"
                android:id="@+id/separatorVertical"/>
     <ImageView android:layout_width="fill_parent" android:layout_height="5dp" android:layout_centerVertical="true"
                android:scaleType="centerInside" android:src="@android:color/darker_gray"
                android:id="@+id/separatorHorizontal"/>
 
-    <RelativeLayout android:id="@+id/relquad1" android:layout_width="fill_parent"    android:focusable="true"  android:contentDescription="Speak Game Info"
+    <RelativeLayout android:id="@+id/relquad1" android:layout_width="fill_parent" android:focusable="true"
+                    android:contentDescription="Speak Game Info"
                     android:layout_above="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
                     android:layout_height="fill_parent">
 
@@ -24,7 +26,7 @@
                   android:id="@+id/textPicksLeft"/>
         <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
                   android:gravity="center" android:text="Score Bonus\n50" android:textSize="27sp"
-                android:visibility="gone"
+                  android:visibility="gone"
                   android:layout_below="@+id/quad1Center"
                   android:id="@+id/textScoreBonus"/>
         <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
@@ -51,7 +53,8 @@
         </LinearLayout>
 
     </RelativeLayout>
-    <RelativeLayout android:id="@+id/relquad2" android:layout_width="fill_parent"    android:contentDescription="Speak Level"   android:focusable="true"
+    <RelativeLayout android:id="@+id/relquad2" android:layout_width="fill_parent"
+                    android:contentDescription="Speak Level" android:focusable="true"
                     android:layout_above="@+id/separatorHorizontal" android:layout_toLeftOf="@+id/separatorVertical"
                     android:layout_height="fill_parent">
 
@@ -66,7 +69,8 @@
                      android:layout_height="fill_parent" android:src="@drawable/ic_media_play"
                      android:background="@android:color/transparent" android:scaleType="fitCenter"/>
     </RelativeLayout>
-    <RelativeLayout android:id="@+id/relquad4" android:layout_width="fill_parent"              android:focusable="true" android:contentDescription="Speak Score"
+    <RelativeLayout android:id="@+id/relquad4" android:layout_width="fill_parent" android:focusable="true"
+                    android:contentDescription="Speak Score"
                     android:layout_below="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
                     android:layout_height="fill_parent">
         <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"

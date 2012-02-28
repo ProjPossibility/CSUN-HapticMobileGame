@@ -3,7 +3,7 @@
     <string name="app_name">LockPick</string>
     <string name="firstrunBlind">If you are blind, hold down the volume up key</string>
     <string name="firstrunDeafBlind">If deafblind hold vol down</string>
-    <string name="mainactivityBlind">Main menu</string>
+    <string name="mainactivityBlind">Main menu. Tap the corners of the screen.</string>
     <string name="mainactivityDeafBlind">Main menu. Tap corners of screen</string>
     <string name="instructionsDeafBlind">Turn the phone on its side. Feel around until you find the sweet
         spot. When you think you are on the right spot, hold down either volume button and slowly turn the phone to

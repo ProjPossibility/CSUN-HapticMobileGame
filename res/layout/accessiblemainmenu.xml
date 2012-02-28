@@ -15,28 +15,50 @@
 
     <Button android:id="@+id/butTimeAttack" android:layout_width="fill_parent" android:text="Time Attack\nMode"
             android:gravity="center" android:background="@android:color/transparent" android:textSize="25sp"
-            android:textColor="#ffcccccc"                                                               android:contentDescription="Time Attack Mode"
+            android:textColor="#ffcccccc" android:contentDescription="Time Attack Mode"
+            android:nextFocusUp="@+id/butSurvivalMode"
+            android:nextFocusDown="@+id/butInstructions"
+            android:nextFocusLeft="@+id/butSurvivalMode"
+            android:nextFocusRight="@+id/butInstructions"
             android:layout_above="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
             android:layout_height="fill_parent"/>
     <Button android:id="@+id/butSurvivalMode" android:layout_width="fill_parent" android:text="Puzzle\nMode"
             android:gravity="center" android:background="@android:color/transparent" android:textSize="25sp"
-            android:textColor="#ffcccccc"                        android:contentDescription="Puzzle Mode"
+            android:textColor="#ffcccccc" android:contentDescription="Puzzle Mode"
+            android:nextFocusUp="@+id/butResetUser"
+            android:nextFocusDown="@+id/butTimeAttack"
+            android:nextFocusLeft="@+id/butResetUser"
+            android:nextFocusRight="@+id/butTimeAttack"
             android:layout_above="@+id/separatorHorizontal" android:layout_toLeftOf="@+id/separatorVertical"
             android:layout_height="fill_parent"/>
     <Button android:id="@+id/butInstructions" android:layout_width="fill_parent" android:text="Tutorial"
             android:gravity="center" android:background="@android:color/transparent" android:textSize="25sp"
-            android:textColor="#ffcccccc"                                                              android:contentDescription="Tutorial"
+            android:textColor="#ffcccccc" android:contentDescription="Tutorial"
+            android:nextFocusUp="@+id/butSurvivalMode"
+            android:nextFocusDown="@+id/butResetUser"
+            android:nextFocusLeft="@+id/butSurvivalMode"
+            android:nextFocusRight="@+id/butResetUser"
             android:layout_below="@+id/separatorHorizontal" android:layout_toLeftOf="@+id/separatorVertical"
             android:layout_height="fill_parent"/>
     <Button android:id="@+id/butResetUser" android:layout_width="fill_parent" android:text="Reset\nUser Type"
             android:gravity="center" android:background="@android:color/transparent" android:textSize="25sp"
-            android:textColor="#ffcccccc"            android:contentDescription="Reset User Type"
+            android:textColor="#ffcccccc" android:contentDescription="Reset User Type"
+            android:nextFocusUp="@+id/butInstructions"
+            android:nextFocusDown="@+id/butSurvivalMode"
+            android:nextFocusLeft="@+id/butInstructions"
+            android:nextFocusRight="@+id/butSurvivalMode"
             android:layout_below="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
             android:layout_height="fill_parent"/>
     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:gravity="center"
-              android:textStyle="bold" android:id="@+id/textAppName"
+              android:textStyle="bold" android:id="@+id/textAppName" android:contentDescription=""
               android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:text="LockPick"
-              android:textSize="30sp"/>
+              android:textSize="30sp"
+              android:nextFocusUp="@+id/butSurvivalMode"
+              android:nextFocusDown="@+id/butSurvivalMode"
+              android:nextFocusLeft="@+id/butSurvivalMode"
+              android:nextFocusRight="@+id/butSurvivalMode">
+        <requestFocus/>
+    </TextView>
 
 </RelativeLayout>
 

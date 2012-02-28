@@ -78,8 +78,7 @@ public class FirstRunActivity extends Activity {
                 hasSelectedUserType = true;
                 SharedPreferencesHandler.setUserType(context, UserType.USER_BLIND);
                 setResult(RESULT_OK);
-                KeyEvent keyReleasedEvent = new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP);
-                onKeyUp(KeyEvent.KEYCODE_VOLUME_UP, keyReleasedEvent);
+
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
@@ -87,8 +86,7 @@ public class FirstRunActivity extends Activity {
                 hasSelectedUserType=true;
                 SharedPreferencesHandler.setUserType(context, UserType.USER_DEAFBLIND);
                 setResult(RESULT_OK);
-                KeyEvent keyReleasedEvent = new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_DOWN);
-                onKeyUp(KeyEvent.KEYCODE_VOLUME_DOWN, keyReleasedEvent)  ;
+
             }
             return true;
         }

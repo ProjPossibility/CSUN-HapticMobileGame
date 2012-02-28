@@ -502,7 +502,6 @@ public class SurvivalGameActivity extends Activity
 
     @Override
     protected void onDestroy() {
-        announcementHandler.shutDown();
         vibrationHandler.stopVibrate();
         announcementHandler = null;
         vibrationHandler = null;

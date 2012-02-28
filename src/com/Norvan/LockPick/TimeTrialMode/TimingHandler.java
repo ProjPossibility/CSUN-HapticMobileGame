@@ -46,6 +46,13 @@ public class TimingHandler {
     public void pauseTimer() {
         chronoTimer.stop();
         pauseChronoElapsed = getCurrentTime() - chronoTimer.getBase();
+     }
+    
+    public void startNextLevel(){
+        chronoTimer.setBase(getCurrentTime() - pauseChronoElapsed);
+        chronoTimer.start();
+        pauseChronoElapsed = 0;
+        levelStartTimeLeft = startTime - (getCurrentTime() - chronoTimer.getBase());
     }
 
     public void resumeTimer() {
@@ -69,10 +76,10 @@ public class TimingHandler {
         }
         long timeLeft = startTime - (getCurrentTime() - chronoTimer.getBase());
         long levelTime = levelStartTimeLeft - timeLeft;
-        levelStartTimeLeft = timeLeft;
+        
         pauseTimer();
         pauseChronoElapsed = pauseChronoElapsed - customWinTime;
-        return levelTime;
+        return Math.abs(levelTime);
     }
 
     public long getTimeLeft() {

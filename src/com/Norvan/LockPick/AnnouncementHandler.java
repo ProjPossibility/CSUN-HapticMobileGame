@@ -21,9 +21,6 @@ public class AnnouncementHandler {
     }
 
 
-    public void shutDown() {
-//        tts.shutDownTTS(false);
-    }
 
 
     public void masterShutDown() {
