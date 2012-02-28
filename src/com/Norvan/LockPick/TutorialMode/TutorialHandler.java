@@ -60,9 +60,6 @@ public class TutorialHandler {
             }
 
 
-            @Override
-            public void notOnSide() {
-            }
         });
         this.tutorialStatusInterface = tutorialStatusInterface;
         gyroExists = SensorHandler.hasGyro(context);

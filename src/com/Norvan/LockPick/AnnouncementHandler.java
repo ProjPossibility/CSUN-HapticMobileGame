@@ -518,9 +518,7 @@ public class AnnouncementHandler {
     public void announceResetUserType() {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
-            vibrationHandler.playStringNotified("T");
-        } else if (userType == UserType.USER_BLIND) {
-            tts.speakPhrase("Alert! Press volume down to reset the user type from blind or volume up to cancel. You will have to restart the app if you do.");
+            vibrationHandler.playStringNotified(context.getString(R.string.resetUserTypeDialogDeafBlind));
         }
     }
 

@@ -9,13 +9,15 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <application android:label="@string/app_name" android:icon="@drawable/lock_pick">
         <activity android:name=".SurvivalMode.SurvivalGameActivity" android:screenOrientation="portrait"
-                  android:theme="@android:style/Theme.NoTitleBar"
+                  android:theme="@android:style/Theme.NoTitleBar" android:configChanges="orientation|keyboardHidden"
                   android:label="">
 
         </activity>
         <activity android:name=".FirstRunActivity" android:label="Select User Type" android:screenOrientation="portrait"
+                  android:configChanges="orientation|keyboardHidden"
                   android:theme="@android:style/Theme.NoTitleBar"/>
         <activity android:name=".MainActivity" android:screenOrientation="portrait" android:label="LockPick"
+                  android:configChanges="orientation|keyboardHidden"
                   android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -24,10 +26,10 @@
         </activity>
 
         <activity android:name=".TimeTrialMode.TimeTrialGameActivity" android:screenOrientation="portrait"
-                  android:label=""
+                  android:label="" android:configChanges="orientation|keyboardHidden"
                   android:theme="@android:style/Theme.NoTitleBar"/>
         <activity android:name=".TutorialMode.TutorialActivity" android:screenOrientation="portrait"
-                  android:label=""
+                  android:label="" android:configChanges="orientation|keyboardHidden"
                   android:theme="@android:style/Theme.NoTitleBar"/>
 
     </application>

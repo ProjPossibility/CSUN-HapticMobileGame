@@ -64,5 +64,9 @@
     </string>
     <string name="tutorialUnlockSuccessMorse">Congratulations, you openned lock. Now go play game!
     </string>
+    <string name="resetUserTypeDialogBlind">Press volume down to reset the user type from blind or volume up to cancel. You will have to restart the app if you do.</string>
+    <string name="resetUserTypeDialogDeafBlind">vol down reset user type from deafblind or vol up cancel. You will have to restart app if you do.</string>
+    <string name="tutoralSuggestionDialogBlind">This game is based entirely on haptic feedback. Would you like to go through the brief (recommended) tutorial? Press volume down to confirm or volume up to skip.</string>
+
 
 </resources>

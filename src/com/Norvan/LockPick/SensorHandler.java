@@ -63,6 +63,10 @@ public class SensorHandler {
                 sensorManager.registerListener(sensorEventListenerWithGyro, sensorOrientation, SensorManager.SENSOR_DELAY_GAME);
                 sensorManager.registerListener(sensorEventListenerWithGyro, sensorGyroscope, SensorManager.SENSOR_DELAY_GAME);
             } else {
+                //Some devices will not give orientation readings unless gravity sensor is also registered. Its values are not used.
+                Sensor sensorGravity = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+                sensorManager.registerListener(sensorEventListenerNoGyro, sensorGravity, SensorManager.SENSOR_DELAY_GAME);
+
                 Sensor sensorOrientation = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
                 sensorManager.registerListener(sensorEventListenerNoGyro, sensorOrientation, SensorManager.SENSOR_DELAY_GAME);
             }
@@ -133,8 +137,6 @@ public class SensorHandler {
                             }
                             lastAngularVelocity = lastAngularVelocity / angularVelocityBuffer.size();
                             sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
-                        } else {
-                            sensorHandlerInterface.notOnSide();
                         }
                         lastTimestampGyro = timestamp;
                     }
@@ -155,9 +157,10 @@ public class SensorHandler {
         public void onSensorChanged(SensorEvent sensorEvent) {
 
             synchronized (this) {
-                long timestamp = sensorEvent.timestamp;
 
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+                    long timestamp = sensorEvent.timestamp;
+
                     if (timestamp - lastTimestampAccel > refreshDelayNoGyro) {
                         int currentTiltReading;
                         boolean isFacingDown = (Math.abs(sensorEvent.values[1]) > 90);
@@ -195,8 +198,6 @@ public class SensorHandler {
                         lastTimestampAccel = timestamp;
                         if (initialSideFacingUp != 0) {
                             sensorHandlerInterface.newValues(delta, currentTiltReading);
-                        } else {
-                            sensorHandlerInterface.notOnSide();
                         }
 
                     }
@@ -221,14 +222,13 @@ public class SensorHandler {
     public interface SensorHandlerInterface {
         public void newValues(float angularVelocity, int tilt);
 
-        public void notOnSide();
-        
 
     }
 
     public static boolean hasGyro(Context context) {
         PackageManager paM = context.getPackageManager();
         boolean hasGyro = paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
+//        hasGyro = false;
         return hasGyro;
     }
 

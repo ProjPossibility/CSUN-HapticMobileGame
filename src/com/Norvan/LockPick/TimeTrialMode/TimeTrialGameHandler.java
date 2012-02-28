@@ -162,10 +162,6 @@ public class TimeTrialGameHandler {
 
         }
 
-        @Override
-        public void notOnSide() {
-
-        }
     };
 
     private  VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {

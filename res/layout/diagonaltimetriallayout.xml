@@ -25,8 +25,8 @@
                   android:id="@+id/textScoreBonus"/>
         <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
                   android:gravity="center"
-                  android:text="Start with 30 seconds and unlimited lock picks. Pick locks to get more time"
-                  android:textSize="27sp" android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+                  android:text="Start with 30 seconds and unlimited lock picks. Pick locks to get more time."
+                  android:textSize="24sp" android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
                   android:layout_marginTop="40dp" android:visibility="visible"
                   android:id="@+id/textGameMode"/>
         <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"

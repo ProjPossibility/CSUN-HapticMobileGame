@@ -23,6 +23,7 @@ public class FirstRunActivity extends Activity {
     private   Context context;
     private  Vibrator vibrator;
     private    Handler mHandler;
+    private boolean hasSelectedUserType =false;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.firstrun);
@@ -74,22 +75,22 @@ public class FirstRunActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (event.isLongPress()) {
-
+                hasSelectedUserType = true;
                 SharedPreferencesHandler.setUserType(context, UserType.USER_BLIND);
                 setResult(RESULT_OK);
-                finish();
-
+                KeyEvent keyReleasedEvent = new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP);
+                onKeyUp(KeyEvent.KEYCODE_VOLUME_UP, keyReleasedEvent);
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            if (event.getRepeatCount() > 15) {
+            if (event.isLongPress()) {
+                hasSelectedUserType=true;
                 SharedPreferencesHandler.setUserType(context, UserType.USER_DEAFBLIND);
                 setResult(RESULT_OK);
-                finish();
-
-                return true;
-
+                KeyEvent keyReleasedEvent = new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_DOWN);
+                onKeyUp(KeyEvent.KEYCODE_VOLUME_DOWN, keyReleasedEvent)  ;
             }
+            return true;
         }
         return super.onKeyDown(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
     }
@@ -97,7 +98,10 @@ public class FirstRunActivity extends Activity {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            return true;
+            if (hasSelectedUserType) {
+                finish();
+                return true;
+            }
         }
         return super.onKeyUp(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
     }

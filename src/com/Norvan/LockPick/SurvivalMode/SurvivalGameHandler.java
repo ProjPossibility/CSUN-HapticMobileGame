@@ -1,10 +1,6 @@
 package com.Norvan.LockPick.SurvivalMode;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.SystemClock;
-import android.util.Log;
 import com.Norvan.LockPick.Helpers.GameVariables;
 import com.Norvan.LockPick.LevelHandler;
 import com.Norvan.LockPick.SensorHandler;
@@ -157,10 +153,6 @@ public class SurvivalGameHandler {
 
         }
 
-        @Override
-        public void notOnSide() {
-
-        }
     };
 
     private void levelLost() {

@@ -242,6 +242,21 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && userType != UserType.USER_NORMAL) {
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
+//    }
+//
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && userType != UserType.USER_NORMAL) {
+//            return true;
+//        }
+//        return super.onKeyUp(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
+//    }
 
     @Override
     protected void onDestroy() {
@@ -314,7 +329,12 @@ public class MainActivity extends Activity {
 
         AlertDialog.Builder adb = new AlertDialog.Builder(context);
         adb.setTitle("Alert");
+
         adb.setMessage("Reset the user type? You will have to restart the app if you do.");
+
+        if (userType == UserType.USER_BLIND) {
+            adb.setMessage(getString(R.string.resetUserTypeDialogBlind));
+        }
         adb.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -367,7 +387,10 @@ public class MainActivity extends Activity {
         final boolean survivalMode = isSurvival;
         AlertDialog.Builder adb = new AlertDialog.Builder(context);
         adb.setTitle("Warning");
-        adb.setMessage("This game is based entirely on haptic feedback. Would you like to go through the brief (recommended) tutorial? Press volume down to confirm or volume up to skip.");
+        adb.setMessage("This game is based entirely on haptic feedback. Would you like to go through the brief (recommended) tutorial?");
+        if (userType == UserType.USER_BLIND) {
+            adb.setMessage(getString(R.string.tutoralSuggestionDialogBlind));
+        }
         adb.setCancelable(true);
 
         adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -381,6 +404,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 announcementHandler.shutUp();
+                SharedPreferencesHandler.didTutorial(context);
                 if (survivalMode) {
                     startActivityForResult(new Intent(context, SurvivalGameActivity.class), REQ_SURVIVALGAMEACTIVITY);
                 } else {
@@ -420,8 +444,11 @@ public class MainActivity extends Activity {
                 }
             });
 
+
+
         }
-        adb.create().show();
+            adb.create().show();
+
     }
 
 
