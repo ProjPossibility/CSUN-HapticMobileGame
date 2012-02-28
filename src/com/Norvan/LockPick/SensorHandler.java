@@ -179,8 +179,7 @@ public class SensorHandler {
 
         @Override
         public void onAccuracyChanged(Sensor sensor, int i) {
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
+         }
     };
 
 
@@ -262,8 +261,7 @@ public class SensorHandler {
 
         @Override
         public void onAccuracyChanged(Sensor sensor, int i) {
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
+         }
     };
 
 

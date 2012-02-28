@@ -11,19 +11,17 @@ import android.widget.Button;
 import com.Norvan.LockPick.Helpers.UserType;
 
 /**
- * Created by IntelliJ IDEA.
- * User: ngorgi
- * Date: 2/5/12
- * Time: 1:23 AM
- * To change this template use File | Settings | File Templates.
+ * @author Norvan Gorgi
+ *         The Activity that is run to select the user type.
  */
 public class FirstRunActivity extends Activity {
-    private  Button butNormalMode, butBlindMode, butBlindDeafMode;
-    private   TTSHandler tts;
-    private   Context context;
-    private  Vibrator vibrator;
-    private    Handler mHandler;
-    private boolean hasSelectedUserType =false;
+    private Button butNormalMode, butBlindMode, butBlindDeafMode;
+    private TTSHandler tts;
+    private Context context;
+    private Vibrator vibrator;
+    private Handler mHandler;
+    private boolean hasSelectedUserType = false;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.firstrun);
@@ -59,11 +57,16 @@ public class FirstRunActivity extends Activity {
             }
         });
 
-          mHandler = new Handler();
+        mHandler = new Handler();
+
+        /**Waits 5 seconds before playing info over TTS and Morse code. Why? Normal users get freaked out when their
+         * starts speaking to them and vibrating as soon as they launch an app. This way they will probably select
+         * normal mode before their phone goes crazy.
+         */
         mHandler.postDelayed(playAccessibleInfo, 5000);
     }
 
-    private   Runnable playAccessibleInfo = new Runnable() {
+    private Runnable playAccessibleInfo = new Runnable() {
         @Override
         public void run() {
             tts.speakPhrase(context.getResources().getString(R.string.firstrunBlind));
@@ -83,7 +86,7 @@ public class FirstRunActivity extends Activity {
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             if (event.isLongPress()) {
-                hasSelectedUserType=true;
+                hasSelectedUserType = true;
                 SharedPreferencesHandler.setUserType(context, UserType.USER_DEAFBLIND);
                 setResult(RESULT_OK);
 

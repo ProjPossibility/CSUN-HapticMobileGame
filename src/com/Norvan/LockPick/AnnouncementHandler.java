@@ -4,7 +4,13 @@ import android.content.Context;
 import android.widget.Toast;
 import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.UserType;
-
+/**
+ * @author Norvan Gorgi
+ *         Abstracts out all the functions relating to communicating game info to the user. When an event is triggered,
+ *         it communicates the info back to the user depending on whether they are normal, blind, or deaf-blind. It's
+ *         better to handle the different outputs based on user type here rather than making the main application code
+ *         more obscure.
+ */
 public class AnnouncementHandler {
     private int userType;
     private VibrationHandler vibrationHandler;
@@ -207,6 +213,7 @@ public class AnnouncementHandler {
                     break;
                 case 4:
                     vibrationHandler.playString("Reset User Type. Hold to select.");
+                    Toast.makeText(context, "Long-Press to select", Toast.LENGTH_SHORT).show();
                     break;
                 case 1:
                     vibrationHandler.playString("Time Attack Mode. Hold to select.");

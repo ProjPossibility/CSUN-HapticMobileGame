@@ -21,9 +21,9 @@ public class LevelHandler {
     private boolean currentTryWinnable = false;
     private int[] levelData;
 
-    public static int STATE_IN_PROGRESS = 0;
-    public static int STATE_UNLOCKED = 1;
-    public static int STATE_FAILED = -1;
+    public static final int STATE_IN_PROGRESS = 0;
+    public static final int STATE_UNLOCKED = 1;
+    public static final int STATE_FAILED = -1;
 
 
     /**

@@ -13,6 +13,10 @@ import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.SurvivalMode.SurvivalGameHandler;
 
+/**
+ * The Activity, or UI layer, for the Time Attack game mode. Communicates with the TimeTrialGameHandler and updates
+ * the UI accordingly.
+ */
 
 public class TimeTrialGameActivity extends Activity {
     private VolumeToggleHelper volumeToggleHelper;
@@ -30,6 +34,7 @@ public class TimeTrialGameActivity extends Activity {
     private RelativeLayout quad1, quad2, quad4;
     private int lastLevelReached = 0;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -37,6 +42,9 @@ public class TimeTrialGameActivity extends Activity {
         vibrationHandler = new VibrationHandler(this);
         prefs = new SharedPreferencesHandler(this);
         userType = prefs.getUserType();
+
+        //Set up a different user interface depending on user type. It's like using different CSS files for desktop and
+        //mobile.
         if (userType == UserType.USER_NORMAL) {
             setUpNormalUI();
         } else if (userType == UserType.USER_DEAFBLIND || userType == UserType.USER_BLIND) {
@@ -108,8 +116,10 @@ public class TimeTrialGameActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (!event.isLongPress() && event.getRepeatCount() == 0) {
                 if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
+                    //The user just pressed the volume button mid-game, start unlocking
                     gameHandler.gotKeyDown();
                 } else if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_FRESHLOAD || gameHandler.getGameState() == TimeTrialGameHandler.STATE_GAMEOVER) {
+                    //The user pressed the volume button when a game was not in progress. Start a new game.
                     textModeDescription.setVisibility(View.GONE);
                     gameHandler.playCurrentLevel();
                 }
@@ -125,6 +135,7 @@ public class TimeTrialGameActivity extends Activity {
             gameHandler.gotKeyUp();
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //Require user confirmation to quit the game using the back button.
             if (backButtonPressed) {
                 finish();
             } else if (gameHandler.getGameState() != TimeTrialGameHandler.STATE_FRESHLOAD && gameHandler.getGameState() != TimeTrialGameHandler.STATE_GAMEOVER) {
@@ -140,9 +151,32 @@ public class TimeTrialGameActivity extends Activity {
         return super.onKeyUp(keyCode, event);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gameHandler.setSensorPollingState(false);
+        if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
+            pauseGame();
+        }
+        vibrationHandler.stopVibrate();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        vibrationHandler.stopVibrate();
+        announcementHandler = null;
+        vibrationHandler = null;
+        gameHandler = null;
+        prefs = null;
+
+    }
+
     private boolean backButtonPressed = false;
 
     private void showBackButtonConfirmation() {
+        //The user pressed the back button. If they press it again, the game will quit.
+        //If they don't press it again within 5 seconds, backButtonPressed returns to false.
         Handler mHandler = new Handler();
         mHandler.postDelayed(backButtonConfirm, 5000);
         announcementHandler.confirmBackButton();
@@ -281,6 +315,9 @@ public class TimeTrialGameActivity extends Activity {
     };
 
 
+    /**
+     * Interface to get game updates from the game handler and update the UI accordingly.
+     */
     private TimeTrialGameHandler.GameStatusInterface gameStatusInterface = new TimeTrialGameHandler.GameStatusInterface() {
         @Override
         public void newGameStart() {
@@ -291,11 +328,8 @@ public class TimeTrialGameActivity extends Activity {
         @Override
         public void levelStart(int level, long timeLeft) {
             setUiGameState(TimeTrialGameHandler.STATE_INGAME);
-//            chronoTimer.setBase(SystemClock.elapsedRealtime());
-//            chronoTimer.start();
             setLevelLabel(level);
             setCurrentScore(gameHandler.getCurrentScore());
-//            announcementHandler.levelStart(level, picksLeft);
         }
 
         @Override
@@ -311,11 +345,6 @@ public class TimeTrialGameActivity extends Activity {
             setScoreBonus(bonus);
             announcementHandler.timeTrialWin();
             setCurrentScore(gameHandler.getCurrentScore());
-//            butGameButton.setText("Next Level");
-//            chronoTimer.stop();
-//            float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
-
-//            announcementHandler.levelWon(levelTime, levelWon);
         }
 
         @Override
@@ -330,11 +359,6 @@ public class TimeTrialGameActivity extends Activity {
             announcementHandler.timeTrialLose();
 
             setUiGameState(TimeTrialGameHandler.STATE_BETWEENLEVELS);
-
-//            butGameButton.setText("Try Again");
-//            chronoTimer.stop();
-
-//            announcementHandler.levelLost(level, picksLeft);
         }
 
 
@@ -412,7 +436,7 @@ public class TimeTrialGameActivity extends Activity {
 
     @Override
     protected void onResume() {
-        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onResume();
         if (gameHandler.getGameState() != TimeTrialGameHandler.STATE_FRESHLOAD) {
             gameHandler.setSensorPollingState(true);
         }
@@ -421,6 +445,9 @@ public class TimeTrialGameActivity extends Activity {
         }
     }
 
+    /**
+     * Pause the game in progress.
+     */
     private void pauseGame() {
         gameHandler.pauseGame();
         imgbutTogglePause.setContentDescription("Resume game");
@@ -428,6 +455,9 @@ public class TimeTrialGameActivity extends Activity {
         announcementHandler.confirmGamePause();
     }
 
+    /**
+     * Resume a previously paused game.
+     */
     private void resumeGame() {
         gameHandler.resumeGame();
         imgbutTogglePause.setContentDescription("Pause game");
@@ -435,35 +465,18 @@ public class TimeTrialGameActivity extends Activity {
         announcementHandler.confirmGameResume();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
-        Log.i("AMP", "onpause timetrial");
-        gameHandler.setSensorPollingState(false);
-        if (gameHandler.getGameState() == TimeTrialGameHandler.STATE_INGAME) {
-            pauseGame();
-        }
-        vibrationHandler.stopVibrate();
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
-        vibrationHandler.stopVibrate();
-        announcementHandler = null;
-        vibrationHandler = null;
-        gameHandler = null;
-        prefs = null;
-
-    }
-
+    /**
+     * Set the visibility of the different UI views based on the game state.
+     *
+     * @param gameState the state to set the UI for
+     */
     private void setUiGameState(int gameState) {
         switch (gameState) {
             case TimeTrialGameHandler.STATE_FRESHLOAD: {
                 textGameOver.setVisibility(View.GONE);
                 textTime.setVisibility(View.GONE);
                 textLevelLabel.setVisibility(View.VISIBLE);
-
                 if (userType == UserType.USER_NORMAL) {
                     butGameButton.setVisibility(View.VISIBLE);
                     textCurrentScore.setVisibility(View.GONE);
@@ -476,17 +489,14 @@ public class TimeTrialGameActivity extends Activity {
                     imgbutTogglePause.setVisibility(View.VISIBLE);
                     setTogglePauseImage(true);
                     textScoreBonus.setVisibility(View.GONE);
-
                 }
             }
             break;
             case TimeTrialGameHandler.STATE_INGAME: {
                 textLevelLabel.setVisibility(View.VISIBLE);
-
                 textGameOver.setVisibility(View.GONE);
                 textCurrentScore.setVisibility(View.VISIBLE);
                 textModeDescription.setVisibility(View.GONE);
-
                 textTime.setVisibility(View.VISIBLE);
                 imgbutTogglePause.setVisibility(View.VISIBLE);
                 textHighScore.setVisibility(View.VISIBLE);
@@ -497,7 +507,6 @@ public class TimeTrialGameActivity extends Activity {
                     setTogglePauseImage(false);
                     imgbutTogglePause.setContentDescription("Pause Game");
                     textScoreBonus.setVisibility(View.GONE);
-
                 }
             }
             break;
@@ -512,23 +521,17 @@ public class TimeTrialGameActivity extends Activity {
                     textTime.setVisibility(View.GONE);
                     textHighScore.setVisibility(View.GONE);
                     imgbutTogglePause.setVisibility(View.GONE);
-
                 } else {
                     textTime.setVisibility(View.VISIBLE);
                     textHighScore.setVisibility(View.VISIBLE);
                     imgbutTogglePause.setVisibility(View.VISIBLE);
-//                    textScoreBonus.setVisibility(View.VISIBLE);
-
                 }
             }
             break;
             case TimeTrialGameHandler.STATE_GAMEOVER: {
                 textModeDescription.setVisibility(View.GONE);
-
                 textGameOver.setVisibility(View.VISIBLE);
-
                 textTime.setVisibility(View.GONE);
-
                 if (userType == UserType.USER_NORMAL) {
                     textLevelLabel.setVisibility(View.GONE);
                     butGameButton.setVisibility(View.VISIBLE);
@@ -550,13 +553,18 @@ public class TimeTrialGameActivity extends Activity {
         }
     }
 
-
+    /**
+     * Sets the image of the togglepause imagebutton.
+     *
+     * @param isPaused true if the game is paused, false if it is not.
+     */
     private void setTogglePauseImage(boolean isPaused) {
         imgbutTogglePause.setImageResource(isPaused ? R.drawable.ic_media_play : R.drawable.ic_media_pause);
-
-
     }
 
+    /**
+     * Interface to be notified that the time left has been changed. Used to read out the time left.
+     */
     private TimingHandler.UpdateTimeLeftInterface updateTimeLeftInterface = new TimingHandler.UpdateTimeLeftInterface() {
         @Override
         public void updateTimeLeft(long timeLeft) {

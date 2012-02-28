@@ -14,7 +14,10 @@ import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameHandler;
-
+/**
+ * The Activity, or UI layer, for the Puzzle game mode. Communicates with the SurvivalGameHandler and updates
+ * the UI accordingly.
+ */
 public class SurvivalGameActivity extends Activity
 
 {
@@ -48,6 +51,9 @@ public class SurvivalGameActivity extends Activity
         prefs = new SharedPreferencesHandler(this);
         userType = prefs.getUserType();
 
+
+        //Set up a different user interface depending on user type. It's like using different CSS files for desktop and
+        //mobile.
         if (userType == UserType.USER_NORMAL) {
             setUpNormalUI();
         } else if (userType == UserType.USER_DEAFBLIND || userType == UserType.USER_BLIND) {
@@ -95,7 +101,6 @@ public class SurvivalGameActivity extends Activity
         quad2.setOnLongClickListener(onLongClickAccessible);
         quad4.setOnLongClickListener(onLongClickAccessible);
         imgbutTogglePause.setContentDescription("Start game");
-//        volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
     }
 
 
@@ -125,6 +130,7 @@ public class SurvivalGameActivity extends Activity
             long timeElapsed = getCurrentTime() - chronometer.getBase();
             if (timeElapsed > 10000) {
                 if (timeElapsed % 10000 < 1000 && gameHandler.getCurrentLevel() > 6) {
+                    //if the user is on level 7 or higher, tell them to hurry up every 10 seconds.
                     announcementHandler.userTakingTooLong();
                 }
             }
@@ -137,8 +143,10 @@ public class SurvivalGameActivity extends Activity
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (!event.isLongPress() && event.getRepeatCount() == 0) {
                 if (gameHandler.getGameState() == SurvivalGameHandler.STATE_INGAME) {
+                    //The user just pressed the volume button mid-game, start unlocking
                     gameHandler.gotKeyDown();
                 } else if (gameHandler.getGameState() != SurvivalGameHandler.STATE_PAUSED) {
+                    //The user pressed the volume button when a game was not in progress. Start a new game.
                     gameHandler.playCurrentLevel();
                 }
             }
@@ -153,6 +161,7 @@ public class SurvivalGameActivity extends Activity
             gameHandler.gotKeyUp();
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //Require user confirmation to quit the game using the back button.
             if (backButtonPressed) {
                 finish();
             } else if (gameHandler.getGameState() != TimeTrialGameHandler.STATE_FRESHLOAD && gameHandler.getGameState() != TimeTrialGameHandler.STATE_GAMEOVER) {
@@ -172,6 +181,8 @@ public class SurvivalGameActivity extends Activity
     boolean backButtonPressed = false;
 
     public void showBackButtonConfirmation() {
+        //The user pressed the back button. If they press it again, the game will quit.
+        //If they don't press it again within 5 seconds, backButtonPressed returns to false.
         Handler mHandler = new Handler();
         mHandler.postDelayed(backButtonConfirm, 5000);
         announcementHandler.confirmBackButton();
@@ -292,7 +303,6 @@ public class SurvivalGameActivity extends Activity
             } else if (quad4.equals(view)) {
                 announcementHandler.readScores(scoreHandler.getCurrentScore(), scoreHandler.getHighScore());
             }
-            //To change body of implemented methods use File | Settings | File Templates.
         }
     };
     View.OnLongClickListener onLongClickAccessible = new View.OnLongClickListener() {
@@ -327,19 +337,16 @@ public class SurvivalGameActivity extends Activity
             } else if (quad4.equals(view)) {
 
             }
-            return false;  //To change body of implemented methods use File | Settings | File Templates.
+            return false;
         }
     };
 
 
+    /**
+     * Interface to get game updates from the game handler and update the UI accordingly.
+     */
     public SurvivalGameHandler.GameStatusInterface gameStatusInterface = new SurvivalGameHandler.GameStatusInterface() {
-        @Override
-        public void newGameStart() {
-            setUiGameState(SurvivalGameHandler.STATE_FRESHLOAD);
-            scoreHandler.newGame();
-            setHighScore(scoreHandler.getHighScore());
-            setScore();
-        }
+
 
         @Override
         public void levelStart(int level, int picksLeft) {
@@ -456,6 +463,9 @@ public class SurvivalGameActivity extends Activity
         }
     }
 
+    /**
+     * Pause the game in progress.
+     */
     private void pauseGame() {
         gameHandler.pauseGame();
         gamePausedChronoProgress = getCurrentTime() - chronoTimer.getBase();
@@ -466,6 +476,9 @@ public class SurvivalGameActivity extends Activity
 
     }
 
+    /**
+     * Resume a previously paused game.
+     */
     private void resumeGame() {    
         gameHandler.resumeGame();
         chronoTimer.setBase(getCurrentTime() - gamePausedChronoProgress);
@@ -485,7 +498,7 @@ public class SurvivalGameActivity extends Activity
         }
 
 
-        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onResume();
     }
 
     @Override
@@ -507,9 +520,14 @@ public class SurvivalGameActivity extends Activity
         vibrationHandler = null;
         gameHandler = null;
         prefs = null;
-        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onDestroy();
     }
 
+    /**
+     * Set the visibility of the different UI views based on the game state.
+     *
+     * @param gameState the state to set the UI for
+     */
     private void setUiGameState(int gameState) {
         switch (gameState) {
             case SurvivalGameHandler.STATE_FRESHLOAD: {
@@ -604,6 +622,11 @@ public class SurvivalGameActivity extends Activity
         return SystemClock.elapsedRealtime();
     }
 
+    /**
+     * Sets the image of the togglepause imagebutton.
+     *
+     * @param isPaused true if the game is paused, false if it is not.
+     */
     private void setTogglePauseImage(boolean isPaused) {
         imgbutTogglePause.setImageResource(isPaused ? R.drawable.ic_media_play : R.drawable.ic_media_pause);
     }

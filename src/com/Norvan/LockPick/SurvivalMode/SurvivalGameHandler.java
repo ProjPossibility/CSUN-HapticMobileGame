@@ -6,11 +6,8 @@ import com.Norvan.LockPick.SensorHandler;
 import com.Norvan.LockPick.VibrationHandler;
 
 /**
- * Created by IntelliJ IDEA.
- * User: ngorgi
- * Date: 2/5/12
- * Time: 12:38 AM
- * To change this template use File | Settings | File Templates.
+ * @author Norvan Gorgi
+ *         The state machine for the Puzzle game mode.
  */
 public class SurvivalGameHandler {
     public int getNumberOfPicksLeft() {
@@ -31,7 +28,6 @@ public class SurvivalGameHandler {
     private boolean keyPressed = false;
     private boolean isPolling = false;
     private GameStatusInterface gameStatusInterface;
-    private Context context;
     private int angularVelocityMinimumThreshold = 10;
     private int gameState = 0;
     public static final int STATE_FRESHLOAD = 0;
@@ -42,10 +38,8 @@ public class SurvivalGameHandler {
     private boolean gyroExists;
 
     public SurvivalGameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler) {
-        this.context = context;
         this.gameStatusInterface = gameStatusInterface;
         this.vibrationHandler = vibrationHandler;
-        this.vibrationHandler.setVibrationCompletedInterface(vibrationCompletedInterface);
         levelHandler = new LevelHandler(0);
         sensorHandler = new SensorHandler(context, sensorHandlerInterface);
         currentLevel = 0;
@@ -77,7 +71,9 @@ public class SurvivalGameHandler {
         return gameState;
     }
 
-
+    /**
+     * Starts the current level.
+     */
     public void playCurrentLevel() {
         if (!sensorHandler.isPolling()) {
             setSensorPollingState(true);
@@ -91,13 +87,18 @@ public class SurvivalGameHandler {
         }
     }
 
-
+    /**
+     * The user pressed the volume button
+     */
     public void gotKeyDown() {
         keyPressed = true;
         levelHandler.keyDown(lastPressedPosition);
         vibrationHandler.stopVibrate();
     }
 
+    /**
+     * The user released the volume button
+     */
     public void gotKeyUp() {
         keyPressed = false;
 
@@ -108,42 +109,48 @@ public class SurvivalGameHandler {
         public void newValues(float angularVelocity, int tilt) {
             if (gameState == STATE_INGAME) {
                 if (keyPressed) {
+                    //If the user is trying to open the lock
+
                     switch (levelHandler.getUnlockedState(tilt)) {
-                        case -1://Pick Broken
-                            gameState = STATE_BETWEENLEVELS;
+                        case LevelHandler.STATE_FAILED://Pick Broken
                             levelLost();
                             break;
-                        case 0: //In Progress
+                        case LevelHandler.STATE_IN_PROGRESS: //In Progress
                             lastPressedPosition = tilt;
-                            int intensity = levelHandler.getIntensityForPositionWhileUnlocking(tilt);
                             if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
-                                if (intensity == -1) {
+                                //Only vibrate if the user is rotating the phone so that it isn't too easy.
+                                int intensity = levelHandler.getIntensityForPositionWhileUnlocking(tilt);
+
+                                if (intensity <= 0) {
                                     vibrationHandler.stopVibrate();
                                 } else {
                                     vibrationHandler.pulsePWM(intensity);
                                 }
                             } else {
+                                //If the user isn't rotating the phone, don't vibrate
                                 vibrationHandler.stopVibrate();
                             }
                             break;
-                        case 1: //A WINRAR IS YOU!!!
+                        case LevelHandler.STATE_UNLOCKED: //A WINRAR IS YOU!!!
 
                             levelWon();
-                            gameState = STATE_BETWEENLEVELS;
                             break;
                     }
                 } else {
                     lastPressedPosition = tilt;
-
+                    //If the user is still searching for the sweet spot.
                     if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
+                        //Only vibrate if the user is rotating the phone so that it isn't too easy.
+
                         int intensity = levelHandler.getIntensityForPosition(tilt);
 
-                        if (intensity < 0) {
+                        if (intensity <= 0) {
                             vibrationHandler.stopVibrate();
                         } else {
                             vibrationHandler.pulsePWM(intensity);
                         }
                     } else {
+                        //If the user isn't rotating the phone, don't vibrate
                         vibrationHandler.stopVibrate();
                     }
                 }
@@ -155,15 +162,18 @@ public class SurvivalGameHandler {
     };
 
     private void levelLost() {
+        gameState = STATE_BETWEENLEVELS;
         vibrationHandler.stopVibrate();
         vibrationHandler.pulseLose();
-        gameState = STATE_BETWEENLEVELS;
         if (numberOfPicksLeft == 0) {
+            //If the user is all out of picks, GAME OVER!
             gameState = STATE_GAMEOVER;
             gameStatusInterface.gameOver(currentLevel);
+            //Set things up for the next game.
             currentLevel = 0;
             numberOfPicksLeft = 5;
         } else {
+            //Take away a pick.
             numberOfPicksLeft--;
             gameStatusInterface.levelLost(currentLevel, numberOfPicksLeft);
         }
@@ -178,8 +188,11 @@ public class SurvivalGameHandler {
 
     }
 
+
+    /**
+     * Interface to communicate game state changes with the Activity
+     */
     public interface GameStatusInterface {
-        public void newGameStart();
 
         public void levelStart(int level, int picksLeft);
 
@@ -190,15 +203,6 @@ public class SurvivalGameHandler {
         public void gameOver(int maxLevel);
     }
 
-
-
-
-
-    private VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
-        @Override
-        public void vibrationCompleted() {
-        }
-    };
 
     public void pauseGame() {
         gameState = STATE_PAUSED;

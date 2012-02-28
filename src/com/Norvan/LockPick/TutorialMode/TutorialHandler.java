@@ -6,7 +6,10 @@ import com.Norvan.LockPick.LevelHandler;
 import com.Norvan.LockPick.SensorHandler;
 import com.Norvan.LockPick.VibrationHandler;
 
-
+/**
+ * @author Norvan Gorgi
+ *         The state machine for the tutorial "game".
+ */
 public class TutorialHandler {
     public static final int STEP_START = 0;
     public static final int STEP_preTURNPHONEONSIDE = 1;
@@ -79,6 +82,10 @@ public class TutorialHandler {
         isPolling = state;
     }
 
+
+    /**
+     * The user pressed the volume button
+     */
     public void gotKeyDown() {
         if (currentStep == STEP_PREFORMUNLOCK) {
             keyPressed = true;
@@ -87,6 +94,9 @@ public class TutorialHandler {
         }
     }
 
+    /**
+     * The user released the volume button
+     */
     public void gotKeyUp() {
         keyPressed = false;
 
@@ -97,17 +107,18 @@ public class TutorialHandler {
         lastPressedPosition = tilt;
         if (currentStep == STEP_preFINDSWEETSPOT || currentStep == STEP_PREFORMUNLOCK) {
             if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
-                int intensity = levelHandler.getIntensityForPosition(tilt);
-                if (!gyroExists) {
-                    intensity = (int) (intensity * 0.7);
-                }
 
-                if (intensity < 0) {
+                //Only vibrate if the user is rotating the phone so that it isn't too easy.
+
+                int intensity = levelHandler.getIntensityForPosition(tilt);
+
+                if (intensity <= 0) {
                     vibrationHandler.stopVibrate();
                 } else {
                     vibrationHandler.pulsePWM(intensity);
                 }
             } else {
+                //If the user isn't rotating the phone, don't vibrate
                 vibrationHandler.stopVibrate();
             }
             if (currentStep == STEP_preFINDSWEETSPOT) {
@@ -124,46 +135,33 @@ public class TutorialHandler {
                 phoneNotOnSide();
             }
             return;
-        } else {
-            return;
         }
 
-        if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
-            int intensity = levelHandler.getIntensityForPosition(tilt);
-            if (!gyroExists) {
-                intensity = (int) (intensity * 0.7);
-            }
-
-            if (intensity < 0) {
-                vibrationHandler.stopVibrate();
-            } else {
-                vibrationHandler.pulsePWM(intensity);
-            }
-        } else {
-            vibrationHandler.stopVibrate();
-        }
     }
 
 
     private void processSensorValuesUnlocking(float angularVelocity, int tilt) {
         switch (levelHandler.getUnlockedState(tilt)) {
-            case -1://Pick Broken
+            case LevelHandler.STATE_FAILED://Pick Broken
                 levelLost();
                 break;
-            case 0: //In Progress
+            case LevelHandler.STATE_IN_PROGRESS: //In Progress
                 lastPressedPosition = tilt;
                 int intensity = levelHandler.getIntensityForPositionWhileUnlocking(tilt);
                 if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
-                    if (intensity == -1) {
+                    //Only vibrate if the user is rotating the phone so that it isn't too easy.
+
+                    if (intensity <= 0) {
                         vibrationHandler.stopVibrate();
                     } else {
                         vibrationHandler.pulsePWM(intensity);
                     }
                 } else {
+                    //If the user isn't rotating the phone, don't vibrate
                     vibrationHandler.stopVibrate();
                 }
                 break;
-            case 1: //A WINRAR IS YOU!!!
+            case LevelHandler.STATE_UNLOCKED: //A WINRAR IS YOU!!!
 
                 levelWon();
                 break;
@@ -182,6 +180,11 @@ public class TutorialHandler {
         tutorialStatusInterface.preformedUnlock(false);
     }
 
+    /**
+     * Go to the indicated step in the state machine.
+     *
+     * @param step the step to go to according to the public static final ints
+     */
     public void goToStep(int step) {
         currentStep = step;
         if (step == STEP_preTURNPHONEONSIDE) {
@@ -201,6 +204,7 @@ public class TutorialHandler {
     }
 
     private void phoneAtSweetSpot() {
+        //If the phone JUST came into the sweet spot, run the phoneAtSweetSpot runnable in 1 second.
         if (!scheduledPhoneAtSweetSpot) {
             handler.postDelayed(phoneAtSweetSpot, 1000);
             scheduledPhoneAtSweetSpot = true;
@@ -208,6 +212,8 @@ public class TutorialHandler {
     }
 
     private void phoneNotAtSweetSpot() {
+        //If the phone was previously at the sweet spot but is no longer there, cancel the scheduled runnable.
+        //This way the user has to hold the phone in the right spot for a full second.
         if (scheduledPhoneAtSweetSpot) {
             handler.removeCallbacks(phoneAtSweetSpot);
             scheduledPhoneAtSweetSpot = false;
@@ -215,6 +221,8 @@ public class TutorialHandler {
     }
 
     private void phoneNotOnSide() {
+        //If the phone was previously on its side but is no longer there, cancel the scheduled runnable.
+        //This way the user has to hold the phone on its side for a full second.
         if (scheduledPhoneAtSweetSpot) {
             handler.removeCallbacks(phoneOnSide);
             scheduledPhoneOnSide = false;
@@ -222,6 +230,7 @@ public class TutorialHandler {
     }
 
     private void phoneOnSide() {
+        //If the phone JUST turned on its side, run the phoneOnSide runnable in 1 second.
         if (!scheduledPhoneOnSide) {
             handler.postDelayed(phoneOnSide, 1000);
             scheduledPhoneOnSide = true;

@@ -1,7 +1,6 @@
 package com.Norvan.LockPick;
 
-import android.content.SharedPreferences;
-import android.util.Log;
+
 
 /**
  * @author Norvan Gorgi

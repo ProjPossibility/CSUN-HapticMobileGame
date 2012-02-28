@@ -8,11 +8,8 @@ import com.Norvan.LockPick.SensorHandler;
 import com.Norvan.LockPick.VibrationHandler;
 
 /**
- * Created by IntelliJ IDEA.
- * User: ngorgi-dev
- * Date: 2/14/12
- * Time: 3:34 PM
- * To change this template use File | Settings | File Templates.
+ * @author Norvan Gorgi
+ *         The state machine for the Time Attack game mode.
  */
 public class TimeTrialGameHandler {
     public int getCurrentLevel() {
@@ -25,10 +22,8 @@ public class TimeTrialGameHandler {
     private LevelHandler levelHandler;
     private int lastPressedPosition = -1;
     private boolean keyPressed = false;
-    private boolean isPolling = false;
     private int keyPressedPosition = -1;
     private GameStatusInterface gameStatusInterface;
-    private Context context;
     private int angularVelocityMinimumThreshold = 10;
     private int gameState = 0;
     public static final int STATE_FRESHLOAD = 0;
@@ -41,7 +36,6 @@ public class TimeTrialGameHandler {
     private ScoreHandler scoreHandler;
 
     public TimeTrialGameHandler(Context context, GameStatusInterface gameStatusInterface, VibrationHandler vibrationHandler, TimingHandler timingHandler) {
-        this.context = context;
         this.gameStatusInterface = gameStatusInterface;
         this.timingHandler = timingHandler;
         this.vibrationHandler = vibrationHandler;
@@ -58,14 +52,13 @@ public class TimeTrialGameHandler {
     }
 
     public void setSensorPollingState(boolean state) {
+        //Why try-catch? You never know when working with hardware.
         try {
             if (state) {
                 sensorHandler.startPolling();
             } else {
                 sensorHandler.stopPolling();
             }
-            isPolling = state;
-
         } catch (Exception e) {
 
         }
@@ -76,15 +69,20 @@ public class TimeTrialGameHandler {
         return gameState;
     }
 
-
+    /**
+     * Starts the current level.
+     */
     public void playCurrentLevel() {
         if (gameState == STATE_BETWEENLEVELS) {
+            //If the user just beat or lost a level
+
             levelHandler = new LevelHandler(currentLevel);
             keyPressed = false;
             gameStatusInterface.levelStart(currentLevel, timingHandler.getTimeLeft());
             gameState = STATE_INGAME;
 
         } else if (gameState == STATE_FRESHLOAD || gameState == STATE_GAMEOVER) {
+            //if this is a new game
             if (!sensorHandler.isPolling()) {
                 setSensorPollingState(true);
             }
@@ -100,7 +98,9 @@ public class TimeTrialGameHandler {
         }
     }
 
-
+    /**
+     * The user pressed the volume button
+     */
     public void gotKeyDown() {
         keyPressed = true;
         keyPressedPosition = lastPressedPosition;
@@ -108,6 +108,9 @@ public class TimeTrialGameHandler {
         vibrationHandler.stopVibrate();
     }
 
+    /**
+     * The user released the volume button
+     */
     public void gotKeyUp() {
         keyPressed = false;
 
@@ -118,34 +121,41 @@ public class TimeTrialGameHandler {
         public void newValues(float angularVelocity, int tilt) {
             if (gameState == STATE_INGAME) {
                 if (keyPressed) {
+                    //If the user is trying to open the lock
+
                     switch (levelHandler.getUnlockedState(tilt)) {
-                        case -1://Pick Broken
+                        case LevelHandler.STATE_FAILED://Pick Broken
                             levelLost();
                             break;
-                        case 0: //In Progress
+                        case LevelHandler.STATE_IN_PROGRESS: //In Progress
                             lastPressedPosition = tilt;
-                            int intensity = levelHandler.getIntensityForPositionWhileUnlocking(tilt);
                             if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
-                                if (intensity == -1) {
+                                //Only vibrate if the user is rotating the phone so that it isn't too easy.
+
+                                int intensity = levelHandler.getIntensityForPositionWhileUnlocking(tilt);
+                                if (intensity <= 0) {
                                     vibrationHandler.stopVibrate();
                                 } else {
                                     vibrationHandler.pulsePWM(intensity);
                                 }
                             } else {
+                                //If the user isn't rotating the phone, don't vibrate
                                 vibrationHandler.stopVibrate();
                             }
                             break;
-                        case 1: //A WINRAR IS YOU!!!
+                        case LevelHandler.STATE_UNLOCKED: //A WINRAR IS YOU!!!
 
                             levelWon();
                             break;
                     }
                 } else {
+                    //If the user is still searching for the sweet spot.
                     lastPressedPosition = tilt;
 
                     if ((angularVelocity * 100) > angularVelocityMinimumThreshold) {
-                        int intensity = levelHandler.getIntensityForPosition(tilt);
+                        //Only vibrate if the user is rotating the phone so that it isn't too easy.
 
+                        int intensity = levelHandler.getIntensityForPosition(tilt);
 
                         if (intensity < 0) {
                             vibrationHandler.stopVibrate();
@@ -153,6 +163,8 @@ public class TimeTrialGameHandler {
                             vibrationHandler.pulsePWM(intensity);
                         }
                     } else {
+                        //If the user isn't rotating the phone, don't vibrate
+
                         vibrationHandler.stopVibrate();
                     }
                 }
@@ -163,18 +175,23 @@ public class TimeTrialGameHandler {
 
     };
 
-    private  VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
+    private VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
+        /**
+         * Called when the level win or lose vibration pattern has completed playing. This way they get to play out
+         * fully before the game's vibrations cancel them out.
+         */
+
         @Override
         public void vibrationCompleted() {
             if (gameState == STATE_BETWEENLEVELS) {
-                timingHandler.resumeTimer();
+                timingHandler.startLevel();
 
                 playCurrentLevel();
             }
         }
     };
 
-    private  TimingHandler.TimingHandlerInterface timingHandlerInterface = new TimingHandler.TimingHandlerInterface() {
+    private TimingHandler.TimingHandlerInterface timingHandlerInterface = new TimingHandler.TimingHandlerInterface() {
         @Override
         public void gotSecondsTick(long timeLeft) {
             gameStatusInterface.updateTimeLeft(timeLeft);
@@ -211,12 +228,14 @@ public class TimeTrialGameHandler {
         long levelTime = timingHandler.levelWon(currentLevel);
         int bonus = scoreHandler.wonLevel(levelTime);
         vibrationHandler.playHappyNotified();
-        Log.i("AMP", "leveltim " + String.valueOf(levelTime));
         gameStatusInterface.levelWon(currentLevel, levelTime, bonus);
         currentLevel++;
 
     }
 
+    /**
+     * Interface to communicate game state changes with the Activity
+     */
     public interface GameStatusInterface {
         public void newGameStart();
 
@@ -253,7 +272,11 @@ public class TimeTrialGameHandler {
         }
     }
 
-
+    /**
+     * The time left before the game ends
+     *
+     * @return the time left in seconds
+     */
     public int getSecondsLeft() {
         return (int) (timingHandler.getTimeLeft() / 1000);
     }

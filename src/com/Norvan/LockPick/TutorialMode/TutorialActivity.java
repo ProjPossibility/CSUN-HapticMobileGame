@@ -16,6 +16,9 @@ import com.Norvan.LockPick.R;
 import com.Norvan.LockPick.SharedPreferencesHandler;
 import com.Norvan.LockPick.VibrationHandler;
 
+/**
+ * The Activity, or UI layer, of the tutorial. Interacts with the TutorialHandler and updates the UI accordingly.
+ */
 
 public class TutorialActivity extends Activity {
     private TutorialHandler tutorialHandler;
@@ -30,6 +33,9 @@ public class TutorialActivity extends Activity {
         super.onCreate(savedInstanceState);
         context = this;
         userType = SharedPreferencesHandler.getUserType(context);
+
+        //Set up a different user interface depending on user type. It's like using different CSS files for desktop and
+        //mobile.
         if (userType == UserType.USER_NORMAL) {
             setUpNormalUI();
         } else {
@@ -39,7 +45,7 @@ public class TutorialActivity extends Activity {
         vibrationHandler.setVibrationCompletedInterface(vibrationCompletedInterface);
         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
         tutorialHandler = new TutorialHandler(context, tutorialStatusInterface, vibrationHandler);
-        if (userType != UserType.USER_DEAFBLIND) {
+        if (userType != UserType.USER_DEAFBLIND) {   //If the user is deaf-blind, just start the tutorial.
             announcementHandler.tutorialLaunch();
         } else {
             startTutorial();
@@ -66,12 +72,15 @@ public class TutorialActivity extends Activity {
         textStepInstructions.setKeepScreenOn(true);
         textStepInstructions.setOnClickListener(onClickAccessible);
         textStepInstructions.setOnLongClickListener(onLongClickAccessible);
-        if (userType == UserType.USER_BLIND) {
+        if (userType == UserType.USER_BLIND) {  //Hack for TalkBack screenreader.
             textStepInstructions.setText("Press either volume button to begin");
             textStepInstructions.setContentDescription("");
         }
     }
 
+    /**
+     * Start the tutorial.
+     */
     private void startTutorial() {
         announcementHandler.tutorialTurnPhoneOnSide();
         goToStep(TutorialHandler.STEP_preTURNPHONEONSIDE);
@@ -84,9 +93,9 @@ public class TutorialActivity extends Activity {
             if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_START) {
                 announcementHandler.tutorialHoldToBegin();
 
-            } else if (userType != UserType.USER_DEAFBLIND) {
+            } else if (userType != UserType.USER_DEAFBLIND) { //Too much for Morse code.
 
-                switch (tutorialHandler.getCurrentStep()) {
+                switch (tutorialHandler.getCurrentStep()) { //Read instructions based on tutorial state.
 
                     case TutorialHandler.STEP_preTURNPHONEONSIDE:
                         announcementHandler.tutorialTurnPhoneOnSide();
@@ -140,6 +149,11 @@ public class TutorialActivity extends Activity {
         textStepInstructions.setText(text);
     }
 
+
+    /**
+     * Change the state of the state machine and update the written instructions.
+     * @param step the step in the tutorial to go to.
+     */
     private void goToStep(int step) {
         switch (step) {
             case TutorialHandler.STEP_START:
@@ -179,7 +193,7 @@ public class TutorialActivity extends Activity {
 
     @Override
     protected void onPause() {
-        super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onPause();
         if (tutorialHandler.isPolling()) {
             tutorialHandler.setSensorPollingState(false);
         }
@@ -189,7 +203,7 @@ public class TutorialActivity extends Activity {
 
     @Override
     protected void onResume() {
-        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onResume();
         if (tutorialHandler.getCurrentStep() > TutorialHandler.STEP_START) {
             tutorialHandler.setSensorPollingState(true);
         }
@@ -197,7 +211,7 @@ public class TutorialActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onDestroy();
         if (tutorialHandler.isPolling()) {
             tutorialHandler.setSensorPollingState(false);
         }
@@ -212,21 +226,24 @@ public class TutorialActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
             if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_START) {
-                if (userType == UserType.USER_BLIND) {
+                if (userType == UserType.USER_BLIND) {  //If the user is blind, they can press the volume button to begin.
                     if (!event.isLongPress() && event.getRepeatCount() == 0) {
                         startTutorial();
                     }
                     return true;
                 }
-            }else if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_FINISHED) {
-                if (userType == UserType.USER_BLIND) {
+            } else if (tutorialHandler.getCurrentStep() == TutorialHandler.STEP_FINISHED) {
+                if (userType == UserType.USER_BLIND) {  //If the user is deaf, they can press the volume button to exit.
                     if (!event.isLongPress() && event.getRepeatCount() == 0) {
                         finish();
                     }
 
-                } return true;
+                }
+                return true;
             } else {
+
                 if (!event.isLongPress() && event.getRepeatCount() == 0) {
+                    //The user just pressed the volume button mid-game
                     tutorialHandler.gotKeyDown();
                 }
                 return true;
@@ -239,11 +256,12 @@ public class TutorialActivity extends Activity {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
             if (tutorialHandler.getCurrentStep() != TutorialHandler.STEP_START && tutorialHandler.getCurrentStep() != TutorialHandler.STEP_FINISHED) {
+                //The user released the volume button mid-game
                 tutorialHandler.gotKeyUp();
-            } 
+            }
             return true;
         }
-        return super.onKeyUp(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
+        return super.onKeyUp(keyCode, event);
     }
 
     private TutorialHandler.TutorialStatusInterface tutorialStatusInterface = new TutorialHandler.TutorialStatusInterface() {
@@ -282,9 +300,14 @@ public class TutorialActivity extends Activity {
                     announcementHandler.tutorialLose();
                 }
             }
-            //To change body of implemented methods use File | Settings | File Templates.
+
         }
     };
+
+    /**
+     * I don't even understand this myself. All I can tell you is that it's so that the Morse code instructions play out
+     * fully before game vibrations override them and that it works.
+     */
     private VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
         @Override
         public void vibrationCompleted() {
