@@ -5,11 +5,8 @@ import android.util.Log;
 import java.util.Random;
 
 /**
- * Created by IntelliJ IDEA.
- * User: ngorgi-dev
- * Date: 2/4/12
- * Time: 7:20 PM
- * To change this template use File | Settings | File Templates.
+ * @author Norvan Gorgi
+ *         Abstracts out all the functions relating to the game level ("playing field").
  */
 public class LevelHandler {
     private static final double sweetSpot = 0.3;
@@ -24,7 +21,16 @@ public class LevelHandler {
     private boolean currentTryWinnable = false;
     private int[] levelData;
 
+    public static int STATE_IN_PROGRESS = 0;
+    public static int STATE_UNLOCKED = 1;
+    public static int STATE_FAILED = -1;
 
+
+    /**
+     * Creates a new level with a random target location for the given levelnumber.
+     *
+     * @param levelNumber the # of the current level. Used to calculate difficulty.
+     */
     public LevelHandler(int levelNumber) {
         difficulty = startingDifficulty - (levelNumber / 3) * 100;
         if (difficulty < 150) {
@@ -46,8 +52,16 @@ public class LevelHandler {
             sb.append(i);
             sb.append(" ");
         }
-     }
+    }
 
+
+    /**
+     * Like the standard constructor, but allows you to specify that the target location cannot be in the center.
+     * Used for tutorial.
+     *
+     * @param levelNumber the # of the current level. Used to calculate difficulty.
+     * @param notInCenter if true, the target wont be at 12 oclock.
+     */
     public LevelHandler(int levelNumber, boolean notInCenter) {
         difficulty = startingDifficulty - (levelNumber / 3) * 100;
         if (difficulty < 150) {
@@ -70,8 +84,14 @@ public class LevelHandler {
             }
         }
 
-     }
+    }
 
+
+    /**
+     * Notifies the level that the user has pressed the volume button
+     *
+     * @param position the position at which the button was pressed.
+     */
     public void keyDown(int position) {
         keyPressPosition = position;
         buttonPressProximity = ((float) Math.abs(keyPressPosition - targetLocation)) / difficulty;
@@ -79,17 +99,24 @@ public class LevelHandler {
         Log.i("AMP", "location " + String.valueOf(((float) Math.abs(keyPressPosition - targetLocation)) / difficulty));
     }
 
+
+    /**
+     * Returns the state of the current picking attempt based on the current position.
+     *
+     * @param currentPosition the current tilt reading of the device.
+     * @return 0 for in Progress, 1 for success, and -1 for fail.
+     */
     public int getUnlockedState(int currentPosition) {
         if (Math.abs(keyPressPosition - currentPosition) > difficulty * unlockDistanceMultiplier) {
             if (((float) Math.abs(keyPressPosition - targetLocation)) / difficulty < sweetSpot) {
-                return 1;
+                return STATE_UNLOCKED;
             } else {
-                return -1;
+                return STATE_FAILED;
             }
         } else if (isPickBroken(currentPosition)) {
-            return -1;
+            return STATE_FAILED;
         }
-        return 0;
+        return STATE_IN_PROGRESS;
     }
 
     private boolean isPickBroken(int currentPosition) {
@@ -110,28 +137,26 @@ public class LevelHandler {
         }
     }
 
-    public float getCurrentTryResult() {
-        return (float) (Math.abs(keyPressPosition - targetLocation)) / difficulty;
-    }
-
+    /**
+     * Returns the intensity of vibration at the given tilt position
+     *
+     * @param tilt the current tilt position
+     * @return intensity for vibration from 0-100
+     */
     public int getIntensityForPosition(int tilt) {
         int distanceFromTarget = Math.abs(targetLocation - tilt);
-
-
-//        int distanceFromTarget = tilt-targetLocation;
-//        if (distanceFromTarget < 0) {
-//            return -1;
-//        }
-
         if (distanceFromTarget >= difficulty) {
             return -1;
         }
         return levelData[distanceFromTarget];
-
-
     }
 
-
+    /**
+     * Returns whether the tilt position is in the winnable "sweet spot"
+     *
+     * @param tilt the current tilt position
+     * @return whether the given tilt is in the sweet spot
+     */
     public boolean tiltIsInSweetSpot(int tilt) {
         if ((float) (Math.abs(tilt - targetLocation)) / difficulty < sweetSpot) {
             return true;
@@ -140,6 +165,13 @@ public class LevelHandler {
         }
     }
 
+    /**
+     * Returns the intensity of vibration at the given tilt position when the volume button is depressed and unlocking
+     * is in progress.
+     *
+     * @param tilt the current tilt position
+     * @return intensity for vibration from 0-100
+     */
     public int getIntensityForPositionWhileUnlocking(int tilt) {
 
         float diff = Math.abs(keyPressPosition - tilt);
@@ -157,15 +189,5 @@ public class LevelHandler {
         } else {
             return intensity;
         }
-    }
-
-
-    public int[] getLevelData() {
-        //TODO remove
-        return levelData;
-    }
-
-    public int getTargetLocation() {
-        return targetLocation;
     }
 }

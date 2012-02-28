@@ -3,13 +3,21 @@ package com.Norvan.LockPick;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-
+/**
+ * @author Norvan Gorgi
+ *         Abstracts out all the functions relating to a game's score and high score.
+ */
 public class ScoreHandler {
-    private  SharedPreferencesHandler sharedPreferencesHandler;
+    private SharedPreferencesHandler sharedPreferencesHandler;
     public static final int MODE_SURVIVAL = 0;
     public static final int MODE_TIMETRIAL = 1;
-    private   int score, gameMode;
+    private int score, gameMode;
 
+
+    /**
+     * @param sharedPreferencesHandler SharedPreferencesHandler to get and set high scores
+     * @param gameMode                 Game mode, either MODE_SURVIVAL or MODE_TIMETRIAL
+     */
     public ScoreHandler(SharedPreferencesHandler sharedPreferencesHandler, int gameMode) {
         this.sharedPreferencesHandler = sharedPreferencesHandler;
         this.gameMode = gameMode;
@@ -20,6 +28,13 @@ public class ScoreHandler {
         score = 0;
     }
 
+    /**
+     * Adds the points from winning a level to the current score. Also calculates in the score bonus based on the
+     * level time.
+     *
+     * @param time The time, in ms, that it took to beat the level. Used to calculate the score bonus.
+     * @return the score bonus.
+     */
     public int wonLevel(float time) {
         score = score + 100;
         if (time <= 10000) {
@@ -30,13 +45,16 @@ public class ScoreHandler {
         return 0;
     }
 
-    
 
     public int getCurrentScore() {
         return score;
     }
 
-
+    /**
+     * Called when the game is over. Calculates whether the current score is the new High Score and returns that.
+     *
+     * @return Whether the game broke the high score.
+     */
     public boolean gameOver() {
         int highScore = 0;
         if (gameMode == MODE_SURVIVAL) {

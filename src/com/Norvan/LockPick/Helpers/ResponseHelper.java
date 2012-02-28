@@ -7,9 +7,13 @@ import com.Norvan.LockPick.R;
 import java.util.Random;
 
 
+/**
+ * @author Norvan Gorgi
+ *         Helper class used to get randomized responses from String resources.
+ */
 public class ResponseHelper {
-    private   Context context;
-    private   Random rand;
+    private Context context;
+    private Random rand;
 
     public ResponseHelper(Context context) {
         this.context = context;
@@ -41,7 +45,6 @@ public class ResponseHelper {
         String[] responses = context.getResources().getStringArray(R.array.levellosefast);
         return responses[rand.nextInt(responses.length)];
     }
-
 
 
 }

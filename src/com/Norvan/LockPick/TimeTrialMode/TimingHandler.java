@@ -7,13 +7,7 @@ import android.widget.Chronometer;
 
 public class TimingHandler {
     private static long startTime = 30000;
-    private static long levelWinTime = 10000;
-    private static final int MODE_STOPPED = -1;
-    private static final int MODE_PLAYING = 0;
-    private static final int MODE_PAUSED = 1;
-    private int timingMode = -1;
 
-    private long gameTimeLeft;
     private long levelStartTimeLeft;
 
 

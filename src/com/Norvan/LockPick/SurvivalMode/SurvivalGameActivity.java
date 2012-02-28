@@ -63,7 +63,6 @@ public class SurvivalGameActivity extends Activity
         chronoTimer.setOnChronometerTickListener(onTick);
         responseHelper = new ResponseHelper(context);
 
-
         scoreHandler = new ScoreHandler(prefs, ScoreHandler.MODE_SURVIVAL);
 
         setUiGameState(SurvivalGameHandler.STATE_FRESHLOAD);

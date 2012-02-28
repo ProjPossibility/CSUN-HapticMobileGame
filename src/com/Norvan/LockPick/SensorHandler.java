@@ -14,14 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: ngorgi-dev
- * Date: 2/4/12
- * Time: 2:30 PM
- * To change this template use File | Settings | File Templates.
+ * @author Norvan Gorgi
+ *         Abstracts out all the functions relating to communicating with the device's sensors.
  */
 public class SensorHandler {
-    public static final int nonGyroSensativityScalar  = 110;
+    public static final int nonGyroSensativityScalar = 110;
     private int lastTiltReading = -1;
     private float lastAngularVelocity = -1;
     private SensorHandlerInterface sensorHandlerInterface;
@@ -52,10 +49,17 @@ public class SensorHandler {
 
     }
 
+
+    /**
+     * @return whether the sensors are currently being polled.
+     */
     public boolean isPolling() {
         return isPolling;
     }
 
+    /**
+     * Starts polling the sensors for values.
+     */
     public void startPolling() {
         try {
             if (gyroExists) {
@@ -77,6 +81,10 @@ public class SensorHandler {
         }
     }
 
+
+    /**
+     * Stops polling the sensors for values.
+     */
     public void stopPolling() {
         try {
             sensorManager.unregisterListener(sensorEventListenerNoGyro);
@@ -91,22 +99,34 @@ public class SensorHandler {
         isPolling = false;
     }
 
+
+    /**
+     *
+     * Handles sensor data for devices with a gyroscope.
+     *
+     */
     private SensorEventListener sensorEventListenerWithGyro = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             synchronized (this) {
                 long timestamp = sensorEvent.timestamp;
-
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+                    //if the refresh delay has passed since the last used reading
                     if (timestamp - lastTimestampAccel > refreshDelay) {
-
+                        //Tilt readings are reported as the angular distance to the horizon. We need check which way the
+                        //phones screen is facing to add direction to the distance
                         boolean isFacingDown = (Math.abs(sensorEvent.values[1]) > 90);
                         float phoneRightSideHeading = sensorEvent.values[2] + 90;
+
+                        //If needed, mirrors the value on the Y axis
                         if (isFacingDown) {
                             phoneRightSideHeading = 360 - phoneRightSideHeading;
                         }
+                        //Converts to a 10,000 unit scale
                         lastTiltReading = (int) ((phoneRightSideHeading * 10000) / 360);
 
+
+                        //Auto-detection for the initial side facing up.
                         if (initialSideFacingUp == 0) {
                             if ((lastTiltReading > 4000 && lastTiltReading < 4950) || (lastTiltReading > 5050 && lastTiltReading < 6000)) {
                                 initialSideFacingUp = RIGHT_FACING_UP;
@@ -117,6 +137,7 @@ public class SensorHandler {
                             }
                         }
 
+                        //Reverses the readings to compensate for "lefty mode" by mirroring on the X axis.
                         if (initialSideFacingUp == LEFT_FACING_UP) {
                             if (lastTiltReading > 5000) {
                                 lastTiltReading = lastTiltReading - 5000;
@@ -124,12 +145,19 @@ public class SensorHandler {
                                 lastTiltReading = lastTiltReading + 5000;
                             }
                         }
+
+                        //Tilt readings are stored
+
                         lastTimestampAccel = timestamp;
                     }
                 } else if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
                     if (timestamp - lastTimestampGyro > refreshDelay) {
+
+                        //Don't do anything if the phone hasn't gone upright yet.
                         if (initialSideFacingUp != 0) {
                             lastAngularVelocity = Math.abs(sensorEvent.values[1]);
+
+                            //Buffers out angular velocity and then averages it.
                             angularVelocityBuffer.remove(0);
                             angularVelocityBuffer.add(lastAngularVelocity);
                             lastAngularVelocity = 0;
@@ -137,6 +165,8 @@ public class SensorHandler {
                                 lastAngularVelocity = lastAngularVelocity + val;
                             }
                             lastAngularVelocity = lastAngularVelocity / angularVelocityBuffer.size();
+
+                            //Notifies of new values with the current angular velocity and the last stored tilt.
                             sensorHandlerInterface.newValues(lastAngularVelocity, lastTiltReading);
                         }
                         lastTimestampGyro = timestamp;
@@ -153,6 +183,12 @@ public class SensorHandler {
         }
     };
 
+
+    /**
+     *
+     * Handles sensor data for devices WITHOUT a gyroscope.
+     *
+     */
     private SensorEventListener sensorEventListenerNoGyro = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
@@ -162,14 +198,24 @@ public class SensorHandler {
                 if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
                     long timestamp = sensorEvent.timestamp;
 
+                    //if the refresh delay has passed since the last used reading
                     if (timestamp - lastTimestampAccel > refreshDelayNoGyro) {
                         int currentTiltReading;
+
+                        //Tilt readings are reported as the angular distance to the horizon. We need check which way the
+                        //phones screen is facing to add direction to the distance
                         boolean isFacingDown = (Math.abs(sensorEvent.values[1]) > 90);
                         float phoneRightSideHeading = sensorEvent.values[2] + 90;
+
+                        //If needed, mirrors the value on the Y axis
                         if (isFacingDown) {
                             phoneRightSideHeading = 360 - phoneRightSideHeading;
                         }
+
+                        //Converts to a 10,000 unit scale
                         currentTiltReading = (int) ((phoneRightSideHeading * 10000) / 360);
+
+                        //Auto-detection for the initial side facing up.
                         if (initialSideFacingUp == 0) {
                             if ((lastTiltReading > 4000 && lastTiltReading < 4950) || (lastTiltReading > 5050 && lastTiltReading < 6000)) {
                                 initialSideFacingUp = RIGHT_FACING_UP;
@@ -179,6 +225,8 @@ public class SensorHandler {
                                 logInitialSideUp(initialSideFacingUp);
                             }
                         }
+
+                        //Reverses the readings to compensate for "lefty mode" by mirroring on the X axis.
                         if (initialSideFacingUp == LEFT_FACING_UP) {
                             if (currentTiltReading > 5000) {
                                 currentTiltReading = currentTiltReading - 5000;
@@ -186,8 +234,11 @@ public class SensorHandler {
                                 currentTiltReading = currentTiltReading + 5000;
                             }
                         }
+
+                        //No gyroscope to get angular velocity from? Just use delta orientation!
                         int delta = Math.abs(lastTiltReading - currentTiltReading);
 
+                        //Buffers out delta and then averages it.
                         angularVelocityBuffer.remove(0);
                         angularVelocityBuffer.add((float) delta);
                         delta = 0;
@@ -195,8 +246,11 @@ public class SensorHandler {
                             delta = (int) (delta + val);
                         }
                         delta = delta / angularVelocityBuffer.size();
+
                         lastTiltReading = currentTiltReading;
                         lastTimestampAccel = timestamp;
+
+                        //Don't do anything if the phone hasn't gone upright yet.
                         if (initialSideFacingUp != 0) {
                             sensorHandlerInterface.newValues(delta, currentTiltReading);
                         }
@@ -211,21 +265,34 @@ public class SensorHandler {
             //To change body of implemented methods use File | Settings | File Templates.
         }
     };
-    
+
+
+    //For debugging purposes
     private void logInitialSideUp(int side) {
         if (side == LEFT_FACING_UP) {
             Log.i("AMP", "LEFT FACING UP");
-        }   else if (side == RIGHT_FACING_UP) {
+        } else if (side == RIGHT_FACING_UP) {
             Log.i("AMP", "RIGHT FACING UP");
         }
     }
 
     public interface SensorHandlerInterface {
+        /**
+         * The sensors have received new values since the last delay threshold.
+         *
+         * @param angularVelocity at what speed the phone is turning
+         * @param tilt            heading of the side of the phone initially facing up. 0-10,000, starting at 6 oclock
+         *                        and going counter-clockwise.
+         */
         public void newValues(float angularVelocity, int tilt);
 
 
     }
 
+
+    /**
+     * @return whether the device has a built in gyroscope.
+     */
     public static boolean hasGyro(Context context) {
         PackageManager paM = context.getPackageManager();
         boolean hasGyro = paM.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);

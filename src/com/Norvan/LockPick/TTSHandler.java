@@ -1,21 +1,19 @@
 package com.Norvan.LockPick;
 
-import java.util.HashMap;
+
 import java.util.Locale;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
-import android.widget.Toast;
 
+/**
+ * @author Norvan Gorgi
+ *         Abstracts out all the functions related with communicating with the text to speech engine.
+ */
 public class TTSHandler {
     private TextToSpeech mTts;
     private Context context;
-    private  boolean goodToGo = false;
+    private boolean goodToGo = false;
     private String notReadyBuffer = null;
 
     public TTSHandler(Context context) {
@@ -27,18 +25,11 @@ public class TTSHandler {
     private TextToSpeech.OnInitListener mInitListener = new TextToSpeech.OnInitListener() {
 
         public void onInit(int status) {
-
-            // status can be either TextToSpeech.SUCCESS or TextToSpeech.ERROR.
             if (status == TextToSpeech.SUCCESS) {
 
                 int result = mTts.setLanguage(Locale.US);
-
-                // Try this someday for some interesting results.
-                // int result mTts.setLanguage(Locale.FRANCE);
                 if (result == TextToSpeech.LANG_MISSING_DATA
                         || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-
-
                 } else {
                     goodToGo = true;
                     if (notReadyBuffer != null) {
@@ -46,13 +37,17 @@ public class TTSHandler {
                     }
                 }
             } else {
-                // Initialization failed.
-                Log.i("AMP", "Could not initialize TextToSpeech.");
+
             }
         }
 
     };
 
+    /**
+     * Speaks a phrase at the normal pace.
+     *
+     * @param phrase The phrase to be spoken
+     */
 
     public void speakPhrase(String phrase) {
         if (goodToGo) {
@@ -60,9 +55,12 @@ public class TTSHandler {
             mTts.speak(phrase, TextToSpeech.QUEUE_FLUSH, null);
         } else {
             notReadyBuffer = phrase;
-
         }
     }
+
+    /**
+     * Stops any active utternace
+     */
 
     public void shutUp() {
         mTts.stop();
@@ -75,13 +73,19 @@ public class TTSHandler {
         }
     }
 
-    public void speakFast(String phrase) {   if (goodToGo) {
-        mTts.setSpeechRate(1.3f);
-        mTts.speak(phrase, TextToSpeech.QUEUE_FLUSH, null);
-    } else {
-        notReadyBuffer = phrase;
+    /**
+     * Speaks a phrase at 1.3x the normal pace.
+     *
+     * @param phrase The phrase to be spoken
+     */
+    public void speakFast(String phrase) {
+        if (goodToGo) {
+            mTts.setSpeechRate(1.3f);
+            mTts.speak(phrase, TextToSpeech.QUEUE_FLUSH, null);
+        } else {
+            notReadyBuffer = phrase;
 
-    }
+        }
     }
 
 

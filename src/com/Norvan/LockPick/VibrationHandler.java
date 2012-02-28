@@ -7,7 +7,10 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 
-
+/**
+ * @author Norvan Gorgi
+ *         Abstracts out all the functions relating to the vibrator.
+ */
 public class VibrationHandler {
 
     private Vibrator vibrator;
@@ -17,9 +20,6 @@ public class VibrationHandler {
     private Handler mHandler;
     private boolean gyroExists;
 
-    public void setVibrationCompletedInterface(VibrationCompletedInterface vibrationCompletedInterface) {
-        this.vibrationCompletedInterface = vibrationCompletedInterface;
-    }
 
     public VibrationHandler(Context context) {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -32,21 +32,34 @@ public class VibrationHandler {
 
     }
 
+    /**
+     * Stops vibration
+     */
     public void stopVibrate() {
         vibrator.cancel();
     }
 
-    public void playHappy() {
+    /**
+     * Plays the 'victory' pattern.
+     */
+    public void pulseWin() {
         long[] happyPattern = {0, 100, 200, 100, 100, 100, 100, 400};
         vibrator.vibrate(happyPattern, -1);
     }
 
-
-    public void playSad() {
+    /**
+     * Plays the 'fail' pattern.
+     */
+    public void pulseLose() {
         long[] sadPattern = {0, 500, 200, 500, 200, 450};
         vibrator.vibrate(sadPattern, -1);
     }
 
+    /**
+     * Continuously vibrates at a given intensity using PWM techniques.
+     *
+     * @param intensity vibration intensity from 0 to 100
+     */
     public void pulsePWM(int intensity) {
         int onTime = (int) (PWMsegmentLength * ((float) intensity / 100));
         int offTime = PWMsegmentLength - onTime;
@@ -56,18 +69,26 @@ public class VibrationHandler {
         if (onTime < 2) {
             onTime = 1;
         }
-
         long[] pattern = {0, onTime, offTime};
-
-
         vibrator.vibrate(pattern, 0);
     }
 
+    /**
+     * Pulses out the given string as Morse Code.
+     *
+     * @param text String to pulse out
+     */
     public void playString(String text) {
-
         vibrator.vibrate(MorseCodeConverter.pattern(text), -1);
     }
 
+
+    /**
+     * Pulses out the given string as Morse Code. Notifies the registered VibrationCompletedInterface when the duration
+     * of the pattern has passed.
+     *
+     * @param text String to pulse out
+     */
     public void playStringNotified(String text) {
         long[] pattern = MorseCodeConverter.pattern(text);
         long duration = 0;
@@ -86,17 +107,24 @@ public class VibrationHandler {
         }
     }
 
-
+    /**
+     * Plays the 'fail' pattern.  Notifies the registered VibrationCompletedInterface when the duration
+     * of the pattern has passed.
+     */
     public void playSadNotified() {
         long[] sadPattern = {0, 500, 200, 500, 200, 450};
         long duration = 0;
         for (long l : sadPattern) {
             duration = duration + l;
         }
-        mHandler.postDelayed(vibrationComplete, duration+200);
+        mHandler.postDelayed(vibrationComplete, duration + 200);
         vibrator.vibrate(sadPattern, -1);
     }
 
+    /**
+     * Plays the 'victory' pattern. Notifies the registered VibrationCompletedInterface when the duration
+     * of the pattern has passed.
+     */
     public void playHappyNotified() {
         long[] happyPattern = {0, 100, 200, 100, 100, 100, 100, 400};
         long duration = 0;
@@ -116,7 +144,14 @@ public class VibrationHandler {
         }
     };
 
+    public void setVibrationCompletedInterface(VibrationCompletedInterface vibrationCompletedInterface) {
+        this.vibrationCompletedInterface = vibrationCompletedInterface;
+    }
+
     public interface VibrationCompletedInterface {
+        /**
+         * The previously triggered notifiable vibration has completed.
+         */
         public void vibrationCompleted();
     }
 }

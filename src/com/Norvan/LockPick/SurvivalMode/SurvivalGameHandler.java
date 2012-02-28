@@ -156,7 +156,7 @@ public class SurvivalGameHandler {
 
     private void levelLost() {
         vibrationHandler.stopVibrate();
-        vibrationHandler.playSad();
+        vibrationHandler.pulseLose();
         gameState = STATE_BETWEENLEVELS;
         if (numberOfPicksLeft == 0) {
             gameState = STATE_GAMEOVER;
@@ -172,7 +172,7 @@ public class SurvivalGameHandler {
     private void levelWon() {
         gameState = STATE_BETWEENLEVELS;
         vibrationHandler.stopVibrate();
-        vibrationHandler.playHappy();
+        vibrationHandler.pulseWin();
         gameStatusInterface.levelWon(currentLevel, numberOfPicksLeft);
         currentLevel++;
 
@@ -190,14 +190,9 @@ public class SurvivalGameHandler {
         public void gameOver(int maxLevel);
     }
 
-    public int[] getLevelData() {
-        //TODO remove
-        return levelHandler.getLevelData();
-    }
 
-    public int getTargetLocation() {
-        return levelHandler.getTargetLocation();
-    }
+
+
 
     private VibrationHandler.VibrationCompletedInterface vibrationCompletedInterface = new VibrationHandler.VibrationCompletedInterface() {
         @Override

@@ -16,7 +16,10 @@
 
 package com.Norvan.LockPick;
 
-/** Class that implements the text to morse code coversion */
+/** Class that implements the text to morse code coversion
+ *
+ *  Taken from Android's API Demos app. License included in NOTICE.TXT.
+ */
 class MorseCodeConverter {
     private static final long SPEED_BASE = 75;
     static final long DOT = SPEED_BASE;
