@@ -1,10 +1,10 @@
 package com.Norvan.LockPick;
 
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+
+import java.util.Locale;
 
 /**
  * @author Norvan Gorgi

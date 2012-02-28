@@ -2,9 +2,7 @@ package com.Norvan.LockPick.Helpers;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.util.Log;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import com.Norvan.LockPick.R;
 
 

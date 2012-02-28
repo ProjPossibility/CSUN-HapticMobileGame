@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.*;
-import android.view.accessibility.AccessibilityEvent;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import com.Norvan.LockPick.Helpers.UserType;
@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
         }
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
+        //If there is no usertype set, run the firstRunActivity.
         if (SharedPreferencesHandler.isFirstRun(this)) {
             startFirstRunActivity();
             return;
@@ -55,6 +56,8 @@ public class MainActivity extends Activity {
             announcementHandler = new AnnouncementHandler(this, vibrationHandler);
 
         }
+
+        //Set up different UI based on user type.
         if (userType == UserType.USER_NORMAL) {
             setContentView(R.layout.mainlayout);
             butNewSurvivalGame = (Button) findViewById(R.id.butMainNewSurvivalGame);
@@ -95,7 +98,6 @@ public class MainActivity extends Activity {
 
 
         }
-        Log.i("AMP", "hasGyro " + String.valueOf(SensorHandler.hasGyro(this)));
 
         announcementHandler.mainActivityLaunch();
 
@@ -115,7 +117,7 @@ public class MainActivity extends Activity {
             } else if (butSettings.equals(v)) {
                 showResetUserTypeDialog();
             }
-            //To change body of implemented methods use File | Settings | File Templates.
+
         }
     };
 
@@ -131,7 +133,7 @@ public class MainActivity extends Activity {
             } else if (butSettings.equals(v)) {
                 announcementHandler.speakQuadrant(4);
             }
-            //To change body of implemented methods use File | Settings | File Templates.
+
         }
     };
     private View.OnLongClickListener deafblindOnLongClickListener = new View.OnLongClickListener() {
@@ -146,13 +148,13 @@ public class MainActivity extends Activity {
             } else if (butSettings.equals(v)) {
                 showResetUserTypeDialog();
             }
-            return true;  //To change body of implemented methods use File | Settings | File Templates.
+            return true;
         }
     };
 
     @Override
     protected void onResume() {
-        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onResume();
         hasDoneTutorial = SharedPreferencesHandler.hasDoneTutorial(this);
     }
 
@@ -179,7 +181,6 @@ public class MainActivity extends Activity {
                         volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
 
                     } else if (userType == UserType.USER_DEAFBLIND || userType == UserType.USER_BLIND) {
-//                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                         setContentView(R.layout.accessiblemainmenu);
                         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
                         butNewSurvivalGame = (Button) findViewById(R.id.butSurvivalMode);
@@ -224,28 +225,14 @@ public class MainActivity extends Activity {
             break;
         }
 
-        super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && userType != UserType.USER_NORMAL) {
-//            return true;
-//        }
-//        return super.onKeyDown(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
-//    }
-//
-//    @Override
-//    public boolean onKeyUp(int keyCode, KeyEvent event) {
-//        if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && userType != UserType.USER_NORMAL) {
-//            return true;
-//        }
-//        return super.onKeyUp(keyCode, event);    //To change body of overridden methods use File | Settings | File Templates.
-//    }
+
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onDestroy();
         vibrationHandler.stopVibrate();
         announcementHandler.masterShutDown();
     }
@@ -357,7 +344,7 @@ public class MainActivity extends Activity {
                         }
                         return true;
                     }
-                    return false;  //To change body of implemented methods use File | Settings | File Templates.
+                    return false;
                 }
             });
 
@@ -425,7 +412,7 @@ public class MainActivity extends Activity {
                         }
                         return true;
                     }
-                    return false;  //To change body of implemented methods use File | Settings | File Templates.
+                    return false;
                 }
             });
 

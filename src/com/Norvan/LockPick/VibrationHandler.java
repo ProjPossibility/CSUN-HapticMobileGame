@@ -1,11 +1,9 @@
 package com.Norvan.LockPick;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.util.Log;
 
 /**
  * @author Norvan Gorgi

@@ -1,7 +1,6 @@
 package com.Norvan.LockPick.TimeTrialMode;
 
 import android.content.Context;
-import android.util.Log;
 import com.Norvan.LockPick.LevelHandler;
 import com.Norvan.LockPick.ScoreHandler;
 import com.Norvan.LockPick.SensorHandler;

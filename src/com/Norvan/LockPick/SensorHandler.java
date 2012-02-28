@@ -6,12 +6,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.SystemClock;
 import android.util.Log;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Norvan Gorgi

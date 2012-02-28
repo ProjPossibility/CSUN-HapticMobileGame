@@ -1,7 +1,6 @@
 package com.Norvan.LockPick.TimeTrialMode;
 
 import android.os.SystemClock;
-import android.util.Log;
 import android.widget.Chronometer;
 
 /**
