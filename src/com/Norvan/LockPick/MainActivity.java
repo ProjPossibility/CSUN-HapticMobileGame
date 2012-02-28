@@ -390,6 +390,7 @@ public class MainActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 announcementHandler.shutUp();
                 SharedPreferencesHandler.didTutorial(context);
+                Log.i("AMP", "didSkip");
                 if (survivalMode) {
                     startActivityForResult(new Intent(context, SurvivalGameActivity.class), REQ_SURVIVALGAMEACTIVITY);
                 } else {
