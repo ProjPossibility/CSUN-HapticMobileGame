@@ -2,7 +2,6 @@ package com.Norvan.LockPick.TutorialMode;
 
 import android.content.Context;
 import android.os.Handler;
-import com.Norvan.LockPick.Helpers.GameVariables;
 import com.Norvan.LockPick.LevelHandler;
 import com.Norvan.LockPick.SensorHandler;
 import com.Norvan.LockPick.VibrationHandler;
@@ -64,7 +63,7 @@ public class TutorialHandler {
         this.tutorialStatusInterface = tutorialStatusInterface;
         gyroExists = SensorHandler.hasGyro(context);
         if (!gyroExists) {
-            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * GameVariables.nonGyroSensativityScalar;
+            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * SensorHandler.nonGyroSensativityScalar;
         }
         handler = new Handler();
 

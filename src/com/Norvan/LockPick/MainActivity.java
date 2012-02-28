@@ -12,21 +12,13 @@ import android.view.*;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import com.Norvan.LockPick.Helpers.AnalyticsHelper;
 import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.SurvivalMode.SurvivalGameActivity;
 import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameActivity;
 import com.Norvan.LockPick.TutorialMode.TutorialActivity;
 
-/**
- * Created by IntelliJ IDEA.
- * User: ngorgi
- * Date: 2/8/12
- * Time: 9:20 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class MainActivity extends Activity {
     private static final int REQ_FIRSTRUNACTIVITY = 1;
     private static final int REQ_SURVIVALGAMEACTIVITY = 2;
@@ -44,11 +36,6 @@ public class MainActivity extends Activity {
     private VibrationHandler vibrationHandler;
     private AnnouncementHandler announcementHandler;
 
-    @Override
-    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-        Log.i("AMP", "dispatched Event");
-        return super.dispatchPopulateAccessibilityEvent(event);    //To change body of overridden methods use File | Settings | File Templates.
-    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +47,7 @@ public class MainActivity extends Activity {
             return;
         }
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        AnalyticsHelper analyticsHelper = new AnalyticsHelper(this);
-        analyticsHelper.startApp(userType);
-        analyticsHelper = null;
+
         if (SharedPreferencesHandler.isFirstRun(this)) {
             startFirstRunActivity();
             return;
@@ -86,7 +71,7 @@ public class MainActivity extends Activity {
             volumeToggleHelper = new VolumeToggleHelper(this, imgbutToggleVolume);
 
         } else if (userType == UserType.USER_DEAFBLIND || userType == UserType.USER_BLIND) {
-            setContentView(R.layout.diagonalmainmenu);
+            setContentView(R.layout.accessiblemainmenu);
             butNewSurvivalGame = (Button) findViewById(R.id.butSurvivalMode);
             butNewTimeTrialGame = (Button) findViewById(R.id.butTimeAttack);
             butHelp = (Button) findViewById(R.id.butInstructions);
@@ -195,7 +180,7 @@ public class MainActivity extends Activity {
 
                     } else if (userType == UserType.USER_DEAFBLIND || userType == UserType.USER_BLIND) {
 //                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                        setContentView(R.layout.diagonalmainmenu);
+                        setContentView(R.layout.accessiblemainmenu);
                         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
                         butNewSurvivalGame = (Button) findViewById(R.id.butSurvivalMode);
                         butNewTimeTrialGame = (Button) findViewById(R.id.butTimeAttack);

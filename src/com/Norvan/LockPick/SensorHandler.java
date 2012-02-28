@@ -21,6 +21,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class SensorHandler {
+    public static final int nonGyroSensativityScalar  = 110;
     private int lastTiltReading = -1;
     private float lastAngularVelocity = -1;
     private SensorHandlerInterface sensorHandlerInterface;

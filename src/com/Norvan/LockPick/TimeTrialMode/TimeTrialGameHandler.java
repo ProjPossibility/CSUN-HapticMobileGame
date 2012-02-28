@@ -2,7 +2,6 @@ package com.Norvan.LockPick.TimeTrialMode;
 
 import android.content.Context;
 import android.util.Log;
-import com.Norvan.LockPick.Helpers.GameVariables;
 import com.Norvan.LockPick.LevelHandler;
 import com.Norvan.LockPick.ScoreHandler;
 import com.Norvan.LockPick.SensorHandler;
@@ -54,7 +53,7 @@ public class TimeTrialGameHandler {
 
         timingHandler.setTimingHandlerInterface(timingHandlerInterface);
         if (!gyroExists) {
-            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * GameVariables.nonGyroSensativityScalar;
+            angularVelocityMinimumThreshold = angularVelocityMinimumThreshold * SensorHandler.nonGyroSensativityScalar;
         }
     }
 

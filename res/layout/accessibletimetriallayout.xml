@@ -13,15 +13,11 @@
                android:scaleType="centerInside" android:src="@android:color/darker_gray"
                android:id="@+id/separatorHorizontal"/>
 
-    <RelativeLayout android:id="@+id/relquad1" android:layout_width="fill_parent"
+    <RelativeLayout android:id="@+id/relquad1" android:layout_width="fill_parent"        android:focusable="true"  android:contentDescription="Speak Game Info"
                     android:layout_above="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
                     android:layout_height="fill_parent">
 
-        <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
-                  android:gravity="center" android:text="Picks Left\n5" android:textSize="27sp"
-                  android:layout_marginTop="40dp"
-                  android:layout_above="@+id/quad1Center"
-                  android:id="@+id/textPicksLeft"/>
+
         <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
                   android:gravity="center" android:text="Score Bonus\n50" android:textSize="27sp"
                 android:visibility="gone"
@@ -29,8 +25,8 @@
                   android:id="@+id/textScoreBonus"/>
         <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
                   android:gravity="center"
-                  android:text="Unlimited time but only 5 extra lock picks.\nBe careful!"
-                  android:textSize="30sp" android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+                  android:text="Start with 30 seconds and unlimited lock picks. Pick locks to get more time."
+                  android:textSize="24sp" android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
                   android:layout_marginTop="40dp" android:visibility="visible"
                   android:id="@+id/textGameMode"/>
         <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
@@ -39,19 +35,17 @@
                   android:id="@+id/textGameOver"/>
         <ImageView android:layout_width="0px" android:layout_height="0px" android:layout_centerInParent="true"
                    android:id="@+id/quad1Center"/>
-        <LinearLayout android:layout_height="fill_parent" android:gravity="center" android:layout_width="fill_parent"
-                      android:orientation="vertical"
-                      android:layout_below="@+id/quad1Center" android:id="@+id/linearTime">
-            <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
+
+
+            <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
                       android:gravity="center" android:text="Time" android:textSize="27sp"
-                      android:layout_below="@+id/quad1Center"
+
                       android:id="@+id/textTime"/>
-            <Chronometer android:layout_height="wrap_content" android:layout_width="fill_parent"
-                         android:gravity="center" android:id="@+id/chronoTime" android:textSize="27sp"/>
-        </LinearLayout>
+
+
 
     </RelativeLayout>
-    <RelativeLayout android:id="@+id/relquad2" android:layout_width="fill_parent"
+    <RelativeLayout android:id="@+id/relquad2" android:layout_width="fill_parent"       android:contentDescription="Speak Level"   android:focusable="true"
                     android:layout_above="@+id/separatorHorizontal" android:layout_toLeftOf="@+id/separatorVertical"
                     android:layout_height="fill_parent">
 
@@ -66,7 +60,7 @@
                      android:layout_height="fill_parent" android:src="@drawable/ic_media_play"
                      android:background="@android:color/transparent" android:scaleType="fitCenter"/>
     </RelativeLayout>
-    <RelativeLayout android:id="@+id/relquad4" android:layout_width="fill_parent"
+    <RelativeLayout android:id="@+id/relquad4" android:layout_width="fill_parent"       android:focusable="true" android:contentDescription="Speak Score"
                     android:layout_below="@+id/separatorHorizontal" android:layout_toRightOf="@+id/separatorVertical"
                     android:layout_height="fill_parent">
         <TextView android:layout_width="fill_parent" android:layout_height="fill_parent"
@@ -83,8 +77,9 @@
     </RelativeLayout>
     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:gravity="center"
               android:textStyle="bold" android:id="@+id/textModeDescription"
-              android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:text="Puzzle Mode"
+              android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:text="Time Attack"
               android:textSize="30sp"/>
-
+    <Chronometer android:layout_height="wrap_content" android:layout_width="wrap_content"     android:visibility="gone"
+               android:id="@+id/chronoTime"/>
 </RelativeLayout>
 

@@ -7,11 +7,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.*;
 import com.Norvan.LockPick.*;
-import com.Norvan.LockPick.Helpers.AnalyticsHelper;
-import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.SurvivalMode.SurvivalGameHandler;
@@ -29,7 +26,6 @@ public class TimeTrialGameActivity extends Activity {
     private SharedPreferencesHandler prefs;
     private Context context;
     private TimingHandler timingHandler;
-    private AnalyticsHelper analyticsHelper;
     private int userType;
     private RelativeLayout quad1, quad2, quad4;
     private int lastLevelReached = 0;
@@ -53,8 +49,6 @@ public class TimeTrialGameActivity extends Activity {
         setHighScore(prefs.getTimeTrialHighScore());
         setUiGameState(TimeTrialGameHandler.STATE_FRESHLOAD);
         announcementHandler = new AnnouncementHandler(context, vibrationHandler);
-        analyticsHelper = new AnalyticsHelper(this);
-        analyticsHelper.startTimeTrialActivity();
         timingHandler.setUpdateTimeLeftInterface(updateTimeLeftInterface);
         ScoreHandler scoreHandler = new ScoreHandler(prefs, ScoreHandler.MODE_TIMETRIAL);
         gameHandler.setScoreHandler(scoreHandler);
@@ -82,7 +76,7 @@ public class TimeTrialGameActivity extends Activity {
     }
 
     private void setUpAccessibleUI() {
-        setContentView(R.layout.diagonaltimetriallayout);
+        setContentView(R.layout.accessibletimetriallayout);
         textLevelLabel = (TextView) findViewById(R.id.textCurrentLevel);
         textCurrentScore = (TextView) findViewById(R.id.textScore);
         textTime = (TextView) findViewById(R.id.textTime);
@@ -292,7 +286,6 @@ public class TimeTrialGameActivity extends Activity {
         public void newGameStart() {
             setUiGameState(TimeTrialGameHandler.STATE_FRESHLOAD);
             setHighScore(gameHandler.getHighScore());
-            analyticsHelper.newTimeTrialGame();
         }
 
         @Override
@@ -318,7 +311,6 @@ public class TimeTrialGameActivity extends Activity {
             setScoreBonus(bonus);
             announcementHandler.timeTrialWin();
             setCurrentScore(gameHandler.getCurrentScore());
-            analyticsHelper.winTimeTrialLevel(level, gameHandler.getSecondsLeft());
 //            butGameButton.setText("Next Level");
 //            chronoTimer.stop();
 //            float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
@@ -338,7 +330,6 @@ public class TimeTrialGameActivity extends Activity {
             announcementHandler.timeTrialLose();
 
             setUiGameState(TimeTrialGameHandler.STATE_BETWEENLEVELS);
-            analyticsHelper.loseTimeTrialLevel(level, gameHandler.getSecondsLeft());
 
 //            butGameButton.setText("Try Again");
 //            chronoTimer.stop();
@@ -355,7 +346,6 @@ public class TimeTrialGameActivity extends Activity {
                 butGameButton.setText("New Game");
             }
             lastLevelReached = maxLevel;
-            analyticsHelper.gameOverTimeTrial(currentScore, maxLevel);
             if (userType == UserType.USER_NORMAL) {
 
                 if (isHighScore) {
@@ -466,8 +456,6 @@ public class TimeTrialGameActivity extends Activity {
         vibrationHandler = null;
         gameHandler = null;
         prefs = null;
-        analyticsHelper.exitTimeTrial();
-        analyticsHelper = null;
 
     }
 

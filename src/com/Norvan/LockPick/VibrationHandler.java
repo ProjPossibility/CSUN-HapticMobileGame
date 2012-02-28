@@ -11,7 +11,7 @@ import android.util.Log;
 public class VibrationHandler {
 
     private Vibrator vibrator;
-    private int PWMsegmentLength = 50;
+    private int PWMsegmentLength = 30;
     private static final int PWMsegmentLengthNoGyro = 15;
     private VibrationCompletedInterface vibrationCompletedInterface;
     private Handler mHandler;

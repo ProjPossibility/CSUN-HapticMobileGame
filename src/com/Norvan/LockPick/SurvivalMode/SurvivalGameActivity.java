@@ -8,10 +8,8 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.*;
 import com.Norvan.LockPick.*;
-import com.Norvan.LockPick.Helpers.AnalyticsHelper;
 import com.Norvan.LockPick.Helpers.ResponseHelper;
 import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
@@ -35,7 +33,6 @@ public class SurvivalGameActivity extends Activity
     Context context;
     ResponseHelper responseHelper;
     long gamePausedChronoProgress;
-    AnalyticsHelper analyticsHelper;
     ScoreHandler scoreHandler;
     int userType;
     RelativeLayout quad1, quad2, quad4;
@@ -66,20 +63,17 @@ public class SurvivalGameActivity extends Activity
         chronoTimer.setOnChronometerTickListener(onTick);
         responseHelper = new ResponseHelper(context);
 
-        analyticsHelper = new AnalyticsHelper(this);
-        analyticsHelper.startSurvivalActivity();
 
         scoreHandler = new ScoreHandler(prefs, ScoreHandler.MODE_SURVIVAL);
 
         setUiGameState(SurvivalGameHandler.STATE_FRESHLOAD);
         scoreHandler.newGame();
         setHighScore(scoreHandler.getHighScore());
-        analyticsHelper.newSurvivalGame();
         announcementHandler.playPuzzleDescription();
     }
 
     private void setUpAccessibleUI() {
-        setContentView(R.layout.diagonalsurvivallayout);
+        setContentView(R.layout.accessiblesurvivallayout);
         textPicksLeft = (TextView) findViewById(R.id.textPicksLeft);
         textLevelLabel = (TextView) findViewById(R.id.textCurrentLevel);
         textCurrentScore = (TextView) findViewById(R.id.textScore);
@@ -270,7 +264,7 @@ public class SurvivalGameActivity extends Activity
                         announcementHandler.readPicksLeft(gameHandler.getNumberOfPicksLeft());
                         break;
                     case SurvivalGameHandler.STATE_FRESHLOAD:
-                        announcementHandler.playPuzzleDescription();
+                        announcementHandler.readPicksLeft(gameHandler.getNumberOfPicksLeft());
                         break;
                     case SurvivalGameHandler.STATE_GAMEOVER:
                         announcementHandler.readGameOver();
@@ -346,7 +340,6 @@ public class SurvivalGameActivity extends Activity
             scoreHandler.newGame();
             setHighScore(scoreHandler.getHighScore());
             setScore();
-            analyticsHelper.newSurvivalGame();
         }
 
         @Override
@@ -374,7 +367,6 @@ public class SurvivalGameActivity extends Activity
             chronoTimer.stop();
             float levelTime = SystemClock.elapsedRealtime() - chronoTimer.getBase();
             setTimeBonus(scoreHandler.wonLevel(levelTime));
-            analyticsHelper.winSurvivalLevel(levelWon, (int) levelTime, picksLeft);
             setPicksLeft(picksLeft);
             setScore();
             announcementHandler.puzzlelevelWon(levelWon);
@@ -394,7 +386,6 @@ public class SurvivalGameActivity extends Activity
             }
             chronoTimer.stop();
             wonLastLevel = false;
-            analyticsHelper.loseSurvivalLevel(level, (int) (SystemClock.elapsedRealtime() - chronoTimer.getBase()), picksLeft);
             setPicksLeft(picksLeft);
             announcementHandler.puzzlelevelLost(level, picksLeft);
         }
@@ -407,7 +398,6 @@ public class SurvivalGameActivity extends Activity
                 butGameButton.setText("New Game");
             }
             lastLevelReached = maxLevel;
-            analyticsHelper.gameOverSurvival(scoreHandler.getCurrentScore(), maxLevel);
             boolean isHighScore = scoreHandler.gameOver();
             if (userType == UserType.USER_NORMAL) {
                 if (isHighScore) {
@@ -519,8 +509,6 @@ public class SurvivalGameActivity extends Activity
         vibrationHandler = null;
         gameHandler = null;
         prefs = null;
-        analyticsHelper.exitSurvival();
-        analyticsHelper = null;
         super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
     }
 

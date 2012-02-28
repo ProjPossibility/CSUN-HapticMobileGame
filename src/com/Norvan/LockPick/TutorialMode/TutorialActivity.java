@@ -6,17 +6,14 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.Norvan.LockPick.AnnouncementHandler;
 import com.Norvan.LockPick.Helpers.UserType;
 import com.Norvan.LockPick.Helpers.VolumeToggleHelper;
 import com.Norvan.LockPick.R;
 import com.Norvan.LockPick.SharedPreferencesHandler;
-import com.Norvan.LockPick.TimeTrialMode.TimeTrialGameHandler;
 import com.Norvan.LockPick.VibrationHandler;
 
 
@@ -64,7 +61,7 @@ public class TutorialActivity extends Activity {
     }
 
     private void setUpAccessibleUI() {
-        setContentView(R.layout.diagonaltutuoriallayout);
+        setContentView(R.layout.accessibletutuoriallayout);
         textStepInstructions = (TextView) findViewById(R.id.textTutorialInstructions);
         textStepInstructions.setKeepScreenOn(true);
         textStepInstructions.setOnClickListener(onClickAccessible);
@@ -226,8 +223,8 @@ public class TutorialActivity extends Activity {
                     if (!event.isLongPress() && event.getRepeatCount() == 0) {
                         finish();
                     }
-                    return true;
-                }
+
+                } return true;
             } else {
                 if (!event.isLongPress() && event.getRepeatCount() == 0) {
                     tutorialHandler.gotKeyDown();

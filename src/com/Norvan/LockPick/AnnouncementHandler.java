@@ -515,6 +515,8 @@ public class AnnouncementHandler {
         }
     }
 
+
+
     public void announceResetUserType() {
         if (userType == UserType.USER_DEAFBLIND) {
             //morse
